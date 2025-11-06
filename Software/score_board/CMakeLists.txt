@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Find Qt (Qt6 preferred, falls back to Qt5)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # ---- List your sources explicitly (edit to match your filenames) ----
@@ -24,6 +24,13 @@ add_executable(anzeigetafel
     away_team.cpp
     timer.cpp
 )
+
+# --- Add icon resources ---
+qt_add_resources(anzeigetafel "app_resources"
+    PREFIX "/"
+    FILES resources.qrc
+)
+
 
 # If your headers live in this folder:
 target_include_directories(anzeigetafel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -38,10 +38,10 @@
  *
  * @author Paranithan Paramalingam. BFH-Ti
  * @version V1.0, 29.05.2025
+ * @version V2.0, 06.11.2025 added the resourcefile to show the execute file with a icon
  *
  *
  */
-
 
 #include <QApplication>
 #include "controll_window.h"
@@ -50,25 +50,25 @@
 #include "timer.h"
 #include "score_memory.h"
 
-
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+  QApplication app(argc, argv);
+  app.setWindowIcon(QIcon(":/icons/anzeigetafel.png"));
 
-    score_memory* ScoreMem = new score_memory();
-    timer* gameTime = new timer();
+  score_memory *ScoreMem = new score_memory();
+  timer *gameTime = new timer();
 
-    Score_board* scoreboard = new Score_board(ScoreMem, gameTime);
-    scoreboard->show();
+  Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
+  scoreboard->show();
 
-    controll_window* window = new controll_window();
-    window->setScoreMemory(ScoreMem);
-    window->setTimer(gameTime);
-    window->show();
+  controll_window *window = new controll_window();
+  window->setScoreMemory(ScoreMem);
+  window->setTimer(gameTime);
+  window->show();
 
-    /**********************************/
-    // Add emblem
-   QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
-    /**********************************/
+  /**********************************/
+  // Add emblem
+  QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
+  /**********************************/
   return app.exec();
 }
