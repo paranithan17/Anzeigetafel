@@ -1,0 +1,86 @@
+/**
+ * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
+ * @file  scoreboard.cpp
+ * @class scoreboard
+ * @caption
+ * This code opens the second window which shows the score, time
+ * and player who scored the goal to audience.
+ * If there is enough time before submission, then is also possible
+ * the show embelem of the Teams aswell.
+ *
+ * @author Paranithan Paramalingam. BFH-Ti
+ * @version V1.0, 29.05.2025
+ *
+ * @note This code has been created with help of chatgpt
+ */
+#ifndef SCORE_BOARD_H
+#define SCORE_BOARD_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QListWidget>
+#include <QKeyEvent>
+#include <QWindowStateChangeEvent>
+#include <QShortcut>
+
+#include "score_memory.h"
+#include "timer.h"
+
+class Score_board : public QWidget
+{
+    Q_OBJECT
+
+private:
+    score_memory* Score;
+    timer* gameTime;
+
+    QLabel* scoreLabel;
+    QLabel* timeLabel;
+    QListWidget* scorerListTeam1;
+    QListWidget* scorerListTeam2;
+
+    /**********************************/
+    /**
+     * Extra features:
+     * 1) Adding emblems of both teams
+     */
+    // Elements to add emblems
+    QLabel* emblemTeam1;
+    QLabel* emblemTeam2;
+
+    void adjustEmblemSize();
+    /**********************************/
+
+
+
+
+    void setupLayout();
+    void applyStyle();
+    void adjustFontSize();
+
+private slots:
+    void updateScore();
+    void extracted(QList<Goal> &goals);
+    void updateGoals();
+    void updateTime(const QString& time);
+
+
+
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+   // void changeEvent(QEvent* event) override;
+
+
+public:
+    Score_board(score_memory* scoreMemory, timer* gameTime, QWidget *parent = nullptr);
+
+/**********************************/
+public slots:
+    // Add embelem
+    void updateEmblem(const QString& team, const QString& filePath);
+/**********************************/
+};
+#endif // SCORE_BOARD_H
