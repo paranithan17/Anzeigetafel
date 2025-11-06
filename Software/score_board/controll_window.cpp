@@ -22,20 +22,19 @@
 #include "controll_window.h"
 #include "QMessageBox"
 
-
 controll_window::controll_window(QWidget *parent) : QWidget(parent)
 {
     /**
      * @brief Managing and displaying (in controll window) the playerlist for both teams
      */
 
-    //list
+    // list
     listTeam1 = new QListWidget;
     listTeam2 = new QListWidget;
 
     // Add player for home Team
     QPushButton *btnAddPlayerTeam1 = new QPushButton("+");
-    btnAddPlayerTeam1->setFixedSize(30,30);
+    btnAddPlayerTeam1->setFixedSize(30, 30);
     connect(btnAddPlayerTeam1, &QPushButton::clicked, this, &controll_window::AddPlayerTeam1);
 
     // connect remove home player
@@ -43,7 +42,7 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
 
     // Add player for away Team
     QPushButton *btnAddPlayerTeam2 = new QPushButton("+");
-    btnAddPlayerTeam2->setFixedSize(30,30);
+    btnAddPlayerTeam2->setFixedSize(30, 30);
     connect(btnAddPlayerTeam2, &QPushButton::clicked, this, &controll_window::AddPlayerTeam2);
 
     // connect remove away player
@@ -91,7 +90,6 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     btnAddEmblemTeam2 = new QPushButton("Logo Hinzufügen");
     connect(btnAddEmblemTeam2, &QPushButton::clicked, this, &controll_window::loadEmblemTeam2);
     /**********************************/
-
 
     /**
      * @brief Timer and log buttons
@@ -165,7 +163,7 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(TeamLayout);
-    mainLayout->addStretch(1000);  // Add vertical space
+    mainLayout->addStretch(1000); // Add vertical space
     mainLayout->addLayout(centerLayout);
     setLayout(mainLayout);
 }
@@ -176,8 +174,9 @@ void controll_window::updateTeamList1()
      * @brief udates the the player list after adding and removing a player in team1 (home)
      */
     listTeam1->clear();
-    for (const auto& player : team1.getPlayers()){
-        QString item = QString::number(player->getNumber()) + " - " +player->getName();
+    for (const auto &player : team1.getPlayers())
+    {
+        QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam1->addItem(item);
     }
 }
@@ -188,8 +187,9 @@ void controll_window::updateTeamList2()
      * @brief udates the the player list after adding and removing a player in team2 (away)
      */
     listTeam2->clear();
-    for (const auto& player : team2.getPlayers()){
-        QString item = QString::number(player->getNumber()) + " - " +player->getName();
+    for (const auto &player : team2.getPlayers())
+    {
+        QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam2->addItem(item);
     }
 }
@@ -224,17 +224,20 @@ void controll_window::AddPlayerTeam1()
     connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
-    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted)
+    {
         bool ok;
         unsigned number = numberEdit->text().toInt(&ok);
         QString name = nameEdit->text();
 
-        if (ok && !name.isEmpty()) {
+        if (ok && !name.isEmpty())
+        {
             team1.addPlayer(number, name);
             updateTeamList1();
-        } else {
+        }
+        else
+        {
             QMessageBox::warning(this, "Input Error", "Bitte eine gültigen Nummer und Namen eingeben!");
-
         }
     }
 }
@@ -269,15 +272,19 @@ void controll_window::AddPlayerTeam2()
     connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
-    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted)
+    {
         bool ok;
         unsigned number = numberEdit->text().toInt(&ok);
         QString name = nameEdit->text();
 
-        if (ok && !name.isEmpty()) {
+        if (ok && !name.isEmpty())
+        {
             team2.addPlayer(number, name);
             updateTeamList2();
-        } else {
+        }
+        else
+        {
             QMessageBox::warning(this, "Input Error", "Bitte eine gültigen Nummer und Namen eingeben!");
         }
     }
@@ -306,13 +313,13 @@ void controll_window::RemovePlayerTeam1(QListWidgetItem *item)
     connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(removeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
 
-    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted)
+    {
         QString text = item->text();
         int number = text.section(" - ", 0, 0).toInt();
         team1.removePlayer(number);
         updateTeamList1();
     }
-
 }
 
 void controll_window::RemovePlayerTeam2(QListWidgetItem *item)
@@ -338,13 +345,13 @@ void controll_window::RemovePlayerTeam2(QListWidgetItem *item)
     connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(removeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
 
-    if (dialog.exec() == QDialog::Accepted) {
+    if (dialog.exec() == QDialog::Accepted)
+    {
         QString text = item->text();
         int number = text.section(" - ", 0, 0).toInt();
         team2.removePlayer(number);
         updateTeamList2();
     }
-
 }
 
 void controll_window::AddGoalTeam1()
@@ -367,12 +374,14 @@ void controll_window::AddGoalTeam1()
     QListWidget *listTeam1 = new QListWidget;
     QListWidget *listTeam2 = new QListWidget;
     // Fill the lists
-    for (const auto& player : team1.getPlayers()) {
+    for (const auto &player : team1.getPlayers())
+    {
         QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam1->addItem(item);
     }
-    for (const auto& player : team2.getPlayers()) {
-        QString item = QString::number(player->getNumber()) + " - " +player->getName();
+    for (const auto &player : team2.getPlayers())
+    {
+        QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam2->addItem(item);
     }
 
@@ -384,16 +393,19 @@ void controll_window::AddGoalTeam1()
     // --- Time and Player Fields ---
     QLineEdit *timeEdit = new QLineEdit;
     QLineEdit *playerEdit = new QLineEdit;
-    playerEdit->setReadOnly(true);  // Player field auto-filled
+    playerEdit->setReadOnly(true); // Player field auto-filled
 
     // Pre-fill timeEdit with current timer time + 1
     unsigned minutes = 0;
-    if (gametime) {
+    if (gametime)
+    {
         QString elapsed;
-        if(gametime->runningPeriod == true){
+        if (gametime->runningPeriod == true)
+        {
             elapsed = gametime->firsthalf();
         }
-        else if(gametime->runningPeriod == false){
+        else if (gametime->runningPeriod == false)
+        {
             elapsed = gametime->secondhalf();
         }
         minutes = elapsed.section(":", 0, 0).toInt() + 1;
@@ -409,16 +421,15 @@ void controll_window::AddGoalTeam1()
 
     // --- Update player field when a player is selected ---
     QString selectedTeam; // This part is to signal a own goal
-    auto updatePlayerField = [&](QListWidgetItem *item, QString team) {
+    auto updatePlayerField = [&](QListWidgetItem *item, QString team)
+    {
         playerEdit->setText(item->text());
         selectedTeam = team;
     };
-    connect(listTeam1, &QListWidget::itemClicked, [=](QListWidgetItem *item){
-        updatePlayerField(item, "team1");
-    });
-    connect(listTeam2, &QListWidget::itemClicked, [=](QListWidgetItem *item){
-        updatePlayerField(item, "team2");
-    });
+    connect(listTeam1, &QListWidget::itemClicked, [=](QListWidgetItem *item)
+            { updatePlayerField(item, "team1"); });
+    connect(listTeam2, &QListWidget::itemClicked, [=](QListWidgetItem *item)
+            { updatePlayerField(item, "team2"); });
 
     // --- Save Button ---
     QPushButton *SaveButton = new QPushButton("Save");
@@ -429,7 +440,8 @@ void controll_window::AddGoalTeam1()
     mainLayout->addLayout(buttonLayout);
 
     connect(CancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
-    connect(SaveButton, &QPushButton::clicked, [&]() {
+    connect(SaveButton, &QPushButton::clicked, [&]()
+            {
         QString timeStr = timeEdit->text();
         QString playerStr = playerEdit->text();
 
@@ -452,8 +464,7 @@ void controll_window::AddGoalTeam1()
 
         ScoreMemory->addGoal(number, name, timeStr, "Home", isOwnGoal);
         qDebug() << "Goal added:" << number << name << timeStr;
-        dialog.accept();
-    });
+        dialog.accept(); });
     dialog.exec();
 }
 
@@ -477,11 +488,13 @@ void controll_window::AddGoalTeam2()
     QListWidget *listTeam1 = new QListWidget;
     QListWidget *listTeam2 = new QListWidget;
     // Fill the lists
-    for (const auto& player : team1.getPlayers()) {
+    for (const auto &player : team1.getPlayers())
+    {
         QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam1->addItem(item);
     }
-    for (const auto& player : team2.getPlayers()) {
+    for (const auto &player : team2.getPlayers())
+    {
         QString item = QString::number(player->getNumber()) + " - " + player->getName();
         listTeam2->addItem(item);
     }
@@ -494,16 +507,19 @@ void controll_window::AddGoalTeam2()
     // --- Time and Player Fields ---
     QLineEdit *timeEdit = new QLineEdit;
     QLineEdit *playerEdit = new QLineEdit;
-    playerEdit->setReadOnly(true);  // Player field auto-filled
+    playerEdit->setReadOnly(true); // Player field auto-filled
 
     // Pre-fill timeEdit with current timer time + 1
     unsigned minutes = 0;
-    if (gametime) {
+    if (gametime)
+    {
         QString elapsed;
-        if(gametime->runningPeriod == true){
+        if (gametime->runningPeriod == true)
+        {
             elapsed = gametime->firsthalf();
         }
-        else if(gametime->runningPeriod == false){
+        else if (gametime->runningPeriod == false)
+        {
             elapsed = gametime->secondhalf();
         }
         minutes = elapsed.section(":", 0, 0).toInt() + 1;
@@ -519,16 +535,15 @@ void controll_window::AddGoalTeam2()
 
     // --- Update player field when a player is selected ---
     QString selectedTeam; // This part is to signal a own goal
-    auto updatePlayerField = [&](QListWidgetItem *item, QString team) {
+    auto updatePlayerField = [&](QListWidgetItem *item, QString team)
+    {
         playerEdit->setText(item->text());
         selectedTeam = team;
     };
-    connect(listTeam1, &QListWidget::itemClicked, [=](QListWidgetItem *item){
-        updatePlayerField(item, "team1");
-    });
-    connect(listTeam2, &QListWidget::itemClicked, [=](QListWidgetItem *item){
-        updatePlayerField(item, "team2");
-    });
+    connect(listTeam1, &QListWidget::itemClicked, [=](QListWidgetItem *item)
+            { updatePlayerField(item, "team1"); });
+    connect(listTeam2, &QListWidget::itemClicked, [=](QListWidgetItem *item)
+            { updatePlayerField(item, "team2"); });
 
     // --- Save Button ---
     QPushButton *SaveButton = new QPushButton("Save");
@@ -539,7 +554,8 @@ void controll_window::AddGoalTeam2()
     mainLayout->addLayout(buttonLayout);
 
     connect(CancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
-    connect(SaveButton, &QPushButton::clicked, [&]() {
+    connect(SaveButton, &QPushButton::clicked, [&]()
+            {
         QString timeStr = timeEdit->text();
         QString playerStr = playerEdit->text();
 
@@ -562,8 +578,7 @@ void controll_window::AddGoalTeam2()
 
         ScoreMemory->addGoal(number, name, timeStr, "Away", isOwnGoal);
         qDebug() << "Goal added:" << number << name << timeStr;
-        dialog.accept();
-    });
+        dialog.accept(); });
     dialog.exec();
 }
 
@@ -573,7 +588,8 @@ void controll_window::StartTime()
      * @brief Sends the signal to the timer class that the timer should start.
      * Also the start timer button will be set disabled, while the state of the timer is running.
      */
-    if (!gametime->isRunning()) {
+    if (!gametime->isRunning())
+    {
         qDebug() << "Time is running";
         gametime->start();
         btnStartTimer->setDisabled(true);
@@ -629,31 +645,31 @@ void controll_window::Log()
     layout->addLayout(LogButtonLayout);
     layout->addWidget(CancelButton);
 
-    connect(RestartButton, &QPushButton::clicked, [&]() {
+    connect(RestartButton, &QPushButton::clicked, [&]()
+            {
         qDebug() << "Restart clicked";
         dialog.accept();
-        gametime->restart();
-    });
+        gametime->restart(); });
 
-    connect(ResetButton, &QPushButton::clicked, [&]() {
+    connect(ResetButton, &QPushButton::clicked, [&]()
+            {
         qDebug() << "Reset clicked";
         dialog.accept();
         gametime->stop();
         btnStartTimer->setDisabled(false);
-        ScoreMemory->resetGame();
-    });
+        ScoreMemory->resetGame(); });
 
-    connect(UndoGoalButton, &QPushButton::clicked, [&]() {
+    connect(UndoGoalButton, &QPushButton::clicked, [&]()
+            {
         qDebug() << "Tor zurücknehmen clicked";
         dialog.accept();
-        ScoreMemory->removeLastGoal();
-    });
+        ScoreMemory->removeLastGoal(); });
 
     connect(CancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
     dialog.exec();
 }
 
-void controll_window::setScoreMemory(score_memory* mem)
+void controll_window::setScoreMemory(score_memory *mem)
 {
     /**
      * @brief updates the score to the score_memory class
@@ -664,7 +680,7 @@ void controll_window::setScoreMemory(score_memory* mem)
     connect(ScoreMemory, &score_memory::goalsUpdated, this, &controll_window::UpdateScoreDisplay);
 }
 
-void controll_window::setTimer(timer* t)
+void controll_window::setTimer(timer *t)
 {
     /**
      * @brief Overgives the informations from timer class to controll_window class.
@@ -684,8 +700,9 @@ void controll_window::loadEmblemTeam1()
      *
      * @note this part of the code was coded with help from chatgpt.
      */
-    emblemTeam1 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "","Images((*.png *.jpg *.bmp)");
-    if(!emblemTeam1.isEmpty()){
+    emblemTeam1 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images((*.png *.jpg *.bmp)");
+    if (!emblemTeam1.isEmpty())
+    {
         emit emblemChanged("Home", emblemTeam1);
     }
 }
@@ -697,8 +714,9 @@ void controll_window::loadEmblemTeam2()
      *
      * @note this part of the code was coded with help from chatgpt.
      */
-    emblemTeam2 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "","Images((*.png *.jpg *.bmp)");
-    if(!emblemTeam2.isEmpty()){
+    emblemTeam2 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images((*.png *.jpg *.bmp)");
+    if (!emblemTeam2.isEmpty())
+    {
         emit emblemChanged("Away", emblemTeam2);
     }
 }
@@ -716,23 +734,28 @@ void controll_window::ImportTeam1()
      * @note That the number and name of the player needs to be seperated by ";". -
      * (Excel Microsoft 365 MSO Version 2505)
      */
-    QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Home Team)", "", "CSV Files (*.csv);");
-    if (fileName.isEmpty()) return;
+    QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Home Team)", "", "CSV Files (*.csv *.CSV);; All Files(*)");
+    if (fileName.isEmpty())
+        return;
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         QMessageBox::warning(this, "File Error", "Could not open file for reading.");
         return;
     }
     QTextStream in(&file);
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         QString line = in.readLine();
         QStringList fields = line.split(";");
-        if (fields.size() >= 2) {
+        if (fields.size() >= 2)
+        {
             bool ok;
             int number = fields[0].trimmed().toInt(&ok);
             QString name = fields[1].trimmed();
-            if (ok && !name.isEmpty()) {
+            if (ok && !name.isEmpty())
+            {
                 team1.addPlayer(number, name);
             }
         }
@@ -749,23 +772,28 @@ void controll_window::ImportTeam2()
      * @note That the number and name of the player needs to be seperated by ";". -
      * (Excel Microsoft 365 MSO Version 2505)
      */
-    QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Away Team)", "", "CSV Files (*.csv);");
-    if (fileName.isEmpty()) return;
+    QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Away Team)", "", "CSV Files (*.csv *.CSV);; All Files(*)");
+    if (fileName.isEmpty())
+        return;
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         QMessageBox::warning(this, "File Error", "Could not open file for reading.");
         return;
     }
     QTextStream in(&file);
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         QString line = in.readLine();
         QStringList fields = line.split(";");
-        if (fields.size() >= 2) {
+        if (fields.size() >= 2)
+        {
             bool ok;
             int number = fields[0].trimmed().toInt(&ok);
             QString name = fields[1].trimmed();
-            if (ok && !name.isEmpty()) {
+            if (ok && !name.isEmpty())
+            {
                 team2.addPlayer(number, name);
             }
         }
@@ -782,14 +810,18 @@ void controll_window::handleTimerTimeout()
      *
      */
     btnStartTimer->setDisabled(false);
-    if (gametime->runningPeriod == true){
+    if (gametime->runningPeriod == true)
+    {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Second Half", "Do you want to start the second half?",
-                                      QMessageBox::Yes|QMessageBox::No);
+                                      QMessageBox::Yes | QMessageBox::No);
 
-        if (reply == QMessageBox::Yes) {
-            StartTime();  // Start the timer for the second half
-        } else {
+        if (reply == QMessageBox::Yes)
+        {
+            StartTime(); // Start the timer for the second half
+        }
+        else
+        {
             // Do nothing; timer remains stopped
             qDebug() << "Second half not started.";
         }
