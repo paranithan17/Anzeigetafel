@@ -53,7 +53,7 @@
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
-  app.setWindowIcon(QIcon(":/icons/anzeigetafel.png"));
+  app.setWindowIcon(QIcon(":/icons/fcs_256.png"));
 
   score_memory *ScoreMem = new score_memory();
   timer *gameTime = new timer();

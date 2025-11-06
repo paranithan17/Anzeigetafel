@@ -23,13 +23,10 @@ add_executable(anzeigetafel
     home_team.cpp
     away_team.cpp
     timer.cpp
+    resources.qrc
 )
 
-# --- Add icon resources ---
-qt_add_resources(anzeigetafel "app_resources"
-    PREFIX "/"
-    FILES resources.qrc
-)
+
 
 
 # If your headers live in this folder:
