@@ -1,0 +1,41 @@
+# --- Qt & CMake build artifacts ---
+build/
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+Makefile
+*.a
+*.lib
+*.dll
+*.so
+*.exe
+
+# --- Qt Creator user/project settings ---
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.creator.user
+*.autosave
+*.qmlproject.user
+*.user
+
+# --- Temporary files ---
+*.obj
+*.o
+*.log
+*.tmp
+*.bak
+*.swp
+*.pyc
+__pycache__/
+
+# --- System-specific ---
+.DS_Store
+Thumbs.db
+
+# --- Optional: ignore compiled resources ---
+*.qrc.dep
+
+# --- Optional: ignore generated build directories (out-of-source builds) ---
+/Software/build*/
