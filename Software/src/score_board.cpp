@@ -10,8 +10,9 @@
  *
  * @author Paranithan Paramalingam. BFH-Ti
  * @version V1.0, 29.05.2025
- *
+ * \version V1.1, 07.11.2025 - Default fullscreen by launching the program
  * @note This code has been created with help of chatgpt
+ *
  */
 #include "score_board.h"
 
@@ -21,7 +22,12 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
 {
     setupLayout();
     applyStyle();  // Apply background and text color
-    // Fullscreen mode, no title bar
+
+
+
+    setWindowFlags(Qt::FramelessWindowHint);     // Fullscreen mode, no title bar
+    showFullScreen();
+
 
     // Connect signals
     connect(Score, &score_memory::goalsUpdated, this, &Score_board::updateGoals);
@@ -32,7 +38,7 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     updateScore();
     updateGoals();
 
-    // In constructor or setupLayout
+    // As backup to exit and re-enter the fullscreen mode
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, &QShortcut::activated, [=]() {
         if (!isFullScreen()) {
