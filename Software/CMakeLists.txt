@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.16)
+project(Anzeigetafel LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable Qt's automatic MOC/UIC/RCC steps
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+# Find Qt (Qt6 preferred, falls back to Qt5)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+# ---- List your sources explicitly (match new folder structure) ----
+add_executable(anzeigetafel
+    main.cpp
+    src/controll_window.cpp
+    src/score_board.cpp
+    src/score_memory.cpp
+    src/Person.cpp
+    src/home_team.cpp
+    src/away_team.cpp
+    src/timer.cpp
+    include/controll_window.h
+    include/score_board.h
+    include/score_memory.h
+    include/Person.h
+    include/home_team.h
+    include/away_team.h
+    include/timer.h
+    resources.qrc
+)
+
+# If your headers live in the include folder:
+target_include_directories(anzeigetafel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Link Qt Widgets
+target_link_libraries(anzeigetafel PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+# Optional: install target (nice for 'make install')
+install(TARGETS anzeigetafel RUNTIME DESTINATION bin)
