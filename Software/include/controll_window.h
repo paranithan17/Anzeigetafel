@@ -32,34 +32,16 @@
 #include <QLineEdit>
 #include <QDialogButtonBox>
 #include <QFileDialog>
-#include <QRadioButton>
-#include <QGroupBox>
-
 #include "home_team.h"
 #include "away_team.h"
 #include "timer.h"
 #include "score_memory.h"
 
-
 class controll_window : public QWidget
 {
     Q_OBJECT
 
-
-public:
-    // Simple state machine for the match
-    enum class MatchState {
-        PreGame = 0,
-        FirstHalf,
-        HalfTime,
-        SecondHalf,
-        PostGame
-    };
-
 private:
-
-    // Current state (default: PreGame)
-    MatchState m_currentState = MatchState::PreGame;
 
     // Elements for connect with other classes
     home_team team1;
@@ -83,15 +65,6 @@ private:
     QPushButton *btnStartTimer;
     QPushButton *btnLog;
 
-    // GUI elements for match state selection (state machine)
-    QRadioButton *radioPreGame;
-    QRadioButton *radioFirstHalf;
-    QRadioButton *radioHalfTime;
-    QRadioButton *radioSecondHalf;
-    QRadioButton *radioPostGame;
-    QPushButton  *btnApplyState;
-
-    // GUI teamlist for representing the scorer
     QListWidget *listTeam1;
     QListWidget *listTeam2;
 
@@ -146,9 +119,6 @@ private slots:
     void ImportTeam1();
     void ImportTeam2();
 
-    // Confirm the selected match state
-    void applyStateSelection();
-
 
     /**
      * 3) start second leg
@@ -165,9 +135,6 @@ public:
 
 signals:
     void emblemChanged(const QString& team, const QString& filepath);
-
-    // Emits whenever the operator confirms a new match state
-    void matchStateChanged(int state);  // static_cast<int>(MatchState)
 
 };
 
