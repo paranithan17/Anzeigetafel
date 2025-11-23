@@ -39,3 +39,4 @@ Thumbs.db
 
 # --- Optional: ignore generated build directories (out-of-source builds) ---
 /Software/build*/
+/Software/CMakeLists.txt.user
