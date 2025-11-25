@@ -31,7 +31,19 @@ class Score_board : public QWidget
 {
     Q_OBJECT
 
+public:
+    // Keep this in sync with controll_window::MatchState
+    enum class MatchState {
+        PreGame = 0,
+        FirstHalf,
+        HalfTime,
+        SecondHalf,
+        PostGame
+    };
+
+
 private:
+    MatchState m_state = MatchState::PreGame;
     score_memory* Score;
     timer* gameTime;
 
@@ -82,5 +94,13 @@ public slots:
     // Add embelem
     void updateEmblem(const QString& team, const QString& filePath);
 /**********************************/
+
+
+    // New: react to state machine changes
+    void setMatchState(int state);
+    /**********************************/
+private:
+    // Helper to adjust the visual mode based on m_state
+    void updateViewForState();
 };
 #endif // SCORE_BOARD_H

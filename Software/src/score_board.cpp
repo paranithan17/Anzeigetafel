@@ -50,8 +50,16 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
         }
     });
 
+    m_state = MatchState::PreGame;  // default state on startup
+    updateViewForState();           // ensure initial view matches state
+
 
 }
+
+
+
+
+
 
 
 void Score_board::setupLayout()
@@ -190,6 +198,29 @@ void Score_board::updateTime(const QString& time)
 }
 
 
+void Score_board::setMatchState(int state)
+{
+    MatchState newState = m_state;
+
+    switch (state) {
+    case 0: newState = MatchState::PreGame;    break;
+    case 1: newState = MatchState::FirstHalf;  break;
+    case 2: newState = MatchState::HalfTime;   break;
+    case 3: newState = MatchState::SecondHalf; break;
+    case 4: newState = MatchState::PostGame;   break;
+    default:
+        // invalid value – ignore
+        return;
+    }
+
+    if (newState == m_state)
+        return; // nothing to do
+
+    m_state = newState;
+    updateViewForState();
+}
+
+
 
 
 void Score_board::resizeEvent(QResizeEvent *event)
@@ -276,6 +307,51 @@ void Score_board::adjustEmblemSize()
     emblemTeam2->setFixedSize(emblemSize, emblemSize);
 
 }
+
+
+void Score_board::updateViewForState()
+{
+    // Simple version: decide if we are showing the normal game UI or a slideshow
+
+    bool gameMode =
+        (m_state == MatchState::FirstHalf ||
+         m_state == MatchState::SecondHalf);
+
+    // In gameMode: show score/time/scorer lists/emblems
+    // In non-gameMode (PreGame, HalfTime, PostGame): we will later
+    // run a slideshow and can hide or dim the game elements.
+
+    if (gameMode) {
+        // Ensure normal scoreboard is visible
+        scoreLabel->show();
+        timeLabel->show();
+        scorerListTeam1->show();
+        scorerListTeam2->show();
+        emblemTeam1->show();
+        emblemTeam2->show();
+
+        // Later: stop slideshow timer here
+        // stopSlideshow();
+    } else {
+        // Presentation mode: keep something on screen even before we implement slideshow
+        // (You can change this text or remove it later.)
+        timeLabel->setText(" ");
+        scoreLabel->setText(" ");
+
+        // For now we just leave the lists empty / visible.
+        scorerListTeam1->clear();
+        scorerListTeam2->clear();
+
+        // Later:
+        //  - start slideshow
+        //  - load files from the matching directory for m_state
+        // startSlideshowForState(m_state);
+    }
+}
+
+
+
+
 /**********************************/
 
 
