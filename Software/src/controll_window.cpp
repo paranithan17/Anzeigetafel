@@ -197,9 +197,10 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     centerLayout->setAlignment(Qt::AlignCenter);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(StateLayout);
+    mainLayout->addStretch(1000); // Add vertical space
     mainLayout->addLayout(TeamLayout);
     mainLayout->addStretch(1000); // Add vertical space
-    mainLayout->addLayout(StateLayout);
     mainLayout->addLayout(centerLayout);
     setLayout(mainLayout);
 }

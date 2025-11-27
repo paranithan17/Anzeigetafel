@@ -24,9 +24,24 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     applyStyle();  // Apply background and text color
 
 
-
+/*
+ * -- Slide Show --
+ */
     setWindowFlags(Qt::FramelessWindowHint);     // Fullscreen mode, no title bar
     showFullScreen();
+
+    slideshowLabel = new QLabel(this);
+    slideshowLabel->setAlignment(Qt::AlignCenter);
+    slideshowLabel->setStyleSheet("background-color: black;");
+    slideshowLabel->setVisible(false);      // hidden during FirstHalf/SecondHalf
+    slideshowLabel->raise();                // always on top when visible
+
+    slideshowLabel->setGeometry(this->rect()); // NEW: make it cover the whole window initially
+
+    slideshowTimer = new QTimer(this);
+    connect(slideshowTimer, &QTimer::timeout,
+            this, &Score_board::showNextSlide);
+/**************************************/
 
 
     // Connect signals
@@ -221,16 +236,31 @@ void Score_board::setMatchState(int state)
 }
 
 
-
-
 void Score_board::resizeEvent(QResizeEvent *event)
 {
     /**
-     * @brief Will be  recalled when the size of the window has be changed
+     * @brief Will be recalled when the size of the window has be changed
      */
     adjustFontSize();
+
+    // Make slideshow label always cover the full window
+    if (slideshowLabel) {
+        slideshowLabel->setGeometry(this->rect());
+
+        // If a slide is currently visible, rescale it to the new size
+        QPixmap pix = slideshowLabel->pixmap(Qt::ReturnByValue);
+        if (!pix.isNull()) {
+            slideshowLabel->setPixmap(
+                pix.scaled(size(),
+                           Qt::KeepAspectRatio,
+                           Qt::SmoothTransformation)
+                );
+        }
+    }
+
     QWidget::resizeEvent(event);
 }
+
 
 void Score_board::adjustFontSize()
 {
@@ -311,18 +341,15 @@ void Score_board::adjustEmblemSize()
 
 void Score_board::updateViewForState()
 {
-    // Simple version: decide if we are showing the normal game UI or a slideshow
-
     bool gameMode =
         (m_state == MatchState::FirstHalf ||
          m_state == MatchState::SecondHalf);
 
-    // In gameMode: show score/time/scorer lists/emblems
-    // In non-gameMode (PreGame, HalfTime, PostGame): we will later
-    // run a slideshow and can hide or dim the game elements.
-
     if (gameMode) {
-        // Ensure normal scoreboard is visible
+        // Stop slideshow
+        stopSlideshow();
+
+        // Show match info
         scoreLabel->show();
         timeLabel->show();
         scorerListTeam1->show();
@@ -330,29 +357,89 @@ void Score_board::updateViewForState()
         emblemTeam1->show();
         emblemTeam2->show();
 
-        // Later: stop slideshow timer here
-        // stopSlideshow();
     } else {
-        // Presentation mode: keep something on screen even before we implement slideshow
-        // (You can change this text or remove it later.)
-        timeLabel->setText(" ");
-        scoreLabel->setText(" ");
+        // Hide scoreboard UI → slideshow takes over
+        scoreLabel->hide();
+        timeLabel->hide();
+        scorerListTeam1->hide();
+        scorerListTeam2->hide();
+        emblemTeam1->hide();
+        emblemTeam2->hide();
 
-        // For now we just leave the lists empty / visible.
-        scorerListTeam1->clear();
-        scorerListTeam2->clear();
-
-        // Later:
-        //  - start slideshow
-        //  - load files from the matching directory for m_state
-        // startSlideshowForState(m_state);
+        // Start slideshow for selected state
+        if (m_state == MatchState::PreGame)
+            startSlideshow(preGamePath);
+        else if (m_state == MatchState::HalfTime)
+            startSlideshow(halfTimePath);
+        else if (m_state == MatchState::PostGame)
+            startSlideshow(postGamePath);
     }
 }
 
 
 
 
+
 /**********************************/
+void Score_board::startSlideshow(const QString &folderPath)
+{
+    stopSlideshow();   // stop any running slideshow
 
+    QDir folder(folderPath);
+    if (!folder.exists()) {
+        qWarning() << "Slideshow folder does not exist:" << folderPath;
+        return;
+    }
 
+    // Load files
+    slideshowFiles = folder.entryList(
+        {"*.png", "*.jpg", "*.jpeg", "*.bmp"},
+        QDir::Files);
+
+    if (slideshowFiles.isEmpty()) {
+        qWarning() << "No images found in slideshow folder:" << folderPath;
+        return;
+    }
+
+    slideshowIndex = 0;
+    slideshowLabel->setVisible(true);
+
+    // Show first slide immediately
+    showNextSlide();
+
+    // Cycle every 4 seconds (adjustable)
+    slideshowTimer->start(4000);
+}
+
+void Score_board::stopSlideshow()
+{
+    slideshowTimer->stop();
+    slideshowLabel->setVisible(false);
+    slideshowFiles.clear();
+}
+
+void Score_board::showNextSlide()
+{
+    if (slideshowFiles.isEmpty())
+        return;
+
+    QString filename = slideshowFiles.at(slideshowIndex);
+
+    slideshowIndex = (slideshowIndex + 1) % slideshowFiles.size();
+
+    QString fullPath;
+    if (m_state == MatchState::PreGame)
+        fullPath = preGamePath + "/" + filename;
+    else if (m_state == MatchState::HalfTime)
+        fullPath = halfTimePath + "/" + filename;
+    else if (m_state == MatchState::PostGame)
+        fullPath = postGamePath + "/" + filename;
+
+    QPixmap pix(fullPath);
+    if (!pix.isNull()) {
+        slideshowLabel->setPixmap(
+            pix.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+    }
+}
 

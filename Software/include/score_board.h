@@ -23,6 +23,10 @@
 #include <QKeyEvent>
 #include <QWindowStateChangeEvent>
 #include <QShortcut>
+#include <QTimer>
+#include <QDir>
+#include <QPixmap>
+
 
 #include "score_memory.h"
 #include "timer.h"
@@ -63,6 +67,26 @@ private:
 
     void adjustEmblemSize();
     /**********************************/
+
+    /*
+     * --- Slideshow system ---
+     */
+    QTimer *slideshowTimer = nullptr;
+    QLabel *slideshowLabel = nullptr;
+
+    QStringList slideshowFiles;
+    int slideshowIndex = 0;
+
+    QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
+    QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
+    QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
+
+
+    // helpers
+    void startSlideshow(const QString &folderPath);
+    void stopSlideshow();
+    void showNextSlide();
+    /*********************************/
 
 
 
