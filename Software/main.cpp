@@ -52,8 +52,10 @@
 
 int main(int argc, char *argv[])
 {
+
   QApplication app(argc, argv);
   app.setWindowIcon(QIcon(":/icons/fcs_256.png"));
+
 
   score_memory *ScoreMem = new score_memory();
   timer *gameTime = new timer();
@@ -70,5 +72,10 @@ int main(int argc, char *argv[])
   // Add emblem
   QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
   /**********************************/
+  // When operator confirms a new match state, notify the scoreboard
+  QObject::connect(window, &controll_window::matchStateChanged,
+                   scoreboard, &Score_board::setMatchState);
+
+
   return app.exec();
 }

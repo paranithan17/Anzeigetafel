@@ -23,6 +23,13 @@
 #include <QKeyEvent>
 #include <QWindowStateChangeEvent>
 #include <QShortcut>
+#include <QTimer>
+#include <QDir>
+#include <QPixmap>
+#include <QProcess>
+#include <QFileInfo>
+
+
 
 #include "score_memory.h"
 #include "timer.h"
@@ -31,7 +38,19 @@ class Score_board : public QWidget
 {
     Q_OBJECT
 
+public:
+    // Keep this in sync with controll_window::MatchState
+    enum class MatchState {
+        PreGame = 0,
+        FirstHalf,
+        HalfTime,
+        SecondHalf,
+        PostGame
+    };
+
+
 private:
+    MatchState m_state = MatchState::PreGame;
     score_memory* Score;
     timer* gameTime;
 
@@ -51,6 +70,39 @@ private:
 
     void adjustEmblemSize();
     /**********************************/
+
+    /*
+     * --- Slideshow system ---
+     */
+    QTimer *slideshowTimer = nullptr;
+    QLabel *slideshowLabel = nullptr;
+
+    QStringList slideshowFiles;
+    int slideshowIndex = 0;
+
+
+    bool pptConversionEnabled = false;
+    bool isLinuxPlatform() const;
+    QStringList convertPowerPoints(const QDir &dir);
+    QString cacheDirForDeck(const QDir &baseDir, const QFileInfo &pptFile) const;
+    bool cacheIsUpToDate(const QFileInfo &pptFile, const QDir &cacheDir) const;
+    QStringList collectSlides(const QString &folderPath);
+    QStringList collectImages(const QDir &dir);
+
+
+
+
+
+    QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
+    QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
+    QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
+
+
+    // helpers
+    void startSlideshow(const QString &folderPath);
+    void stopSlideshow();
+    void showNextSlide();
+    /*********************************/
 
 
 
@@ -82,5 +134,13 @@ public slots:
     // Add embelem
     void updateEmblem(const QString& team, const QString& filePath);
 /**********************************/
+
+
+    // New: react to state machine changes
+    void setMatchState(int state);
+    /**********************************/
+private:
+    // Helper to adjust the visual mode based on m_state
+    void updateViewForState();
 };
 #endif // SCORE_BOARD_H

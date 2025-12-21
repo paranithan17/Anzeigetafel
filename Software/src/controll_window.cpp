@@ -107,6 +107,35 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     btnLog->setFixedSize(250, 30);
     connect(btnLog, &QPushButton::clicked, this, &controll_window::Log);
 
+    /**********************************/
+    /**
+     * @brief Match state (simple state machine)
+     */
+    QGroupBox *stateGroup = new QGroupBox("Match State");
+
+    radioPreGame   = new QRadioButton("PreGame");
+    radioFirstHalf = new QRadioButton("First half");
+    radioHalfTime  = new QRadioButton("Half time");
+    radioSecondHalf= new QRadioButton("Second half");
+    radioPostGame  = new QRadioButton("Post game");
+
+    // Default state when the application starts
+    radioPreGame->setChecked(true);
+    m_currentState = MatchState::PreGame;
+
+    QHBoxLayout *stateLayout = new QHBoxLayout;
+    stateLayout->addWidget(radioPreGame);
+    stateLayout->addWidget(radioFirstHalf);
+    stateLayout->addWidget(radioHalfTime);
+    stateLayout->addWidget(radioSecondHalf);
+    stateLayout->addWidget(radioPostGame);
+    stateGroup->setLayout(stateLayout);
+
+    btnApplyState = new QPushButton("Apply state");
+    connect(btnApplyState, &QPushButton::clicked,
+            this, &controll_window::applyStateSelection);
+
+
     /**
      * @brief Operator Score and Time display
      */
@@ -156,12 +185,20 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     TeamLayout->setSpacing(100);
     TeamLayout->addItem(away_Team_Layout);
 
+    QVBoxLayout *StateLayout = new QVBoxLayout;
+    StateLayout->addWidget(stateGroup);
+    StateLayout->addWidget(btnApplyState);
+    StateLayout->addSpacing(20);
+
+
     QVBoxLayout *centerLayout = new QVBoxLayout;
     centerLayout->addWidget(btnStartTimer);
     centerLayout->addWidget(btnLog);
     centerLayout->setAlignment(Qt::AlignCenter);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(StateLayout);
+    mainLayout->addStretch(1000); // Add vertical space
     mainLayout->addLayout(TeamLayout);
     mainLayout->addStretch(1000); // Add vertical space
     mainLayout->addLayout(centerLayout);
@@ -800,6 +837,34 @@ void controll_window::ImportTeam2()
     }
     updateTeamList2();
 }
+
+void controll_window::applyStateSelection()
+{
+    MatchState newState = m_currentState;
+
+    if (radioPreGame->isChecked()) {
+        newState = MatchState::PreGame;
+    } else if (radioFirstHalf->isChecked()) {
+        newState = MatchState::FirstHalf;
+    } else if (radioHalfTime->isChecked()) {
+        newState = MatchState::HalfTime;
+    } else if (radioSecondHalf->isChecked()) {
+        newState = MatchState::SecondHalf;
+    } else if (radioPostGame->isChecked()) {
+        newState = MatchState::PostGame;
+    }
+
+    // Nothing changed → do nothing
+    if (newState == m_currentState) {
+        return;
+    }
+
+    m_currentState = newState;
+
+    // Notify others (e.g. Score_board) later
+    emit matchStateChanged(static_cast<int>(m_currentState));
+}
+
 
 // Starting a second have of a game.
 void controll_window::handleTimerTimeout()
