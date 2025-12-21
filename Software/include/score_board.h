@@ -26,6 +26,9 @@
 #include <QTimer>
 #include <QDir>
 #include <QPixmap>
+#include <QProcess>
+#include <QFileInfo>
+
 
 
 #include "score_memory.h"
@@ -76,6 +79,19 @@ private:
 
     QStringList slideshowFiles;
     int slideshowIndex = 0;
+
+
+    bool pptConversionEnabled = false;
+    bool isLinuxPlatform() const;
+    QStringList convertPowerPoints(const QDir &dir);
+    QString cacheDirForDeck(const QDir &baseDir, const QFileInfo &pptFile) const;
+    bool cacheIsUpToDate(const QFileInfo &pptFile, const QDir &cacheDir) const;
+    QStringList collectSlides(const QString &folderPath);
+    QStringList collectImages(const QDir &dir);
+
+
+
+
 
     QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
     QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";

@@ -68,6 +68,10 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     m_state = MatchState::PreGame;  // default state on startup
     updateViewForState();           // ensure initial view matches state
 
+    pptConversionEnabled = isLinuxPlatform(); // Conversion on PPT from PPTX (Windows -> Linux)
+    qDebug() << "PPT conversion enabled:" << pptConversionEnabled;
+
+
 
 }
 
@@ -442,4 +446,163 @@ void Score_board::showNextSlide()
             );
     }
 }
+
+
+QStringList Score_board::convertPowerPoints(const QDir &dir)
+{
+    if (!pptConversionEnabled) {
+        return {};
+    }
+
+    QStringList result;
+
+    QFileInfoList ppts = dir.entryInfoList(
+        {"*.ppt", "*.pptx"},
+        QDir::Files | QDir::Readable,
+        QDir::Name);
+
+    if (ppts.isEmpty()) {
+        return {};
+    }
+
+    for (const QFileInfo &pptFile : ppts) {
+        const QString pptPath = pptFile.absoluteFilePath();
+
+        // Cache directory per deck
+        const QString cachePath = cacheDirForDeck(dir, pptFile);
+        QDir cacheDir(cachePath);
+
+        // Create cache dir if missing
+        if (!cacheDir.exists()) {
+            dir.mkpath(".ppt_cache/" + pptFile.completeBaseName());
+        }
+
+        // Only convert if cache is missing/outdated
+        if (!cacheIsUpToDate(pptFile, cacheDir)) {
+            qDebug() << "Converting PPTX (cache miss/outdated):" << pptPath;
+
+            QProcess proc;
+            proc.setProgram("libreoffice");
+            proc.setArguments({
+                "--headless",
+                "--convert-to", "png",
+                "--outdir", cacheDir.absolutePath(),
+                pptPath
+            });
+
+            proc.start();
+
+            if (!proc.waitForFinished(600000)) {
+                qWarning() << "LibreOffice conversion timed out for:" << pptPath;
+                proc.kill();
+                proc.waitForFinished();
+                continue;
+            }
+
+            if (proc.exitStatus() != QProcess::NormalExit || proc.exitCode() != 0) {
+                qWarning() << "LibreOffice conversion failed for:" << pptPath
+                           << "exitCode:" << proc.exitCode()
+                           << "stderr:" << proc.readAllStandardError()
+                           << "stdout:" << proc.readAllStandardOutput();
+                continue;
+            }
+        } else {
+            qDebug() << "Using cached PPTX render:" << pptPath;
+        }
+
+        // Collect PNGs from cache folder
+        QFileInfoList pngs = cacheDir.entryInfoList(
+            {"*.png"},
+            QDir::Files | QDir::Readable,
+            QDir::Name);
+
+        for (const QFileInfo &png : pngs) {
+            result << png.absoluteFilePath();
+        }
+    }
+
+    result.removeDuplicates();
+    result.sort();
+    return result;
+}
+
+
+
+QString Score_board::cacheDirForDeck(const QDir &baseDir, const QFileInfo &pptFile) const
+{
+    // <slidesFolder>/.ppt_cache/<deckBaseName>/
+    return baseDir.absoluteFilePath(".ppt_cache/" + pptFile.completeBaseName());
+}
+
+bool Score_board::cacheIsUpToDate(const QFileInfo &pptFile, const QDir &cacheDir) const
+{
+    if (!cacheDir.exists())
+        return false;
+
+    QFileInfoList pngs = cacheDir.entryInfoList(
+        {"*.png"},
+        QDir::Files | QDir::Readable,
+        QDir::Name);
+
+    if (pngs.isEmpty())
+        return false;
+
+    // If any PNG is older than the PPT file, reconvert
+    const QDateTime pptTime = pptFile.lastModified();
+    for (const QFileInfo &png : pngs) {
+        if (png.lastModified() < pptTime)
+            return false;
+    }
+    return true;
+}
+
+QStringList Score_board::collectSlides(const QString &folderPath)
+{
+    QDir dir(folderPath);
+    if (!dir.exists()) {
+        qWarning() << "Slideshow folder does not exist:" << folderPath;
+        return {};
+    }
+
+    QStringList slides;
+
+    // 1) Images in the base folder
+    slides << collectImages(dir);
+
+    // 2) PPT/PPTX rendered PNGs (cached)
+    slides << convertPowerPoints(dir);
+
+    // 3) Deterministic order
+    slides.removeDuplicates();
+    slides.sort(Qt::CaseInsensitive);
+
+    return slides;
+}
+QStringList Score_board::collectImages(const QDir &dir)
+{
+    QStringList result;
+
+    QFileInfoList files = dir.entryInfoList(
+        {"*.png", "*.jpg", "*.jpeg", "*.bmp"},
+        QDir::Files | QDir::Readable,
+        QDir::Name
+        );
+
+    for (const QFileInfo &fi : files) {
+        result << fi.absoluteFilePath();
+    }
+
+    return result;
+}
+
+
+bool Score_board::isLinuxPlatform() const
+{
+#ifdef Q_OS_LINUX
+    return true;
+#else
+    return false;
+#endif
+}
+
 
