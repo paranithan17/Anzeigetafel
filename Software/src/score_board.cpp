@@ -68,7 +68,7 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     m_state = MatchState::PreGame;  // default state on startup
     updateViewForState();           // ensure initial view matches state
 
-    pptConversionEnabled = isLinuxPlatform(); // Conversion on PPT from PPTX (Windows -> Linux)
+    pptConversionEnabled = true; // Conversion on PPT from PPTX (Windows -> Linux)
     qDebug() << "PPT conversion enabled:" << pptConversionEnabled;
 
 
