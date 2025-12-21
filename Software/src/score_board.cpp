@@ -450,6 +450,9 @@ void Score_board::showNextSlide()
 
 QStringList Score_board::convertPowerPoints(const QDir &dir)
 {
+    qDebug() << "convertPowerPoints() called for:" << dir.absolutePath();
+    qDebug() << "pptConversionEnabled =" << pptConversionEnabled;
+
     if (!pptConversionEnabled) {
         return {};
     }
@@ -480,6 +483,10 @@ QStringList Score_board::convertPowerPoints(const QDir &dir)
         // Only convert if cache is missing/outdated
         if (!cacheIsUpToDate(pptFile, cacheDir)) {
             qDebug() << "Converting PPTX (cache miss/outdated):" << pptPath;
+
+
+            qDebug() << "Running LibreOffice for:" << pptPath;
+            qDebug() << "Output dir:" << cacheDir.absolutePath();
 
             QProcess proc;
             proc.setProgram("libreoffice");
