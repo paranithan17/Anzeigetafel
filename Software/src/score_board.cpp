@@ -24,7 +24,7 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     applyStyle();  // Apply background and text color
 
 
-/*
+    /*
  * -- Slide Show --
  */
     setWindowFlags(Qt::FramelessWindowHint);     // Fullscreen mode, no title bar
@@ -41,7 +41,7 @@ Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     slideshowTimer = new QTimer(this);
     connect(slideshowTimer, &QTimer::timeout,
             this, &Score_board::showNextSlide);
-/**************************************/
+    /**************************************/
 
 
     // Connect signals
@@ -395,13 +395,11 @@ void Score_board::startSlideshow(const QString &folderPath)
         return;
     }
 
-    // Load files
-    slideshowFiles = folder.entryList(
-        {"*.png", "*.jpg", "*.jpeg", "*.bmp"},
-        QDir::Files);
+    // Load files (images + PPT/PPTX rendered PNGs)
+    slideshowFiles = collectSlides(folderPath);
 
     if (slideshowFiles.isEmpty()) {
-        qWarning() << "No images found in slideshow folder:" << folderPath;
+        qWarning() << "No slides found in slideshow folder:" << folderPath;
         return;
     }
 
@@ -427,25 +425,19 @@ void Score_board::showNextSlide()
     if (slideshowFiles.isEmpty())
         return;
 
-    QString filename = slideshowFiles.at(slideshowIndex);
-
+    const QString fullPath = slideshowFiles.at(slideshowIndex);
     slideshowIndex = (slideshowIndex + 1) % slideshowFiles.size();
-
-    QString fullPath;
-    if (m_state == MatchState::PreGame)
-        fullPath = preGamePath + "/" + filename;
-    else if (m_state == MatchState::HalfTime)
-        fullPath = halfTimePath + "/" + filename;
-    else if (m_state == MatchState::PostGame)
-        fullPath = postGamePath + "/" + filename;
 
     QPixmap pix(fullPath);
     if (!pix.isNull()) {
         slideshowLabel->setPixmap(
             pix.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation)
             );
+    } else {
+        qWarning() << "Failed to load slide:" << fullPath;
     }
 }
+
 
 
 QStringList Score_board::convertPowerPoints(const QDir &dir)
