@@ -557,6 +557,8 @@ bool Score_board::cacheIsUpToDate(const QFileInfo &pptFile, const QDir &cacheDir
 
 QStringList Score_board::collectSlides(const QString &folderPath)
 {
+    qDebug() << "collectSlides called with:" << folderPath;
+
     QDir dir(folderPath);
     if (!dir.exists()) {
         qWarning() << "Slideshow folder does not exist:" << folderPath;
