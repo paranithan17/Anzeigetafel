@@ -19,16 +19,20 @@
 Score_board::Score_board(score_memory* score, timer* gameTime, QWidget* parent)
     : QWidget(parent), Score(score), gameTime(gameTime)
 
-{
+{  
     setupLayout();
     applyStyle();  // Apply background and text color
 
+    adjustFontSize();    // Force native LED resolution for 2x2 P2.5 Panels
+    setFixedSize(256, 128);   // Force native LED resolution for 2x2 P2.5 Panels
 
-    /*
+    //showFullScreen();     // Fullscreen when there is no issue with the resolution
+    setWindowFlags(Qt::FramelessWindowHint);     // Disable window scaling artifacts
+
+
+    /**
  * -- Slide Show --
  */
-    setWindowFlags(Qt::FramelessWindowHint);     // Fullscreen mode, no title bar
-    showFullScreen();
 
     slideshowLabel = new QLabel(this);
     slideshowLabel->setAlignment(Qt::AlignCenter);
@@ -245,7 +249,7 @@ void Score_board::resizeEvent(QResizeEvent *event)
     /**
      * @brief Will be recalled when the size of the window has be changed
      */
-    adjustFontSize();
+    //adjustFontSize(); // commented out for the 2x2 LED Wall
 
     // Make slideshow label always cover the full window
     if (slideshowLabel) {
@@ -274,6 +278,7 @@ void Score_board::adjustFontSize()
      *
      * @note this part of the code was coded with help from chatgpt.
      */
+    /*
     int w = width();
     int h = height();
     int fontSize = std::min(w, h) / 5;  // Adjust scaling as needed
@@ -295,6 +300,31 @@ void Score_board::adjustFontSize()
     scorerListTeam2->setFont(goalFont);
 
     adjustEmblemSize();
+    */
+
+
+    // Fixed sizes for 256x128 LED wall (tune later if needed)
+    QFont scoreFont;
+    scoreFont.setPixelSize(72);
+    scoreFont.setBold(true);
+    scoreLabel->setFont(scoreFont);
+
+    QFont timeFont;
+    timeFont.setPixelSize(28);
+    timeFont.setBold(true);
+    timeLabel->setFont(timeFont);
+
+    QFont goalFont;
+    goalFont.setPixelSize(16);
+    goalFont.setBold(true);
+    scorerListTeam1->setFont(goalFont);
+    scorerListTeam2->setFont(goalFont);
+
+    // If you keep emblems, they must be small on 256x128
+    emblemTeam1->setFixedSize(32, 32);
+    emblemTeam2->setFixedSize(32, 32);
+
+
 }
 
 void Score_board::keyPressEvent(QKeyEvent *event)
