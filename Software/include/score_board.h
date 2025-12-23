@@ -95,7 +95,7 @@ private:
     // Windows Test path
     // QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
     // QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
-    // QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
+    //QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
 
     // Linux path
     QString preGamePath  = "/home/rpi/Anzeigetafel/slides/PreGame";
