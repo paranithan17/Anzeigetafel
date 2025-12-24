@@ -1,5 +1,6 @@
 /**
  * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
+
  *
  * Class timer,
  * Initialzes the time for the game.
@@ -21,31 +22,45 @@
 #include <QString>
 #include "QDebug"
 
-
 class timer : public QObject
 {
     Q_OBJECT
+public:
+    // Explicit game phases to integrate with the state machine
+    enum class GamePhase
+    {
+        PreGame = 0,
+        FirstHalf,
+        HalfTime,
+        SecondHalf,
+        PostGame
+    };
+
 private:
     QElapsedTimer gameTime;
     QTimer updateTimer;
     bool m_running;
+    GamePhase m_phase = GamePhase::PreGame;
 
 public:
     timer(QObject *parent = nullptr);
     void start();
-    void stop(); // stop time after 45 Min.
-    QString firsthalf(); // "00:00"$
+    void stop();          // stop time after 45 Min.
+    QString firsthalf();  // "00:00"$
     QString secondhalf(); // restarts the timer for the 2nd half
-    void restart();  // restarts the timer when the restart button is pushed.
-    bool runningPeriod; // 1 = 1st half, 0 = 2nd half
+    void restart();       // restarts the timer when the restart button is pushed.
     bool isRunning() const;
 
+    // Phase control
+    void setPhase(GamePhase phase);
+    GamePhase phase() const { return m_phase; }
+
 signals:
-    void timeout(); // Emitted when 45 Minutes have elapsed
+    void timeout();                               // Emitted when 45 Minutes have elapsed
     void timeUpdated(const QString &elapsedTime); // Emitted every second with update
 
 private slots:
-    void updateElapsedTime();  /** @note The function is unknown yet, since it was given by chatgpt */
+    void updateElapsedTime(); /** @note The function is unknown yet, since it was given by chatgpt */
 };
 
 #endif // TIMER_H

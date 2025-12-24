@@ -113,11 +113,11 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
      */
     QGroupBox *stateGroup = new QGroupBox("Match State");
 
-    radioPreGame   = new QRadioButton("PreGame");
+    radioPreGame = new QRadioButton("PreGame");
     radioFirstHalf = new QRadioButton("First half");
-    radioHalfTime  = new QRadioButton("Half time");
-    radioSecondHalf= new QRadioButton("Second half");
-    radioPostGame  = new QRadioButton("Post game");
+    radioHalfTime = new QRadioButton("Half time");
+    radioSecondHalf = new QRadioButton("Second half");
+    radioPostGame = new QRadioButton("Post game");
 
     // Default state when the application starts
     radioPreGame->setChecked(true);
@@ -134,7 +134,6 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     btnApplyState = new QPushButton("Apply state");
     connect(btnApplyState, &QPushButton::clicked,
             this, &controll_window::applyStateSelection);
-
 
     /**
      * @brief Operator Score and Time display
@@ -189,7 +188,6 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     StateLayout->addWidget(stateGroup);
     StateLayout->addWidget(btnApplyState);
     StateLayout->addSpacing(20);
-
 
     QVBoxLayout *centerLayout = new QVBoxLayout;
     centerLayout->addWidget(btnStartTimer);
@@ -437,11 +435,11 @@ void controll_window::AddGoalTeam1()
     if (gametime)
     {
         QString elapsed;
-        if (gametime->runningPeriod == true)
+        if (gametime->phase() == timer::GamePhase::FirstHalf)
         {
             elapsed = gametime->firsthalf();
         }
-        else if (gametime->runningPeriod == false)
+        else if (gametime->phase() == timer::GamePhase::SecondHalf)
         {
             elapsed = gametime->secondhalf();
         }
@@ -551,11 +549,11 @@ void controll_window::AddGoalTeam2()
     if (gametime)
     {
         QString elapsed;
-        if (gametime->runningPeriod == true)
+        if (gametime->phase() == timer::GamePhase::FirstHalf)
         {
             elapsed = gametime->firsthalf();
         }
-        else if (gametime->runningPeriod == false)
+        else if (gametime->phase() == timer::GamePhase::SecondHalf)
         {
             elapsed = gametime->secondhalf();
         }
@@ -627,9 +625,17 @@ void controll_window::StartTime()
      */
     if (!gametime->isRunning())
     {
-        qDebug() << "Time is running";
-        gametime->start();
-        btnStartTimer->setDisabled(true);
+        // Only start during FirstHalf or SecondHalf
+        if (m_currentState == MatchState::FirstHalf || m_currentState == MatchState::SecondHalf)
+        {
+            qDebug() << "Time is running";
+            gametime->start();
+            btnStartTimer->setDisabled(true);
+        }
+        else
+        {
+            qDebug() << "Timer can only start in First/Second Half";
+        }
     }
 }
 
@@ -842,20 +848,30 @@ void controll_window::applyStateSelection()
 {
     MatchState newState = m_currentState;
 
-    if (radioPreGame->isChecked()) {
+    if (radioPreGame->isChecked())
+    {
         newState = MatchState::PreGame;
-    } else if (radioFirstHalf->isChecked()) {
+    }
+    else if (radioFirstHalf->isChecked())
+    {
         newState = MatchState::FirstHalf;
-    } else if (radioHalfTime->isChecked()) {
+    }
+    else if (radioHalfTime->isChecked())
+    {
         newState = MatchState::HalfTime;
-    } else if (radioSecondHalf->isChecked()) {
+    }
+    else if (radioSecondHalf->isChecked())
+    {
         newState = MatchState::SecondHalf;
-    } else if (radioPostGame->isChecked()) {
+    }
+    else if (radioPostGame->isChecked())
+    {
         newState = MatchState::PostGame;
     }
 
     // Nothing changed → do nothing
-    if (newState == m_currentState) {
+    if (newState == m_currentState)
+    {
         return;
     }
 
@@ -863,8 +879,30 @@ void controll_window::applyStateSelection()
 
     // Notify others (e.g. Score_board) later
     emit matchStateChanged(static_cast<int>(m_currentState));
-}
 
+    // Inform timer about phase change
+    if (gametime)
+    {
+        switch (m_currentState)
+        {
+        case MatchState::PreGame:
+            gametime->setPhase(timer::GamePhase::PreGame);
+            break;
+        case MatchState::FirstHalf:
+            gametime->setPhase(timer::GamePhase::FirstHalf);
+            break;
+        case MatchState::HalfTime:
+            gametime->setPhase(timer::GamePhase::HalfTime);
+            break;
+        case MatchState::SecondHalf:
+            gametime->setPhase(timer::GamePhase::SecondHalf);
+            break;
+        case MatchState::PostGame:
+            gametime->setPhase(timer::GamePhase::PostGame);
+            break;
+        }
+    }
+}
 
 // Starting a second have of a game.
 void controll_window::handleTimerTimeout()
@@ -875,7 +913,7 @@ void controll_window::handleTimerTimeout()
      *
      */
     btnStartTimer->setDisabled(false);
-    if (gametime->runningPeriod == true)
+    if (gametime->phase() == timer::GamePhase::FirstHalf)
     {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Second Half", "Do you want to start the second half?",
@@ -883,7 +921,10 @@ void controll_window::handleTimerTimeout()
 
         if (reply == QMessageBox::Yes)
         {
-            StartTime(); // Start the timer for the second half
+            // Switch state to SecondHalf and start
+            radioSecondHalf->setChecked(true);
+            applyStateSelection();
+            StartTime();
         }
         else
         {

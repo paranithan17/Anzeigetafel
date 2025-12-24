@@ -20,6 +20,9 @@ Makefile
 *.qmlproject.user
 *.user
 
+# --- VS Code configuration ---
+.vscode/
+
 
 # --- Temporary files ---
 *.obj

@@ -1,3 +1,17 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.sourceDirectory": "${workspaceFolder}/software",
+    "cmake.buildDirectory": "${workspaceFolder}/software/build/vscode",
+    "cmake.generator": "Ninja",
+    "cmake.configureSettings": {
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe"
+    },
+    "cmake.configureArgs": [
+        "-DCMAKE_PREFIX_PATH=C:/Qt/6.10.0/mingw_64",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ],
+    "cmake.defaultBuildType": "Debug",
+    "cmake.ignoreCMakeListsMissing": false,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "chatgpt.openOnStartup": false
 }
