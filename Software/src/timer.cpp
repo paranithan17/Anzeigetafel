@@ -21,30 +21,29 @@
 #include "timer.h"
 #include "QDebug"
 #include "QString"
-
+#include <algorithm>
 
 timer::timer(QObject *parent)
     : QObject(parent),
-    m_running(false),
-    runningPeriod(false)
+      m_running(false)
 {
     connect(&updateTimer, &QTimer::timeout, this, &timer::updateElapsedTime);
-
 }
 
 void timer::start()
 {
     /**
- * @brief This methods starts the QTimer with a interval of 1 second
- * and sets the timer state and the period.
- */
-    if(!m_running){
+     * @brief This methods starts the QTimer with a interval of 1 second
+     * and sets the timer state and the period.
+     */
+    // Only start timing during FirstHalf or SecondHalf
+    if (!m_running && (m_phase == GamePhase::FirstHalf || m_phase == GamePhase::SecondHalf))
+    {
         gameTime.start();
         updateTimer.start(1000); // setting interval for timer
         m_running = true;
-        runningPeriod = !runningPeriod;
+        qDebug() << "Timer started for phase:" << static_cast<int>(m_phase);
     }
-    qDebug() << "Period:" << runningPeriod;
 }
 
 void timer::stop()
@@ -52,7 +51,8 @@ void timer::stop()
     /**
      * @brief Stops the QTimer and sets the timerstate to false
      */
-    if (m_running) {
+    if (m_running)
+    {
 
         updateTimer.stop();
         m_running = false;
@@ -65,7 +65,6 @@ void timer::restart()
      * @brief Restarts the QTimer from 00:00. Sets the Period state back to 1st half.
      */
     gameTime.restart();
-    runningPeriod = true;
 }
 
 bool timer::isRunning() const
@@ -77,8 +76,6 @@ bool timer::isRunning() const
     return m_running;
 };
 
-
-
 QString timer::firsthalf()
 {
     /**
@@ -86,41 +83,60 @@ QString timer::firsthalf()
      * @note This part of the code was coded by chatgpt!
      */
     qint64 elapsedMs = gameTime.elapsed();
+    const qint64 maxMs = 45LL * 60 * 1000; // 45 minutes in ms
+    elapsedMs = std::min(elapsedMs, maxMs);
     int minutes = static_cast<int>(elapsedMs / 60000);
     int seconds = static_cast<int>((elapsedMs % 60000) / 1000);
-    return QString ("%1:%2")
+    return QString("%1:%2")
         .arg(minutes, 2, 10, QChar('0'))
         .arg(seconds, 2, 10, QChar('0'));
 }
 
 QString timer::secondhalf()
-{    /**
-     * @brief Gets the elapsed time from Qtimer and returns the time in 45:00 - 90:00
-     * @note This part of the code was coded by chatgpt!
-     */
+{ /**
+   * @brief Gets the elapsed time from Qtimer and returns the time in 45:00 - 90:00
+   * @note This part of the code was coded by chatgpt!
+   */
     qint64 elapsedMs = gameTime.elapsed();
+    const qint64 maxMs = 45LL * 60 * 1000; // 45 minutes in ms
+    elapsedMs = std::min(elapsedMs, maxMs);
     int minutes = static_cast<int>(elapsedMs / 60000) + 45;
     int seconds = static_cast<int>((elapsedMs % 60000) / 1000);
-    return QString ("%1:%2")
+    return QString("%1:%2")
         .arg(minutes, 2, 10, QChar('0'))
         .arg(seconds, 2, 10, QChar('0'));
 }
 
-
-
-void timer::updateElapsedTime(){
+void timer::updateElapsedTime()
+{
     /**
      * @brief Depending on which period is on going, this method emits the right timeformat to
      * the controll_window. When 45 minutes are reached, the stop method will called.
      */
-    if(runningPeriod){
+    if (m_phase == GamePhase::FirstHalf)
+    {
         emit timeUpdated(firsthalf());
     }
-    else{
+    else if (m_phase == GamePhase::SecondHalf)
+    {
         emit timeUpdated(secondhalf());
     }
-    if (gameTime.elapsed() >=  45 * 60 * 1000){ //45 Minutes
+    else
+    {
+        // Not a running phase; ignore updates
+        return;
+    }
+    if (gameTime.elapsed() >= 45 * 60 * 1000)
+    { // 45 Minutes
         stop();
         emit timeout();
     }
+}
+
+void timer::setPhase(GamePhase phase)
+{
+    // Changing phase does not auto-start/stop the timer.
+    // Caller (state machine) controls start/stop.
+    m_phase = phase;
+    qDebug() << "Timer phase set to:" << static_cast<int>(m_phase);
 }

@@ -29,8 +29,6 @@
 #include <QProcess>
 #include <QFileInfo>
 
-
-
 #include "score_memory.h"
 #include "timer.h"
 
@@ -40,7 +38,8 @@ class Score_board : public QWidget
 
 public:
     // Keep this in sync with controll_window::MatchState
-    enum class MatchState {
+    enum class MatchState
+    {
         PreGame = 0,
         FirstHalf,
         HalfTime,
@@ -48,16 +47,15 @@ public:
         PostGame
     };
 
-
 private:
     MatchState m_state = MatchState::PreGame;
-    score_memory* Score;
-    timer* gameTime;
+    score_memory *Score;
+    timer *gameTime;
 
-    QLabel* scoreLabel;
-    QLabel* timeLabel;
-    QListWidget* scorerListTeam1;
-    QListWidget* scorerListTeam2;
+    QLabel *scoreLabel;
+    QLabel *timeLabel;
+    QListWidget *scorerListTeam1;
+    QListWidget *scorerListTeam2;
 
     /**********************************/
     /**
@@ -65,8 +63,8 @@ private:
      * 1) Adding emblems of both teams
      */
     // Elements to add emblems
-    QLabel* emblemTeam1;
-    QLabel* emblemTeam2;
+    QLabel *emblemTeam1;
+    QLabel *emblemTeam2;
 
     void adjustEmblemSize();
     /**********************************/
@@ -80,7 +78,6 @@ private:
     QStringList slideshowFiles;
     int slideshowIndex = 0;
 
-
     bool pptConversionEnabled = false;
     bool isLinuxPlatform() const;
     QStringList convertPowerPoints(const QDir &dir);
@@ -89,27 +86,21 @@ private:
     QStringList collectSlides(const QString &folderPath);
     QStringList collectImages(const QDir &dir);
 
-
-
-
     // Windows Test path
-    // QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
-    // QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
-    //QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
+    QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
+    QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
+    QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
 
     // Linux path
-    QString preGamePath  = "/home/rpi/Anzeigetafel/slides/PreGame";
-    QString halfTimePath = "/home/rpi/Anzeigetafel/slides/HalfTime";
-    QString postGamePath = "/home/rpi/Anzeigetafel/slides/PostGame";
+    // QString preGamePath = "/home/rpi/Anzeigetafel/slides/PreGame";
+    // QString halfTimePath = "/home/rpi/Anzeigetafel/slides/HalfTime";
+    // QString postGamePath = "/home/rpi/Anzeigetafel/slides/PostGame";
 
     // helpers
     void startSlideshow(const QString &folderPath);
     void stopSlideshow();
     void showNextSlide();
     /*********************************/
-
-
-
 
     void setupLayout();
     void applyStyle();
@@ -119,26 +110,21 @@ private slots:
     void updateScore();
     void extracted(QList<Goal> &goals);
     void updateGoals();
-    void updateTime(const QString& time);
-
-
-
+    void updateTime(const QString &time);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-   // void changeEvent(QEvent* event) override;
-
+    // void changeEvent(QEvent* event) override;
 
 public:
-    Score_board(score_memory* scoreMemory, timer* gameTime, QWidget *parent = nullptr);
+    Score_board(score_memory *scoreMemory, timer *gameTime, QWidget *parent = nullptr);
 
-/**********************************/
+    /**********************************/
 public slots:
     // Add embelem
-    void updateEmblem(const QString& team, const QString& filePath);
-/**********************************/
-
+    void updateEmblem(const QString &team, const QString &filePath);
+    /**********************************/
 
     // New: react to state machine changes
     void setMatchState(int state);
