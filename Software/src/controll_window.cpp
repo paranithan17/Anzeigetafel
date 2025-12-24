@@ -875,6 +875,47 @@ void controll_window::applyStateSelection()
         return;
     }
 
+    // Check if timer is running during FirstHalf or SecondHalf and changing to a different state
+    bool leavingActivePhase = (m_currentState == MatchState::FirstHalf || m_currentState == MatchState::SecondHalf);
+    bool enteringInactivePhase = (newState != MatchState::FirstHalf && newState != MatchState::SecondHalf);
+
+    if (gametime && gametime->isRunning() && leavingActivePhase && enteringInactivePhase)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::warning(this, "Timer Running",
+                                     "The timer is currently running. Changing the state will stop and reset the timer.\n\nDo you want to continue?",
+                                     QMessageBox::Ok | QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Cancel)
+        {
+            // Abort state change - restore radio button to current state
+            switch (m_currentState)
+            {
+            case MatchState::PreGame:
+                radioPreGame->setChecked(true);
+                break;
+            case MatchState::FirstHalf:
+                radioFirstHalf->setChecked(true);
+                break;
+            case MatchState::HalfTime:
+                radioHalfTime->setChecked(true);
+                break;
+            case MatchState::SecondHalf:
+                radioSecondHalf->setChecked(true);
+                break;
+            case MatchState::PostGame:
+                radioPostGame->setChecked(true);
+                break;
+            }
+            return;
+        }
+
+        // User confirmed - stop and reset timer
+        gametime->stop();
+        gametime->restart();
+        btnStartTimer->setDisabled(false);
+    }
+
     m_currentState = newState;
 
     // Notify others (e.g. Score_board) later
