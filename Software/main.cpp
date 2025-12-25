@@ -1,58 +1,33 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  main.cpp
- * @caption
- * This is main code which runs the score board.
+ * @file main.cpp
+ * @brief Application entry point for the Football Scoreboard.
  *
- * This program initializes and launches a modular graphical scoreboard system designed
- * for managing and displaying football match events using the Qt framework.
- * It creates two main windows:
+ * Initializes and launches a modular graphical scoreboard system for managing
+ * football match events. Creates two synchronized main windows: Control (operator)
+ * and Scoreboard (audience display), linked via Qt signals/slots.
  *
- *   -- Control Window: Allows the match operator to manage team rosters, log goals,
- *      start/reset the game timer, and correct events (e.g., undo last goal).
+ * Features:
+ * - Real-time goal tracking with timestamps and player attribution.
+ * - Two-half timer management (00:00–45:00, 45:00–90:00).
+ * - Own goal and undo support.
+ * - CSV import for player lists (UTF-8, supports umlauts).
+ * - Team emblems and fullscreen toggle.
+ * - Match state machine with window toggling.
  *
- *   -- Scoreboard Window: Public display showing live score, match time,
- *      and goal events (player, time, team), with automatic updates.
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.1, 2025-12-25
  *
- * Special Features:
- *
- *   -- Real-time goal tracking with timestamp and player attribution.
- *
- *   -- Timer management supporting first and second halves (00:00–45:00, 45:00–90:00).
- *
- *   -- Support for own goals and undoing the last scoring event.
- *
- *   -- CSV import for player lists and optional emblem uploads for team branding.
- *
- *   -- Fullscreen display toggle for the scoreboard view.
- *
- *
- * This file is the entry point of the application, linking core components
- * (score_memory, timer, control_window, score_board) via Qt’s signal-slot mechanism
- * to enable live updates and interactivity.
- *
- *
- * @note At the moment this program allows only to be used in a football game for 2x 45 minutes.
- * There is no option to change the time and over time issues of the game.
- *
- *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 29.05.2025
- * @version V2.0, 06.11.2025 added the resourcefile to show the execute file with a icon
- *
- *
+ * @note Currently designed for 2×45 minute football matches only.
  */
 
 #include <QApplication>
 #include "controll_window.h"
-
 #include "score_board.h"
 #include "timer.h"
 #include "score_memory.h"
 
 int main(int argc, char *argv[])
 {
-
   QApplication app(argc, argv);
 
   score_memory *ScoreMem = new score_memory();
@@ -70,10 +45,9 @@ int main(int argc, char *argv[])
   scoreboard->setControlWindow(window);
   window->setScoreboard(scoreboard);
 
-  /**********************************/
-  // Add emblem
+  // Add emblem changed signal connection
   QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
-  /**********************************/
+
   // When operator confirms a new match state, notify the scoreboard
   QObject::connect(window, &controll_window::matchStateChanged,
                    scoreboard, &Score_board::setMatchState);

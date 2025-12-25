@@ -1,18 +1,13 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  scoreboard.cpp
- * @class scoreboard
- * @brief
- * This code opens the second window which shows the score, time
- * and player who scored the goal to audience.
- * If there is enough time before submission, then is also possible
- * the show embelem of the Teams aswell.
+ * @file score_board.cpp
+ * @brief Implementation of the Scoreboard display window.
  *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 29.05.2025
- * \version V1.1, 07.11.2025 - Default fullscreen by launching the program
- * @note This code has been created with help of chatgpt
+ * Provides live score and match information display with support for fullscreen,
+ * emblems, and dynamic layout scaling. Integrates match state changes and
+ * synchronizes with timer and score memory components.
  *
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.1, 2025-12-25
  */
 #include "score_board.h"
 
@@ -21,41 +16,29 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
 
 {
     setupLayout();
-    applyStyle(); // Apply background and text color
+    applyStyle();
 
-    adjustFontSize();       // Force native LED resolution for 2x2 P2.5 Panels
-    setFixedSize(256, 128); // Force native LED resolution for 2x2 P2.5 Panels
-
-    showFullScreen();                        // Fullscreen when there is no issue with the resolution
-    setWindowFlags(Qt::FramelessWindowHint); // Disable window scaling artifacts
-
-    /**
-     * -- Slide Show --
-     */
+    adjustFontSize();
+    setFixedSize(256, 128);
+    showFullScreen();
+    setWindowFlags(Qt::FramelessWindowHint);
 
     slideshowLabel = new QLabel(this);
     slideshowLabel->setAlignment(Qt::AlignCenter);
     slideshowLabel->setStyleSheet("background-color: black;");
-    slideshowLabel->setVisible(false); // hidden during FirstHalf/SecondHalf
-    slideshowLabel->raise();           // always on top when visible
-
-    slideshowLabel->setGeometry(this->rect()); // NEW: make it cover the whole window initially
+    slideshowLabel->setVisible(false);
+    slideshowLabel->raise();
+    slideshowLabel->setGeometry(this->rect());
 
     slideshowTimer = new QTimer(this);
-    connect(slideshowTimer, &QTimer::timeout,
-            this, &Score_board::showNextSlide);
-    /**************************************/
-
-    // Connect signals
+    connect(slideshowTimer, &QTimer::timeout, this, &Score_board::showNextSlide);
     connect(Score, &score_memory::goalsUpdated, this, &Score_board::updateGoals);
     connect(Score, &score_memory::goalsUpdated, this, &Score_board::updateScore);
     connect(gameTime, &timer::timeUpdated, this, &Score_board::updateTime);
 
-    // Display Initialisation
     updateScore();
     updateGoals();
 
-    // As backup to exit and re-enter the fullscreen mode
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, &QShortcut::activated, [=]()
             {
@@ -67,8 +50,8 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
             showNormal();
         } });
 
-    m_state = MatchState::PreGame; // default state on startup
-    updateViewForState();          // ensure initial view matches state
+    m_state = MatchState::PreGame;
+    updateViewForState();
 }
 
 void Score_board::setupLayout()
@@ -76,13 +59,10 @@ void Score_board::setupLayout()
     QVBoxLayout *mainlayout = new QVBoxLayout(this);
     mainlayout->setAlignment(Qt::AlignCenter);
 
-    /*   QVBoxLayout* scorelayout = new QVBoxLayout(this);
-        scorelayout->setAlignment(Qt::AlignCenter);
-*/
+    // Score label
     scoreLabel = new QLabel("0 : 0", this);
     scoreLabel->setAlignment(Qt::AlignCenter);
 
-    /**********************************/
     emblemTeam1 = new QLabel(this);
     emblemTeam2 = new QLabel(this);
 
@@ -102,7 +82,6 @@ void Score_board::setupLayout()
     topLayout->addWidget(emblemTeam2);
     topLayout->addSpacing(100);
 
-    /**********************************/
     timeLabel = new QLabel("00:00", this);
     timeLabel->setAlignment(Qt::AlignCenter);
 
@@ -126,10 +105,7 @@ void Score_board::setupLayout()
 
 void Score_board::applyStyle()
 {
-    /**
-     * @brief Desing paranmeters to set the design of the scoreboard
-     */
-    this->setStyleSheet("background-color: black;"); // <-- Background color here
+    this->setStyleSheet("background-color: black;");
 
     scoreLabel->setStyleSheet("color: white;");
     timeLabel->setStyleSheet("color: white;");
@@ -139,9 +115,6 @@ void Score_board::applyStyle()
 
 void Score_board::updateScore()
 {
-    /**
-     * @brief Layout for represent the score
-     */
     unsigned home = Score->getHomeScore();
     unsigned away = Score->getAwayScore();
     scoreLabel->setText(QString("%1 : %2").arg(home).arg(away));
@@ -149,14 +122,8 @@ void Score_board::updateScore()
 
 void Score_board::extracted(QList<Goal> &goals)
 {
-    /**
-     * @brief Design of the scorerlist, which also remarks when it is a owngaol
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     for (const Goal &g : goals)
     {
-        // Skip entries where no player was chosen
         if (g.player.trimmed().isEmpty())
         {
             continue;
@@ -164,7 +131,6 @@ void Score_board::extracted(QList<Goal> &goals)
 
         QString text;
 
-        // If it's an own goal, show "OG" instead of player number
         if (g.ownGoal)
         {
             text = QString("OG - %1  %2'").arg(g.player, g.timeStamp);
@@ -176,18 +142,16 @@ void Score_board::extracted(QList<Goal> &goals)
                        .arg(g.player, g.timeStamp);
         }
 
-        // Create the item
         QListWidgetItem *item = new QListWidgetItem(text);
 
-        // Add to the correct team list
         if (g.team == "Home")
         {
-            item->setTextAlignment(Qt::AlignCenter); // Right align for Home team
+            item->setTextAlignment(Qt::AlignCenter);
             scorerListTeam1->addItem(item);
         }
         else if (g.team == "Away")
         {
-            item->setTextAlignment(Qt::AlignCenter); // Left align for Away team
+            item->setTextAlignment(Qt::AlignCenter);
             scorerListTeam2->addItem(item);
         }
     }
@@ -195,12 +159,6 @@ void Score_board::extracted(QList<Goal> &goals)
 
 void Score_board::updateGoals()
 {
-
-    /**
-     * @brief Updates the numbers of the score when one was added or removed
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     scorerListTeam1->clear();
     scorerListTeam2->clear();
 
@@ -235,12 +193,11 @@ void Score_board::setMatchState(int state)
         newState = MatchState::PostGame;
         break;
     default:
-        // invalid value – ignore
         return;
     }
 
     if (newState == m_state)
-        return; // nothing to do
+        return;
 
     m_state = newState;
     updateViewForState();
@@ -248,18 +205,12 @@ void Score_board::setMatchState(int state)
 
 void Score_board::resizeEvent(QResizeEvent *event)
 {
-    /**
-     * @brief Will be recalled when the size of the window has be changed
-     */
+    adjustFontSize();
 
-    adjustFontSize(); // commented out for the 2x2 LED Wall
-
-    // Make slideshow label always cover the full window
     if (slideshowLabel)
     {
         slideshowLabel->setGeometry(this->rect());
 
-        // If a slide is currently visible, rescale it to the new size
         QPixmap pix = slideshowLabel->pixmap(Qt::ReturnByValue);
         if (!pix.isNull())
         {
@@ -275,19 +226,12 @@ void Score_board::resizeEvent(QResizeEvent *event)
 
 void Score_board::adjustFontSize()
 {
-    /**
-     * @brief Sets the parameters for resize the window, so that all datas can be displayed in
-     * a go size.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
-
+    // Dynamic font sizes for fullscreen mode
     if (isFullScreen())
     {
-
         int w = width();
         int h = height();
-        int fontSize = std::min(w, h) / 5; // Adjust scaling as needed
+        int fontSize = std::min(w, h) / 5;
 
         QFont font;
         font.setPointSize(fontSize);
@@ -307,9 +251,9 @@ void Score_board::adjustFontSize()
 
         adjustEmblemSize();
     }
+    // Font sizes for fixed 256x128 LED wall
     else
     {
-        // Fixed sizes for 256x128 LED wall (tune later if needed) */
         QFont scoreFont;
         scoreFont.setPixelSize(22);
         scoreFont.setBold(true);
@@ -326,7 +270,6 @@ void Score_board::adjustFontSize()
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        // If you keep emblems, they must be small on 256x128
         emblemTeam1->setFixedSize(32, 32);
         emblemTeam2->setFixedSize(32, 32);
     }
@@ -334,25 +277,17 @@ void Score_board::adjustFontSize()
 
 void Score_board::keyPressEvent(QKeyEvent *event)
 {
-    /**
-     * @brief Lets the score board displaying in full size without white windwow bars.
-     */
     if (event->key() == Qt::Key_Escape)
     {
         if (isFullScreen())
         {
-            showNormal(); // Exit fullscreen
+            showNormal();
         }
     }
 }
 
-/**********************************/
-// Add emblem
 void Score_board::updateEmblem(const QString &team, const QString &filePath)
 {
-    /**
-     * @brief Represents the emblem of the teams.
-     */
     if (team == "Home")
     {
         emblemTeam1->setPixmap(QPixmap(filePath));
@@ -365,15 +300,9 @@ void Score_board::updateEmblem(const QString &team, const QString &filePath)
 
 void Score_board::adjustEmblemSize()
 {
-    /**
-     * @brief Resizes the embelem as well.
-     */
-
     int w = width();
     int h = height();
-
-    // Adjust size as a fraction of window size
-    int emblemSize = std::min(w, h) / 3; // Adjust 5 as a scaling factor if needed
+    int emblemSize = std::min(w, h) / 3;
 
     emblemTeam1->setFixedSize(emblemSize, emblemSize);
     emblemTeam2->setFixedSize(emblemSize, emblemSize);
@@ -387,10 +316,8 @@ void Score_board::updateViewForState()
 
     if (gameMode)
     {
-        // Stop slideshow
         stopSlideshow();
 
-        // Show match info
         scoreLabel->show();
         timeLabel->show();
         scorerListTeam1->show();
@@ -400,7 +327,6 @@ void Score_board::updateViewForState()
     }
     else
     {
-        // Hide scoreboard UI → slideshow takes over
         scoreLabel->hide();
         timeLabel->hide();
         scorerListTeam1->hide();
@@ -408,7 +334,6 @@ void Score_board::updateViewForState()
         emblemTeam1->hide();
         emblemTeam2->hide();
 
-        // Start slideshow for selected state
         if (m_state == MatchState::PreGame)
             startSlideshow(preGamePath);
         else if (m_state == MatchState::HalfTime)
@@ -418,10 +343,9 @@ void Score_board::updateViewForState()
     }
 }
 
-/**********************************/
 void Score_board::startSlideshow(const QString &folderPath)
 {
-    stopSlideshow(); // stop any running slideshow
+    stopSlideshow();
 
     QDir folder(folderPath);
     if (!folder.exists())
@@ -430,7 +354,6 @@ void Score_board::startSlideshow(const QString &folderPath)
         return;
     }
 
-    // Load files (images + PPT/PPTX rendered PNGs)
     slideshowFiles = collectSlides(folderPath);
 
     if (slideshowFiles.isEmpty())
@@ -442,10 +365,7 @@ void Score_board::startSlideshow(const QString &folderPath)
     slideshowIndex = 0;
     slideshowLabel->setVisible(true);
 
-    // Show first slide immediately
     showNextSlide();
-
-    // Cycle every 4 seconds (adjustable)
     slideshowTimer->start(4000);
 }
 
@@ -488,17 +408,13 @@ QStringList Score_board::collectSlides(const QString &folderPath)
     }
 
     QStringList slides;
-
-    // 1) Images in the base folder
     slides << collectImages(dir);
-
-    // 3) Deterministic order
     slides.removeDuplicates();
     slides.sort(Qt::CaseInsensitive);
 
     return slides;
 }
-#
+
 QStringList Score_board::collectImages(const QDir &dir)
 {
     QStringList result;

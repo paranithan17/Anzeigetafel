@@ -1,18 +1,9 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  home_team.cpp
- * @class home_team
- * @brief Mananges the playerlist of the hometeam
+ * @file home_team.cpp
+ * @brief Implementation of home team roster management.
  *
- *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 27.05.2025
- * @version V2.0, 01.06.2025 - std::string changed to QString
- *
- * @note This code has been created with help of chatgpt
- *
- * @todo At the moment, there is no check if a number is already taken
- *
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.0, 2025-06-01
  */
 #include "home_team.h"
 #include "player.h"
@@ -41,7 +32,7 @@ void home_team::removePlayer(unsigned number)
                                  {
                                      removedName = p->getName();
                                      found = true;
-                                     return true; // marks the removal
+                                     return true;
                                  }
                                  return false;
                              });

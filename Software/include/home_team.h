@@ -1,16 +1,12 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  home_team.h
- * @class home_team
- * @caption Mananges the playerlist of the hometeam
+ * @file home_team.h
+ * @brief Home team roster management.
  *
+ * Manages the home team's player list with add/remove operations.
+ * Players are stored as shared pointers for efficient memory management.
  *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 27.05.2025
- * @version V2.0, 01.06.2025 - std::string changed to QString
- *
- *
- * @note This code has been created with help of chatgpt
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.0, 2025-06-01
  */
 #ifndef HOME_TEAM_H
 #define HOME_TEAM_H
@@ -21,14 +17,36 @@
 
 class home_team
 {
+public:
+    /**
+     * @brief Constructs empty home team roster.
+     */
+    home_team();
+
+    /**
+     * @brief Adds player to home team roster.
+     *
+     * @param number Player jersey number
+     * @param name Player name
+     */
+    void addPlayer(unsigned number, const QString &name);
+
+    /**
+     * @brief Removes player from home team roster by jersey number.
+     *
+     * @param number Jersey number of player to remove
+     */
+    void removePlayer(unsigned number);
+
+    /**
+     * @brief Gets all players in home team roster.
+     *
+     * @return Const reference to vector of player shared pointers
+     */
+    const std::vector<std::shared_ptr<player>> &getPlayers() const;
+
 private:
     std::vector<std::shared_ptr<player>> players;
-
-public:
-    home_team();
-    void addPlayer(unsigned number, const QString &name);
-    void removePlayer(unsigned number);
-    const std::vector<std::shared_ptr<player>> &getPlayers() const;
 };
 
 #endif // HOME_TEAM_H
