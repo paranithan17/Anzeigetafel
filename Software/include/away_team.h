@@ -15,20 +15,20 @@
 #ifndef AWAY_TEAM_H
 #define AWAY_TEAM_H
 
-
 #include <vector>
 #include <memory>
-#include <Person.h>
+#include "player.h"
 
 class away_team
 {
 private:
-    std::vector<std::shared_ptr<Person>> players ;
+    std::vector<std::shared_ptr<player>> players;
+
 public:
     away_team();
-    void addPlayer(unsigned number, const QString& name);
+    void addPlayer(unsigned number, const QString &name);
     void removePlayer(unsigned number);
-    const std::vector<std::shared_ptr<Person>>& getPlayers() const;
+    const std::vector<std::shared_ptr<player>> &getPlayers() const;
 };
 
 #endif // AWAY_TEAM_H

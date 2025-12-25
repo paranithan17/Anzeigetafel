@@ -21,12 +21,14 @@
  */
 #include "controll_window.h"
 #include "QMessageBox"
-
+#include <QStringConverter>
 controll_window::controll_window(QWidget *parent) : QWidget(parent)
 {
     /**
      * @brief Managing and displaying (in controll window) the playerlist for both teams
      */
+
+    // Set window icon and remove title bar
 
     // list
     listTeam1 = new QListWidget;
@@ -101,6 +103,7 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     timerFont.setPixelSize(24); // here to change the size of letters
     timerFont.setBold(true);
     btnStartTimer->setFont(timerFont);
+    btnStartTimer->setEnabled(false); // Disabled by default; only enabled in FirstHalf or SecondHalf
     connect(btnStartTimer, &QPushButton::clicked, this, &controll_window::StartTime);
 
     btnLog = new QPushButton("Log");
@@ -113,7 +116,7 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
      */
     QGroupBox *stateGroup = new QGroupBox("Match State");
 
-    radioPreGame = new QRadioButton("PreGame");
+    radioPreGame = new QRadioButton("Pre game");
     radioFirstHalf = new QRadioButton("First half");
     radioHalfTime = new QRadioButton("Half time");
     radioSecondHalf = new QRadioButton("Second half");
@@ -698,7 +701,7 @@ void controll_window::Log()
             {
         qDebug() << "Reset clicked";
         dialog.accept();
-        gametime->stop();
+        gametime->resetToPhaseStart();
         btnStartTimer->setDisabled(false);
         ScoreMemory->resetGame(); });
 
@@ -788,10 +791,13 @@ void controll_window::ImportTeam1()
         return;
     }
     QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8); // Ensure umlauts and accents load correctly
+
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        QStringList fields = line.split(";");
+        QChar delimiter = line.contains(';') ? ';' : ',';
+        QStringList fields = line.split(delimiter);
         if (fields.size() >= 2)
         {
             bool ok;
@@ -826,10 +832,13 @@ void controll_window::ImportTeam2()
         return;
     }
     QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8); // Ensure umlauts and accents load correctly
+
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        QStringList fields = line.split(";");
+        QChar delimiter = line.contains(';') ? ';' : ',';
+        QStringList fields = line.split(delimiter);
         if (fields.size() >= 2)
         {
             bool ok;
@@ -918,6 +927,10 @@ void controll_window::applyStateSelection()
 
     m_currentState = newState;
 
+    // Disable the Start Timer button if not in FirstHalf or SecondHalf
+    bool isActivePhase = (m_currentState == MatchState::FirstHalf || m_currentState == MatchState::SecondHalf);
+    btnStartTimer->setEnabled(isActivePhase);
+
     // Notify others (e.g. Score_board) later
     emit matchStateChanged(static_cast<int>(m_currentState));
 
@@ -975,3 +988,31 @@ void controll_window::handleTimerTimeout()
     }
 }
 /**********************************/
+
+void controll_window::setScoreboard(QWidget *board)
+{
+    scoreboard = board;
+}
+
+void controll_window::toggleScoreboard()
+{
+    if (scoreboard)
+    {
+        if (scoreboard->isVisible())
+        {
+            scoreboard->hide();
+        }
+        else
+        {
+            scoreboard->show();
+            scoreboard->raise();
+            scoreboard->activateWindow();
+        }
+    }
+}
+
+void controll_window::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    toggleScoreboard();
+}

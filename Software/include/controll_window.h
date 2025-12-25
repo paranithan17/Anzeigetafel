@@ -34,7 +34,7 @@
 #include <QFileDialog>
 #include <QRadioButton>
 #include <QGroupBox>
-
+#include <QMouseEvent>
 
 #include "home_team.h"
 #include "away_team.h"
@@ -47,15 +47,16 @@ class controll_window : public QWidget
 
 public:
     // Simple state machine for the match
-    enum class MatchState {
+    enum class MatchState
+    {
         PreGame = 0,
         FirstHalf,
         HalfTime,
         SecondHalf,
         PostGame
     };
-private:
 
+private:
     // Current state (default: PreGame)
     MatchState m_currentState = MatchState::PreGame;
 
@@ -66,8 +67,6 @@ private:
     timer *gametime;
 
     score_memory *ScoreMemory;
-
-
 
     // GUI elements for playermanagement
     QPushButton *btnAddPlayerTeam1;
@@ -87,8 +86,7 @@ private:
     QRadioButton *radioHalfTime;
     QRadioButton *radioSecondHalf;
     QRadioButton *radioPostGame;
-    QPushButton  *btnApplyState;
-
+    QPushButton *btnApplyState;
 
     QListWidget *listTeam1;
     QListWidget *listTeam2;
@@ -103,24 +101,25 @@ private:
      * 1) Adding emblems of both teams
      */
 
-    QPushButton* btnAddEmblemTeam1;
-    QPushButton* btnAddEmblemTeam2;
+    QPushButton *btnAddEmblemTeam1;
+    QPushButton *btnAddEmblemTeam2;
     QString emblemTeam1;
     QString emblemTeam2;
 
     /**
      * 2) Import player list with csv-file
      */
-    QPushButton* btnImportTeam1;
-    QPushButton* btnImportTeam2;
+    QPushButton *btnImportTeam1;
+    QPushButton *btnImportTeam2;
 
     /**********************************/
-
-
 
     // MEthods
     void updateTeamList1();
     void updateTeamList2();
+
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private slots:
     void AddPlayerTeam1();
@@ -136,7 +135,6 @@ private slots:
     void UpdateScoreDisplay();
     void Log();
 
-
     /**********************************/
     void loadEmblemTeam1();
     void loadEmblemTeam2();
@@ -147,25 +145,27 @@ private slots:
     // Confirm the selected match state
     void applyStateSelection();
 
-
     /**
      * 3) start second leg
      */
     void handleTimerTimeout();
     /**********************************/
 
-
-
 public:
     controll_window(QWidget *parent = nullptr);
-    void setScoreMemory(score_memory* mem);
-    void setTimer(timer* t);
+    void setScoreMemory(score_memory *mem);
+    void setTimer(timer *t);
+    void setScoreboard(QWidget *board);
+    void toggleScoreboard();
+
+private:
+    QWidget *scoreboard = nullptr;
 
 signals:
-    void emblemChanged(const QString& team, const QString& filepath);
+    void emblemChanged(const QString &team, const QString &filepath);
 
     // Emits whenever the operator confirms a new match state
-    void matchStateChanged(int state);  // static_cast<int>(MatchState)
+    void matchStateChanged(int state); // static_cast<int>(MatchState)
 };
 
 #endif // CONTROLL_WINDOW_H

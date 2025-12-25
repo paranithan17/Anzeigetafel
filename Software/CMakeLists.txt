@@ -19,14 +19,14 @@ add_executable(anzeigetafel
     src/controll_window.cpp
     src/score_board.cpp
     src/score_memory.cpp
-    src/Person.cpp
+    src/player.cpp
     src/home_team.cpp
     src/away_team.cpp
     src/timer.cpp
     include/controll_window.h
     include/score_board.h
     include/score_memory.h
-    include/Person.h
+    include/player.h
     include/home_team.h
     include/away_team.h
     include/timer.h

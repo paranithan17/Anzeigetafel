@@ -67,6 +67,28 @@ void timer::restart()
     gameTime.restart();
 }
 
+void timer::resetToPhaseStart()
+{
+    // Stop timing and emit the baseline time for the current phase.
+    updateTimer.stop();
+    m_running = false;
+
+    // Reset elapsed counter so the next start begins from zero again.
+    gameTime.restart();
+
+    QString baseline;
+    if (m_phase == GamePhase::SecondHalf)
+    {
+        baseline = QStringLiteral("45:00");
+    }
+    else
+    {
+        baseline = QStringLiteral("00:00");
+    }
+
+    emit timeUpdated(baseline);
+}
+
 bool timer::isRunning() const
 {
     /**

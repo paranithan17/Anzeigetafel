@@ -49,6 +49,7 @@ public:
     QString firsthalf();  // "00:00"$
     QString secondhalf(); // restarts the timer for the 2nd half
     void restart();       // restarts the timer when the restart button is pushed.
+    void resetToPhaseStart(); // stops and emits baseline time for current phase
     bool isRunning() const;
 
     // Phase control

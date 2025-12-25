@@ -17,17 +17,18 @@
 
 #include <vector>
 #include <memory>
-#include <Person.h>
+#include "player.h"
 
 class home_team
 {
 private:
-    std::vector<std::shared_ptr<Person>> players ;
+    std::vector<std::shared_ptr<player>> players;
+
 public:
     home_team();
-    void addPlayer(unsigned number, const QString& name);
+    void addPlayer(unsigned number, const QString &name);
     void removePlayer(unsigned number);
-    const std::vector<std::shared_ptr<Person>>& getPlayers() const;
+    const std::vector<std::shared_ptr<player>> &getPlayers() const;
 };
 
 #endif // HOME_TEAM_H

@@ -21,12 +21,13 @@
 #include <QVBoxLayout>
 #include <QListWidget>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QWindowStateChangeEvent>
 #include <QShortcut>
 #include <QTimer>
 #include <QDir>
 #include <QPixmap>
-#include <QProcess>
+#include <QMouseEvent>
 #include <QFileInfo>
 
 #include "score_memory.h"
@@ -78,16 +79,11 @@ private:
     QStringList slideshowFiles;
     int slideshowIndex = 0;
 
-    bool pptConversionEnabled = false;
-    bool isLinuxPlatform() const;
-    QStringList convertPowerPoints(const QDir &dir);
-    QString cacheDirForDeck(const QDir &baseDir, const QFileInfo &pptFile) const;
-    bool cacheIsUpToDate(const QFileInfo &pptFile, const QDir &cacheDir) const;
     QStringList collectSlides(const QString &folderPath);
     QStringList collectImages(const QDir &dir);
 
     // Windows Test path
-    QString preGamePath  = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
+    QString preGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
     QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
     QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
 
@@ -115,10 +111,12 @@ private slots:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
     // void changeEvent(QEvent* event) override;
 
 public:
     Score_board(score_memory *scoreMemory, timer *gameTime, QWidget *parent = nullptr);
+    void setControlWindow(QWidget *window);
 
     /**********************************/
 public slots:
@@ -128,8 +126,10 @@ public slots:
 
     // New: react to state machine changes
     void setMatchState(int state);
+    void toggleControlWindow();
     /**********************************/
 private:
+    QWidget *controlWindow = nullptr;
     // Helper to adjust the visual mode based on m_state
     void updateViewForState();
 };
