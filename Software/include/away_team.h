@@ -1,34 +1,52 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  home_team.h
- * @class home_team
- * @caption Mananges the playerlist of the awayteam
+ * @file away_team.h
+ * @brief Away team roster management.
  *
+ * Manages the away team's player list with add/remove operations.
+ * Players are stored as shared pointers for efficient memory management.
  *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 27.05.2025
- * @version V2.0, 01.06.2025 - std::string changed to QString
- *
- *
- * @note This code has been created with help of chatgpt
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.0, 2025-06-01
  */
 #ifndef AWAY_TEAM_H
 #define AWAY_TEAM_H
 
-
 #include <vector>
 #include <memory>
-#include <Person.h>
+#include "player.h"
 
 class away_team
 {
-private:
-    std::vector<std::shared_ptr<Person>> players ;
 public:
+    /**
+     * @brief Constructs empty away team roster.
+     */
     away_team();
-    void addPlayer(unsigned number, const QString& name);
+
+    /**
+     * @brief Adds player to away team roster.
+     *
+     * @param number Player jersey number
+     * @param name Player name
+     */
+    void addPlayer(unsigned number, const QString &name);
+
+    /**
+     * @brief Removes player from away team roster by jersey number.
+     *
+     * @param number Jersey number of player to remove
+     */
     void removePlayer(unsigned number);
-    const std::vector<std::shared_ptr<Person>>& getPlayers() const;
+
+    /**
+     * @brief Gets all players in away team roster.
+     *
+     * @return Const reference to vector of player shared pointers
+     */
+    const std::vector<std::shared_ptr<player>> &getPlayers() const;
+
+private:
+    std::vector<std::shared_ptr<player>> players;
 };
 
 #endif // AWAY_TEAM_H

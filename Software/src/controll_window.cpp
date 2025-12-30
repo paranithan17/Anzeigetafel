@@ -1,34 +1,24 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
- * @file  controll_window.cpp
- * @class controll_window
- * @brief
- * This is the class for the controll-element. It includes
- * the management of the players, management of the goal,
- * start and restart options of the timer and log-setup.
+ * @file controll_window.cpp
+ * @brief Implementation of the Control Window for match operator.
  *
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 27.05.2025
- * @version V1.1, 01.06.2025 changed std:string to QString
- * @version V1.2, 01.06.2025 Detecting own goals
- * @version V1.3, 02.06.2025 load the emblems of the clubs
- * @version V1.4, 02.06.2025 import player list as a csv-file
- * @version V2.0, 07.06.2025 timer first and second period 00:00 - 45:00 and 45:00 - 90:00
+ * Manages team rosters, goal logging, timer control, and match state transitions.
+ * Handles CSV imports with UTF-8 support and synchronizes changes to scoreboard
+ * and score memory via Qt signals/slots.
  *
- *
- * @note This code has been created with help of chatgpt
- * @note The extras of the GUI rather the minimum requirements are marked with a comment block
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.1, 2025-12-25
  */
 #include "controll_window.h"
 #include "QMessageBox"
+#include <QStringConverter>
 
 controll_window::controll_window(QWidget *parent) : QWidget(parent)
 {
-    /**
-     * @brief Managing and displaying (in controll window) the playerlist for both teams
-     */
 
-    // list
+    /**
+     * @brief Team management
+     */
     listTeam1 = new QListWidget;
     listTeam2 = new QListWidget;
 
@@ -48,7 +38,6 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     // connect remove away player
     connect(listTeam2, &QListWidget::itemClicked, this, &controll_window::RemovePlayerTeam2);
 
-    /**********************************/
     // Import teams via csv file
     QPushButton *btnImportTeam1 = new QPushButton("Import");
     btnImportTeam1->setFixedHeight(30);
@@ -57,30 +46,28 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
     QPushButton *btnImportTeam2 = new QPushButton("Import");
     btnImportTeam2->setFixedHeight(30);
     connect(btnImportTeam2, &QPushButton::clicked, this, &controll_window::ImportTeam2);
-    /**********************************/
 
     /**
      * @brief Managing goal
      */
-
     btnGoalTeam1 = new QPushButton("GOAL");
     btnGoalTeam1->setFixedHeight(50); // here to change the size of the btn
+
     // font settings for both buttons
     QFont goalFont = btnGoalTeam1->font();
-    goalFont.setPixelSize(14); // here to change the size of letters
+    goalFont.setPixelSize(14); // changes the size of letters
     goalFont.setBold(true);
     btnGoalTeam1->setFont(goalFont);
     connect(btnGoalTeam1, &QPushButton::clicked, this, &controll_window::AddGoalTeam1);
 
     btnGoalTeam2 = new QPushButton("GOAL");
-    btnGoalTeam2->setFixedHeight(50); // here to change the size of the btn
+    btnGoalTeam2->setFixedHeight(50); // changes the size of the btn
     btnGoalTeam2->setFont(goalFont);
     connect(btnGoalTeam2, &QPushButton::clicked, this, &controll_window::AddGoalTeam2);
 
     // Transmits the date to score_memory
     ScoreMemory = new score_memory(this);
 
-    /**********************************/
     /**
      * @brief Adding emblem buttons
      */
@@ -89,31 +76,29 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
 
     btnAddEmblemTeam2 = new QPushButton("Logo Hinzufügen");
     connect(btnAddEmblemTeam2, &QPushButton::clicked, this, &controll_window::loadEmblemTeam2);
-    /**********************************/
 
     /**
      * @brief Timer and log buttons
      */
-
     btnStartTimer = new QPushButton("Start Timer");
     btnStartTimer->setFixedHeight(70);
     QFont timerFont = btnGoalTeam1->font();
-    timerFont.setPixelSize(24); // here to change the size of letters
+    timerFont.setPixelSize(24); // changes the size of letters
     timerFont.setBold(true);
     btnStartTimer->setFont(timerFont);
+    btnStartTimer->setEnabled(false); // Disabled by default; only enabled in FirstHalf or SecondHalf
     connect(btnStartTimer, &QPushButton::clicked, this, &controll_window::StartTime);
 
     btnLog = new QPushButton("Log");
     btnLog->setFixedSize(250, 30);
     connect(btnLog, &QPushButton::clicked, this, &controll_window::Log);
 
-    /**********************************/
     /**
      * @brief Match state (simple state machine)
      */
     QGroupBox *stateGroup = new QGroupBox("Match State");
 
-    radioPreGame = new QRadioButton("PreGame");
+    radioPreGame = new QRadioButton("Pre game");
     radioFirstHalf = new QRadioButton("First half");
     radioHalfTime = new QRadioButton("Half time");
     radioSecondHalf = new QRadioButton("Second half");
@@ -205,9 +190,6 @@ controll_window::controll_window(QWidget *parent) : QWidget(parent)
 
 void controll_window::updateTeamList1()
 {
-    /**
-     * @brief udates the the player list after adding and removing a player in team1 (home)
-     */
     listTeam1->clear();
     for (const auto &player : team1.getPlayers())
     {
@@ -218,9 +200,6 @@ void controll_window::updateTeamList1()
 
 void controll_window::updateTeamList2()
 {
-    /**
-     * @brief udates the the player list after adding and removing a player in team2 (away)
-     */
     listTeam2->clear();
     for (const auto &player : team2.getPlayers())
     {
@@ -231,13 +210,6 @@ void controll_window::updateTeamList2()
 
 void controll_window::AddPlayerTeam1()
 {
-    /**
-     * @brief when the plus button has been clicked, it pop ups a dialog,
-     *  where the name and number of a player can be entered. This initiales can be saved in the list
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     *
-     */
     QDialog dialog(this);
     dialog.setWindowTitle("Spieler Hinzufügen");
 
@@ -279,13 +251,6 @@ void controll_window::AddPlayerTeam1()
 
 void controll_window::AddPlayerTeam2()
 {
-    /**
-     * @brief when the plus button has been clicked, it pop ups a dialog,
-     *  where the name and number of a player can be entered. This initiales can be saved in the list
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     *
-     */
     QDialog dialog(this);
     dialog.setWindowTitle("Spieler Hinzufügen");
 
@@ -327,12 +292,6 @@ void controll_window::AddPlayerTeam2()
 
 void controll_window::RemovePlayerTeam1(QListWidgetItem *item)
 {
-    /**
-     * @brief when a player in the list of the controll window is clicked, its pops up a dialog
-     * window, where the chosen player can be removed from the list.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     QDialog dialog(this);
     dialog.setWindowTitle("Spieler bearbeiten");
 
@@ -359,12 +318,6 @@ void controll_window::RemovePlayerTeam1(QListWidgetItem *item)
 
 void controll_window::RemovePlayerTeam2(QListWidgetItem *item)
 {
-    /**
-     * @brief when a player in the list of the controll window is clicked, its pops up a dialog
-     * window, where the chosen player can be removed from the list.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     QDialog dialog(this);
     dialog.setWindowTitle("Spieler bearbeiten");
 
@@ -391,15 +344,6 @@ void controll_window::RemovePlayerTeam2(QListWidgetItem *item)
 
 void controll_window::AddGoalTeam1()
 {
-    /**
-     * @brief By pressing the GOAL button, it pos up a new dialog window where a goal for the
-     * team1 can be added. It automatically enters the time when the goal button was pressed.
-     * But the time is adjustable. By chosing the player from the opponents lists,
-     * it asks if it was a own goal. If it is a own goal, it will also be marked as one.
-     * The time and scorer are returned to the score_memory class.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     qDebug() << "Goal for home Team!";
     QDialog dialog(this);
     dialog.setWindowTitle("Tor Heimmannschaft");
@@ -484,7 +428,6 @@ void controll_window::AddGoalTeam1()
         int number = playerStr.section(" - ", 0, 0).toInt();
         QString name = playerStr.section(" - ", 1, 1);
 
-        /***********************************************/
         bool isOwnGoal = false;
         if (selectedTeam == "team2") {
             // Confirm own goal
@@ -495,7 +438,6 @@ void controll_window::AddGoalTeam1()
                 isOwnGoal = true;
             }
         }
-        /***********************************************/
 
         ScoreMemory->addGoal(number, name, timeStr, "Home", isOwnGoal);
         qDebug() << "Goal added:" << number << name << timeStr;
@@ -505,15 +447,6 @@ void controll_window::AddGoalTeam1()
 
 void controll_window::AddGoalTeam2()
 {
-    /**
-     * @brief By pressing the GOAL button, it pos up a new dialog window where a goal for the
-     * team1 can be added. It automatically enters the time when the goal button was pressed.
-     * But the time is adjustable. By chosing the player from the opponents lists,
-     * it asks if it was a own goal. If it is a own goal, it will also be marked as one.
-     * The time and scorer are returned to the score_memory class.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
     qDebug() << "Goal for Home Team!";
     QDialog dialog(this);
     dialog.setWindowTitle("Tor Heimmannschaft");
@@ -598,7 +531,6 @@ void controll_window::AddGoalTeam2()
         int number = playerStr.section(" - ", 0, 0).toInt();
         QString name = playerStr.section(" - ", 1, 1);
 
-        /***********************************************/
         bool isOwnGoal = false;
         if (selectedTeam == "team1") {
             // Confirm own goal
@@ -609,7 +541,6 @@ void controll_window::AddGoalTeam2()
                 isOwnGoal = true;
             }
         }
-        /***********************************************/
 
         ScoreMemory->addGoal(number, name, timeStr, "Away", isOwnGoal);
         qDebug() << "Goal added:" << number << name << timeStr;
@@ -619,10 +550,6 @@ void controll_window::AddGoalTeam2()
 
 void controll_window::StartTime()
 {
-    /**
-     * @brief Sends the signal to the timer class that the timer should start.
-     * Also the start timer button will be set disabled, while the state of the timer is running.
-     */
     if (!gametime->isRunning())
     {
         // Only start during FirstHalf or SecondHalf
@@ -641,20 +568,12 @@ void controll_window::StartTime()
 
 void controll_window::UpdateTimeDisplay(const QString &elapsedTime)
 {
-    /**
-     * @brief This methode updates the time for displaying it in the
-     * controll window for the operator.
-     */
     qDebug() << "Current Time: " << elapsedTime;
     time->setText(elapsedTime);
 }
 
 void controll_window::UpdateScoreDisplay()
 {
-    /**
-     * @brief This methode updates the score for displaying it in the
-     * controll window for the operator.
-     */
     unsigned homeScore = ScoreMemory->getHomeScore();
     unsigned awayScore = ScoreMemory->getAwayScore();
     score->setText(QString::number(homeScore) + " : " + QString::number(awayScore));
@@ -662,12 +581,6 @@ void controll_window::UpdateScoreDisplay()
 
 void controll_window::Log()
 {
-    /**
-     * @brief The log button is there to reset the score, restart the timer and to
-     * retake the last added goal
-     *
-     * @note this part of the code was coded whit help from chatgpt.
-     */
     qDebug() << "Log button clicked";
     QDialog dialog(this);
     dialog.setWindowTitle("Log window");
@@ -698,7 +611,7 @@ void controll_window::Log()
             {
         qDebug() << "Reset clicked";
         dialog.accept();
-        gametime->stop();
+        gametime->resetToPhaseStart();
         btnStartTimer->setDisabled(false);
         ScoreMemory->resetGame(); });
 
@@ -714,36 +627,20 @@ void controll_window::Log()
 
 void controll_window::setScoreMemory(score_memory *mem)
 {
-    /**
-     * @brief updates the score to the score_memory class
-     *
-     * @note this part of the code was generated by chatgpt!
-     */
     ScoreMemory = mem;
     connect(ScoreMemory, &score_memory::goalsUpdated, this, &controll_window::UpdateScoreDisplay);
 }
 
 void controll_window::setTimer(timer *t)
 {
-    /**
-     * @brief Overgives the informations from timer class to controll_window class.
-     *
-     * @note this part of the code was generated by chatgpt!
-     */
     gametime = t;
     connect(gametime, &timer::timeUpdated, this, &controll_window::UpdateTimeDisplay);
     connect(gametime, &timer::timeout, this, &controll_window::handleTimerTimeout);
 }
 
-/**********************************/
 void controll_window::loadEmblemTeam1()
 {
-    /**
-     * @brief Allows to upload a emblem of the team.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
-    emblemTeam1 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images((*.png *.jpg *.bmp)");
+    emblemTeam1 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images (*.png *.jpg *.bmp)");
     if (!emblemTeam1.isEmpty())
     {
         emit emblemChanged("Home", emblemTeam1);
@@ -752,31 +649,19 @@ void controll_window::loadEmblemTeam1()
 
 void controll_window::loadEmblemTeam2()
 {
-    /**
-     * @brief Allows to upload a emblem of the team.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     */
-    emblemTeam2 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images((*.png *.jpg *.bmp)");
+    emblemTeam2 = QFileDialog::getOpenFileName(this, "Vereinslogo einfügen", "", "Images (*.png *.jpg *.bmp)");
     if (!emblemTeam2.isEmpty())
     {
         emit emblemChanged("Away", emblemTeam2);
     }
 }
 
-// import teams
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
+
 void controll_window::ImportTeam1()
 {
-    /**
-     * @brief Allows to upload a playerlist of the team in form of a csv-file.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     * @note That the number and name of the player needs to be seperated by ";". -
-     * (Excel Microsoft 365 MSO Version 2505)
-     */
     QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Home Team)", "", "CSV Files (*.csv *.CSV);; All Files(*)");
     if (fileName.isEmpty())
         return;
@@ -788,10 +673,13 @@ void controll_window::ImportTeam1()
         return;
     }
     QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8); // Ensure umlauts and accents load correctly
+
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        QStringList fields = line.split(";");
+        QChar delimiter = line.contains(';') ? ';' : ',';
+        QStringList fields = line.split(delimiter);
         if (fields.size() >= 2)
         {
             bool ok;
@@ -808,13 +696,6 @@ void controll_window::ImportTeam1()
 
 void controll_window::ImportTeam2()
 {
-    /**
-     * @brief Allows to upload a playerlist of the team in form of a csv-file.
-     *
-     * @note this part of the code was coded with help from chatgpt.
-     * @note That the number and name of the player needs to be seperated by ";". -
-     * (Excel Microsoft 365 MSO Version 2505)
-     */
     QString fileName = QFileDialog::getOpenFileName(this, "Import Player List (Away Team)", "", "CSV Files (*.csv *.CSV);; All Files(*)");
     if (fileName.isEmpty())
         return;
@@ -826,10 +707,13 @@ void controll_window::ImportTeam2()
         return;
     }
     QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8); // Ensure umlauts and accents load correctly
+
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        QStringList fields = line.split(";");
+        QChar delimiter = line.contains(';') ? ';' : ',';
+        QStringList fields = line.split(delimiter);
         if (fields.size() >= 2)
         {
             bool ok;
@@ -875,7 +759,52 @@ void controll_window::applyStateSelection()
         return;
     }
 
+    // Check if timer is running during FirstHalf or SecondHalf and changing to a different state
+    bool leavingActivePhase = (m_currentState == MatchState::FirstHalf || m_currentState == MatchState::SecondHalf);
+    bool enteringInactivePhase = (newState != MatchState::FirstHalf && newState != MatchState::SecondHalf);
+
+    if (gametime && gametime->isRunning() && leavingActivePhase && enteringInactivePhase)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::warning(this, "Timer Running",
+                                     "The timer is currently running. Changing the state will stop and reset the timer.\n\nDo you want to continue?",
+                                     QMessageBox::Ok | QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Cancel)
+        {
+            // Abort state change - restore radio button to current state
+            switch (m_currentState)
+            {
+            case MatchState::PreGame:
+                radioPreGame->setChecked(true);
+                break;
+            case MatchState::FirstHalf:
+                radioFirstHalf->setChecked(true);
+                break;
+            case MatchState::HalfTime:
+                radioHalfTime->setChecked(true);
+                break;
+            case MatchState::SecondHalf:
+                radioSecondHalf->setChecked(true);
+                break;
+            case MatchState::PostGame:
+                radioPostGame->setChecked(true);
+                break;
+            }
+            return;
+        }
+
+        // User confirmed - stop and reset timer
+        gametime->stop();
+        gametime->restart();
+        btnStartTimer->setDisabled(false);
+    }
+
     m_currentState = newState;
+
+    // Disable the Start Timer button if not in FirstHalf or SecondHalf
+    bool isActivePhase = (m_currentState == MatchState::FirstHalf || m_currentState == MatchState::SecondHalf);
+    btnStartTimer->setEnabled(isActivePhase);
 
     // Notify others (e.g. Score_board) later
     emit matchStateChanged(static_cast<int>(m_currentState));
@@ -904,14 +833,8 @@ void controll_window::applyStateSelection()
     }
 }
 
-// Starting a second have of a game.
 void controll_window::handleTimerTimeout()
 {
-    /**
-     * @brief After 45min it popsup a new window, where it asks to continue the timer with the
-     * second half.
-     *
-     */
     btnStartTimer->setDisabled(false);
     if (gametime->phase() == timer::GamePhase::FirstHalf)
     {
@@ -933,4 +856,31 @@ void controll_window::handleTimerTimeout()
         }
     }
 }
-/**********************************/
+
+void controll_window::setScoreboard(QWidget *board)
+{
+    scoreboard = board;
+}
+
+void controll_window::toggleScoreboard()
+{
+    if (scoreboard)
+    {
+        if (scoreboard->isVisible())
+        {
+            scoreboard->hide();
+        }
+        else
+        {
+            scoreboard->show();
+            scoreboard->raise();
+            scoreboard->activateWindow();
+        }
+    }
+}
+
+void controll_window::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    toggleScoreboard();
+}

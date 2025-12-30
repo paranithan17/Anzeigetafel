@@ -38,3 +38,18 @@ Die vier Matrizen wurden zusammen verkabelt und es wurde versucht eine Testbild 
 Es scheint so als wären die Matrizen defekt, denn es leuchten keine LED's wenn Spannung angelegt wird. Dies wäre normal wenn man die Verbindungen bei laufender Spannung am Matrix einsteckt.
 Auch beim Einstecken der HUB verbindung ist nichts zu sehen.
 Als Backup wurden 4 P5 Matrizen auf AliExpress bestellt. Diese sollten in ca. 2 Wochen ankommen.
+
+04.12.25
+Die vorhanden Matrizen wurden nun als Prototyp zusammengebaut. Es konnte kein Bild angezeigt werden. Um auszuschliessen, dass die HUIDU Sende und Controller Einheit defekt sind, wurde der Aufbau mit dem P2.5 Matrizen von Lyson (privater Besitz) getestet. Mit diesem Aufbau konnte ein Bild angezeigt werden.
+
+11.12.25
+In dieser Zeit wurde mit dem Hersteller der P2.5 Panele Kontakt aufgenommen. Nach dem er mir einige Details nennen konnte, konnte zumindest festgestellt werden, dass die Panele nicht defekt sind. Man konnte vorerst einen RGB-Test durchführen, bei dem die einzelnen Farben Rot, Grün und Blau nacheinander angezeigt werden.
+
+16.12.25
+Inziwschen Zeit wurde auch mit der Firma HUIDU Kontakt aufgenommen. Diese haben mir per Remote Zugriff Support für die Konfiguration LED Wands gegeben.
+Nun kann ich die P2.5 Panele mit der HUIDU Sendeeinheit verbinden und auch ein Testbild anzeigen.
+Aktuell wird die Auflösung der Anzeigeteifel ziemlich stark zerquetssch auf den Panels aussgegeb, so dass das Bild nicht wirklich gut aussieht.
+Mit der Software HDPlayer können nebst der HDMI-Quelle diverse andere Vislualisierungen erstellt und diese dann auf die LED Wand gestreamt werden. Diese Viusalisierungen hingegen sind in guter Qualität sichtbar.
+
+22.12.25 - 25.12.25
+Die Software wurde geupdatet. Siehe Git Commit History.

@@ -1,15 +1,13 @@
 /**
- * BTE5058a Einstieg in  OOP, Mini-project Scoreboard
-
+ * @file timer.h
+ * @brief Match timer with phase-aware time tracking.
  *
- * Class timer,
- * Initialzes the time for the game.
- * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 26.05.2025
- * @version v2.0, 07.06.2025 - There is a period handler implemented,
- *  which switches between 1st and 2nd half of a football game.
+ * Manages match time for different game phases (PreGame, FirstHalf, HalfTime,
+ * SecondHalf, PostGame). Tracks elapsed time during active phases and emits
+ * updates every second. Automatically stops at 45-minute mark.
  *
- * @note This code has been created with help of chatgpt
+ * @author Paranithan Paramalingam (BFH-Ti)
+ * @version 2.0, 2025-06-07
  */
 
 #ifndef TIMER_H
@@ -25,8 +23,14 @@
 class timer : public QObject
 {
     Q_OBJECT
+
 public:
-    // Explicit game phases to integrate with the state machine
+    /**
+     * @brief Game phase enumeration for state machine integration.
+     *
+     * Defines match phases to control timer behavior.
+     * @see controll_window::MatchState
+     */
     enum class GamePhase
     {
         PreGame = 0,
@@ -36,31 +40,103 @@ public:
         PostGame
     };
 
+    /**
+     * @brief Constructs match timer.
+     *
+     * @param parent Parent QObject (default nullptr)
+     */
+    timer(QObject *parent = nullptr);
+
+    /**
+     * @brief Starts timer for current phase.
+     *
+     * Only starts during FirstHalf or SecondHalf phases.
+     * Emits timeUpdated signal every second.
+     */
+    void start();
+
+    /**
+     * @brief Stops timer and pauses time tracking.
+     */
+    void stop();
+
+    /**
+     * @brief Restarts elapsed time counter to zero.
+     *
+     * Resets internal QElapsedTimer without changing phase.
+     */
+    void restart();
+
+    /**
+     * @brief Resets timer to phase baseline and emits baseline time.
+     *
+     * Stops timing and emits "00:00" for FirstHalf or "45:00" for SecondHalf.
+     */
+    void resetToPhaseStart();
+
+    /**
+     * @brief Checks if timer is currently running.
+     *
+     * @return true if timer is active, false otherwise
+     */
+    bool isRunning() const;
+
+    /**
+     * @brief Sets current game phase.
+     *
+     * Does not auto-start/stop timer; caller controls timing.
+     *
+     * @param phase New game phase
+     */
+    void setPhase(GamePhase phase);
+
+    /**
+     * @brief Gets current game phase.
+     *
+     * @return Current GamePhase
+     */
+    GamePhase phase() const { return m_phase; }
+
+    /**
+     * @brief Formats elapsed time for first half (00:00 - 45:00).
+     *
+     * @return Formatted time string
+     */
+    QString firsthalf();
+
+    /**
+     * @brief Formats elapsed time for second half (45:00 - 90:00).
+     *
+     * @return Formatted time string
+     */
+    QString secondhalf();
+
+signals:
+    /**
+     * @brief Emitted when 45 minutes elapsed.
+     */
+    void timeout();
+
+    /**
+     * @brief Emitted every second with formatted time.
+     *
+     * @param elapsedTime Time string in MM:SS format
+     */
+    void timeUpdated(const QString &elapsedTime);
+
+private slots:
+    /**
+     * @brief Updates time display based on current phase.
+     *
+     * Emits timeUpdated signal and checks for 45-minute timeout.
+     */
+    void updateElapsedTime();
+
 private:
     QElapsedTimer gameTime;
     QTimer updateTimer;
     bool m_running;
     GamePhase m_phase = GamePhase::PreGame;
-
-public:
-    timer(QObject *parent = nullptr);
-    void start();
-    void stop();          // stop time after 45 Min.
-    QString firsthalf();  // "00:00"$
-    QString secondhalf(); // restarts the timer for the 2nd half
-    void restart();       // restarts the timer when the restart button is pushed.
-    bool isRunning() const;
-
-    // Phase control
-    void setPhase(GamePhase phase);
-    GamePhase phase() const { return m_phase; }
-
-signals:
-    void timeout();                               // Emitted when 45 Minutes have elapsed
-    void timeUpdated(const QString &elapsedTime); // Emitted every second with update
-
-private slots:
-    void updateElapsedTime(); /** @note The function is unknown yet, since it was given by chatgpt */
 };
 
 #endif // TIMER_H
