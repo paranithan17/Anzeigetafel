@@ -34,11 +34,8 @@ This application provides a **control window** for match operators and a **score
 - Undo last goal, reset score, and timer restart
 - Fullscreen toggle for the scoreboard
 
-<<<<<<< Updated upstream
 ## Architecture
 
-=======
->>>>>>> Stashed changes
 ### Class Diagram
 
 ![Class Diagram](Dokumentationen/Bilder/KlassenDiagramm_Endversion.drawio.png)
