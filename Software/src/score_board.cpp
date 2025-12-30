@@ -18,9 +18,10 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     setupLayout();
     applyStyle();
 
-    adjustFontSize();
     setFixedSize(256, 128);
-    showFullScreen();
+    adjustFontSize();
+
+    //showFullScreen();
     setWindowFlags(Qt::FramelessWindowHint);
 
     slideshowLabel = new QLabel(this);
@@ -74,13 +75,13 @@ void Score_board::setupLayout()
     emblemTeam2->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addSpacing(100);
+    topLayout->addSpacing(10);
     topLayout->addWidget(emblemTeam1);
     topLayout->addStretch(10);
     topLayout->addWidget(scoreLabel);
     topLayout->addStretch(10);
     topLayout->addWidget(emblemTeam2);
-    topLayout->addSpacing(100);
+    topLayout->addSpacing(10);
 
     timeLabel = new QLabel("00:00", this);
     timeLabel->setAlignment(Qt::AlignCenter);
@@ -90,14 +91,16 @@ void Score_board::setupLayout()
     scorerListTeam1->setFocusPolicy(Qt::NoFocus);
     scorerListTeam2 = new QListWidget(this);
     scorerListTeam2->setFocusPolicy(Qt::NoFocus);
-    scorerLayout->addSpacing(100);
+    scorerLayout->addSpacing(10);
     scorerLayout->addWidget(scorerListTeam1);
-    // scorerLayout->addStretch();
-    scorerLayout->addSpacing(600);
+    scorerLayout->addStretch();
+    scorerLayout->addSpacing(60);
     scorerLayout->addWidget(scorerListTeam2);
-    scorerLayout->addSpacing(100);
-
+    scorerLayout->addSpacing(10);
+	
+	mainlayout->addSpacing(-5);
     mainlayout->addLayout(topLayout);
+    mainlayout->addSpacing(3);
     mainlayout->addWidget(timeLabel);
     mainlayout->addLayout(scorerLayout);
     setLayout(mainlayout);
@@ -255,23 +258,23 @@ void Score_board::adjustFontSize()
     else
     {
         QFont scoreFont;
-        scoreFont.setPixelSize(22);
+        scoreFont.setPixelSize(40);
         scoreFont.setBold(true);
         scoreLabel->setFont(scoreFont);
 
         QFont timeFont;
-        timeFont.setPixelSize(12);
+        timeFont.setPixelSize(18);
         timeFont.setBold(true);
         timeLabel->setFont(timeFont);
 
         QFont goalFont;
-        goalFont.setPixelSize(9);
-        goalFont.setBold(true);
+        goalFont.setPixelSize(8);
+        goalFont.setBold(false);
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        emblemTeam1->setFixedSize(32, 32);
-        emblemTeam2->setFixedSize(32, 32);
+        emblemTeam1->setFixedSize(42, 42);
+        emblemTeam2->setFixedSize(42, 42);
     }
 }
 
