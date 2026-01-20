@@ -94,15 +94,15 @@ private:
     QStringList slideshowFiles;
     int slideshowIndex = 0;
 
-	// Windows path
-    //QString preGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
-    //QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
-    //QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
-    
+    // Windows path
+    QString preGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
+    QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
+    QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
+
     // Linux path
-    QString preGamePath  = "/home/rpi/Anzeigetafel/slides/PreGame";
-    QString halfTimePath = "/home/rpi/Anzeigetafel/slides/HalfTime";
-    QString postGamePath = "/home/rpi/Anzeigetafel/slides/PostGame";
+    // QString preGamePath  = "/home/rpi/Anzeigetafel/slides/PreGame";
+    // QString halfTimePath = "/home/rpi/Anzeigetafel/slides/HalfTime";
+    // QString postGamePath = "/home/rpi/Anzeigetafel/slides/PostGame";
 
     /**
      * @brief Initializes UI layout with score, time, and goal lists.

@@ -1,6 +1,4 @@
-# FS25_BTE5058_Spielstands_Anzeige
-
-# Football Scoreboard Application
+# Anzeigetafel - Football Scoreboard Application - Software
 
 A modular Qt application to manage and display live football match events. Developed as a mini-project for the BTE5058a "Einstieg in OOP" course at BFH.
 
@@ -41,10 +39,6 @@ _Fullscreen audience display with score, time, emblems, and goal scorers._
 - **Undo/Reset Functions**: Remove last goal, reset entire match state
 - **Fullscreen Toggle**: Double-click to show/hide windows
 - **Qt Signal-Slot Architecture**: Real-time synchronization between all components
-
-## Architecture
-
-The application follows a **Model-View-Controller (MVC)** pattern with Qt's signal-slot mechanism for loose coupling.
 
 ### Class Diagram
 
