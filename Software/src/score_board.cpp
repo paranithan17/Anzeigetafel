@@ -21,7 +21,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     setFixedSize(256, 128);
     adjustFontSize();
 
-    //showFullScreen();
+    showFullScreen();
     setWindowFlags(Qt::FramelessWindowHint);
 
     slideshowLabel = new QLabel(this);
