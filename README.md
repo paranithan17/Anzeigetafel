@@ -1,7 +1,5 @@
 # Anzeigetafel
 
-# Anzeigetafel
-
 Aktuell dient diese Readme als Arbeitsjournal, damit einfacher Dokumentiert werden kann.
 
 25.09.25
@@ -53,3 +51,4 @@ Mit der Software HDPlayer können nebst der HDMI-Quelle diverse andere Vislualis
 
 22.12.25 - 25.12.25
 Die Software wurde geupdatet. Siehe Git Commit History.
+https://news.sparkfun.com/2650
