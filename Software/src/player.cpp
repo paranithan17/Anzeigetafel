@@ -6,7 +6,7 @@
  * @version 2.0, 2025-06-01
  */
 
-#include <player.h>
+#include "player.h"
 
 player::player(unsigned number, QString name) : playerNumber(number),
                                                 playerName(name)
@@ -14,7 +14,7 @@ player::player(unsigned number, QString name) : playerNumber(number),
 }
 
 QString player::getName()
-{
+{ 
     return playerName;
 }
 

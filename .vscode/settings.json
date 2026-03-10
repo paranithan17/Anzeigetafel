@@ -1,6 +1,6 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/software",
-    "cmake.buildDirectory": "${workspaceFolder}/software/build/vscode",
+    "cmake.sourceDirectory": "${workspaceFolder}/Software",
+    "cmake.buildDirectory": "${workspaceFolder}/Software/build/vscode",
     "cmake.generator": "Ninja",
     "cmake.configureSettings": {
         "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
@@ -13,5 +13,10 @@
     "cmake.defaultBuildType": "Debug",
     "cmake.ignoreCMakeListsMissing": false,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/Software/build/vscode/compile_commands.json",
+    "clangd.path": "C:/Qt/Tools/QtCreator/bin/clang/bin/clangd.exe",
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/Software/build/vscode"
+    ],
     "chatgpt.openOnStartup": false
 }
