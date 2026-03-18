@@ -1,0 +1,175 @@
+---
+title: Anzeigetafel (Scoreboard) - Class Diagram
+---
+classDiagram
+  class player {
+    -unsigned playerNumber
+    -QString playerName
+    +player(unsigned number, QString name)
+    +QString getName()
+    +unsigned getNumber()
+    +void setName(QString name)
+    +void setNumber(unsigned number)
+  }
+
+  class away_team {
+    -vector~shared_ptr~player~~ players
+    +away_team()
+    +void addPlayer(unsigned number, QString name)
+    +void removePlayer(unsigned number)
+    +vector~shared_ptr~player~~ getPlayers()
+  }
+
+  class home_team {
+    -vector~shared_ptr~player~~ players
+    +home_team()
+    +void addPlayer(unsigned number, QString name)
+    +void removePlayer(unsigned number)
+    +vector~shared_ptr~player~~ getPlayers()
+  }
+
+  class timer {
+    -QElapsedTimer gameTime
+    -QTimer updateTimer
+    -bool m_running
+    -GamePhase m_phase
+    +void start()
+    +void stop()
+    +void restart()
+    +void resetToPhaseStart()
+    +bool isRunning()
+    +void setPhase(GamePhase phase)
+    +GamePhase phase()
+    +QString firsthalf()
+    +QString secondhalf()
+  }
+
+  class timer_GamePhase {
+    <<enumeration>>
+    PreGame
+    FirstHalf
+    HalfTime
+    SecondHalf
+    PostGame
+  }
+
+  class Goal {
+    <<struct>>
+    +int playerNumber
+    +QString player
+    +QString timeStamp
+    +QString team
+    +bool ownGoal
+  }
+
+  class score_memory {
+    -unsigned homeScore
+    -unsigned awayScore
+    -QList~Goal~ goals
+    +void addGoal(int number, QString player, QString timeStamp, QString team, bool ownGoal)
+    +void removeLastGoal()
+    +int getHomeScore()
+    +int getAwayScore()
+    +QList~Goal~ getGoals()
+    +void resetGame()
+  }
+
+  class Score_board {
+    -MatchState m_state
+    -score_memory* Score
+    -timer* gameTime
+    -QWidget* controlWindow
+    -QLabel* scoreLabel
+    -QLabel* timeLabel
+    -QListWidget* scorerListTeam1
+    -QListWidget* scorerListTeam2
+    -QLabel* emblemTeam1
+    -QLabel* emblemTeam2
+    -QTimer* slideshowTimer
+    +Score_board(score_memory* scoreMemory, timer* gameTime)
+    +void setControlWindow(QWidget* window)
+    +void updateEmblem(QString team, QString filePath)
+    +void setMatchState(int state)
+    +void toggleControlWindow()
+    -void updateScore()
+    -void updateGoals()
+    -void updateTime(QString time)
+    -void setupLayout()
+    -void adjustFontSize()
+  }
+
+  class Score_board_MatchState {
+    <<enumeration>>
+    PreGame
+    FirstHalf
+    HalfTime
+    SecondHalf
+    PostGame
+  }
+
+  class controll_window {
+    -MatchState m_currentState
+    -score_memory* ScoreMemory
+    -timer* gametime
+    -Score_board* scoreboard
+    -home_team team1
+    -away_team team2
+    +controll_window()
+    +void setScoreMemory(score_memory* mem)
+    +void setTimer(timer* t)
+    +void setScoreboard(QWidget* board)
+    +void AddPlayerTeam1()
+    +void AddPlayerTeam2()
+    +void RemovePlayerTeam1()
+    +void RemovePlayerTeam2()
+    +void ImportTeam1()
+    +void ImportTeam2()
+    +void AddGoalTeam1()
+    +void AddGoalTeam2()
+    +void StartTime()
+    +void UpdateTimeDisplay(QString elapsedTime)
+    +void applyStateSelection()
+    +void handleTimerTimeout()
+  }
+
+  class controll_window_MatchState {
+    <<enumeration>>
+    PreGame
+    FirstHalf
+    HalfTime
+    SecondHalf
+    PostGame
+  }
+
+  class QObject {
+    <<Qt>>
+    +Signals/Slots support
+  }
+
+  class QWidget {
+    <<Qt>>
+    +show()
+    +hide()
+  }
+
+  away_team o-- "0..*" player : players
+  home_team o-- "0..*" player : players
+
+  score_memory *-- "0..*" Goal : goals
+  timer ..> timer_GamePhase : uses
+  Score_board ..> Score_board_MatchState : uses
+  controll_window ..> controll_window_MatchState : uses
+
+  score_memory --|> QObject
+  Score_board --|> QWidget
+  controll_window --|> QWidget
+
+  Score_board --> score_memory : Score
+  Score_board --> timer : gameTime
+  Score_board --> controll_window : controlWindow
+
+  controll_window --> score_memory : ScoreMemory
+  controll_window --> timer : gametime
+  controll_window --> Score_board : scoreboard
+  controll_window --> home_team : HomeTeam
+  controll_window --> away_team : AwayTeam
