@@ -1,0 +1,175 @@
+---
+title: Refactored Scoreboard System - Class Diagram
+---
+classDiagram
+  %% Qt Foundation Classes
+
+
+  class QWidget {
+    <<Qt>>
+    +show()
+    +hide()
+  }
+
+
+  class QTimer {
+    <<Qt>>
+    +void start()
+    +void stop()
+    +void timeout()
+  }
+
+  %% Enumerations & Data Structures
+
+  class GoalEvent {
+    +int playerNumber
+    +QString playerName
+    +QString teamId
+    +QString timeStamp
+    +bool ownGoal
+  }
+
+  %% Domain Model
+  class Player {
+    -unsigned playerNumber
+    -QString playerName
+    +Player(unsigned number, QString name)
+    +unsigned getNumber()
+    +QString getName()
+    +void setName(QString name)
+    +void setNumber(unsigned number)
+  }
+
+  class Team {
+    -QString id
+    -QString displayName
+    -QString logoPath
+    -vector~shared_ptr~Player~~ players
+    +Team(QString id, QString displayName)
+    +void addPlayer(unsigned number, QString name)
+    +void removePlayer(unsigned number)
+    +vector~shared_ptr~Player~~ getPlayers()
+    +void setLogo(QString logoPath)
+  }
+
+  class ScoreMemory {
+    -QList~GoalEvent~ goals
+    +void addGoal(int number, QString player, QString teamId, QString timeStamp, bool ownGoal)
+    +void removeGoal(int goalIndex)
+    +int getHomeScore()
+    +int getAwayScore()
+    +QList~GoalEvent~ getGoals()
+    +void clearGoals()
+  }
+
+  %% Timer Component
+  class MatchTimer {
+    -QElapsedTimer elapsed
+    -QTimer tickTimer
+    -bool running
+    -MatchState phase
+    +void start()
+    +void stop()
+    +void reset()
+    +void setPhase(MatchState phase)
+    +QString getCurrentTime()
+    +MatchState getPhase()
+  }
+
+  %% UI Components
+  class ControlWindow {
+    +void displayMatchState(MatchSnapshot snapshot)
+    +void sendUserAction(QString action, QVariantMap payload)
+  }
+
+  class ScoreBoard {
+    -MatchState m_state
+    -score_memory* Score
+    -timer* gameTime
+    -QWidget* controlWindow
+    -QLabel* scoreLabel
+    -QLabel* timeLabel
+    -QListWidget* scorerListTeam1
+    -QListWidget* scorerListTeam2
+    -QLabel* emblemTeam1
+    -QLabel* emblemTeam2
+    -QTimer* slideshowTimer
+    -QLabel* slideshowLabel
+    -QStringList slideshowFiles
+    -int slideshowIndex
+    -QString preGamePath
+    -QString halfTimePath
+    -QString postGamePath
+  }
+
+  class SlidesDataBase {
+    PreGameSlides
+    HalfTimeSlides
+    PostGameSlides
+  }
+
+  %% Central Controller
+  class MatchController {
+    -Team homeTeam
+    -Team awayTeam
+    -ScoreMemory* scoreMemory
+    -MatchTimer* timer
+    -ControlWindow* controlWindow
+    -ScoreBoard* scoreBoard
+    -WebSocketServer* webSocketServer
+    +void addGoal(int number, QString player, QString teamId, bool ownGoal)
+    +void removeGoal(int goalIndex)
+    +void addPlayer(QString teamId, unsigned number, QString name)
+    +void removePlayer(QString teamId, unsigned number)
+    +void startTimer()
+    +void stopTimer()
+    +void setMatchState(MatchState state)
+    +void handleCommand(MatchCommand* command)
+    +void publishSnapshot()
+  }
+
+  %% Web/Network Components
+  class WebSocketServer {
+    <<WebComm>>
+    +QString receiveMessage()
+    +void sendMessage(QString message)
+  }
+
+  class WebPage {
+    <<Frontend>>
+    +sendJson(json)
+    +receiveJson(json)
+  }
+
+  %% Qt Inheritance
+  ControlWindow --|> QWidget
+  ScoreBoard --|> QWidget
+  MatchTimer --|> QTimer
+
+  %% Domain Model Composition
+  Team --* "0..*" Player 
+  ScoreMemory *-- "0..*" GoalEvent 
+
+  %% Controller to Components
+  MatchController --> ScoreMemory 
+  MatchController --> MatchTimer 
+  MatchController --> Team 
+  MatchController --> ControlWindow 
+  MatchController --> ScoreBoard 
+  MatchController --> WebSocketServer
+
+  %% UI to Data/Controller
+  ControlWindow --> Team
+  ControlWindow --> MatchController 
+  
+  ScoreBoard --> ScoreMemory 
+  ScoreBoard --> MatchTimer
+  ScoreBoard --> SlidesDataBase 
+
+  %% Web Communication
+  WebPage --> WebSocketServer : WebSocket JSON
+  WebSocketServer --> WebPage : WebSocket JSON
+
+
+
+

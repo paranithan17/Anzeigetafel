@@ -1,0 +1,143 @@
+<mxfile host="app.diagrams.net" modified="2026-03-25T12:00:00.000Z" agent="GitHub Copilot" version="24.7.17" editor="draw.io">
+  <diagram id="usecase-1" name="Use Case Diagram">
+    <mxGraphModel dx="1422" dy="804" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="systemBoundary" value="Football Scoreboard System" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;align=left;verticalAlign=top;spacingTop=10;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="70" width="1100" height="840" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="actorOperator" value="Match Operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="70" y="230" width="60" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="actorAudience" value="Audience" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="70" y="560" width="60" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="actorWebClient" value="Web Client" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="350" width="60" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucConfigureTeams" value="Configure Teams and Players" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="90" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucImportCsv" value="Import Team from CSV" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="190" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucSetState" value="Set Match State" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="290" width="360" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucTimer" value="Start / Stop / Reset Timer" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="390" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucAddGoal" value="Add Goal" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="490" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucUndoGoal" value="Remove Last Goal" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="590" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucUpdateEmblem" value="Update Team Emblems" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="690" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucToggleFullscreen" value="Toggle Scoreboard Fullscreen" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="70" y="790" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucDisplayLive" value="Display Live Score, Time and Scorers" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="430" y="230" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucShowSlides" value="Run PreGame / HalfTime / PostGame Slides" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="430" y="370" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucSyncWindows" value="Synchronize Control and Scoreboard Windows" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="430" y="510" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucWebSocket" value="Publish Match Data via WebSocket" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="820" y="290" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucReceiveWeb" value="Receive Web Client Commands" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="820" y="430" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucRenderWeb" value="Render Match State in Web Interface" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="systemBoundary">
+          <mxGeometry x="820" y="570" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucConfigureTeams">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucImportCsv">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucSetState">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucTimer">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucAddGoal">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucUndoGoal">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucUpdateEmblem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" style="endArrow=none;html=1;" edge="1" parent="1" source="actorOperator" target="ucToggleFullscreen">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e9" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAudience" target="ucDisplayLive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAudience" target="ucShowSlides">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e11" style="endArrow=none;html=1;" edge="1" parent="1" source="actorWebClient" target="ucRenderWeb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e12" style="endArrow=none;html=1;" edge="1" parent="1" source="actorWebClient" target="ucReceiveWeb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e13" style="endArrow=none;html=1;" edge="1" parent="1" source="actorWebClient" target="ucWebSocket">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="inc1" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucSetState" target="ucShowSlides">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc2" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucSetState" target="ucDisplayLive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc3" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucAddGoal" target="ucDisplayLive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc4" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucUndoGoal" target="ucDisplayLive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc5" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucDisplayLive" target="ucSyncWindows">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="inc6" value="&lt;&lt;include&gt;&gt;" style="dashed=1;endArrow=open;html=1;" edge="1" parent="1" source="ucSyncWindows" target="ucWebSocket">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
