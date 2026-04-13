@@ -1,16 +1,14 @@
 ---
-title: Refactored Scoreboard System - Class Diagram
+title: Refactored Scoreboard System - Class Diagram (MVC Pattern)
+id: acebe2d1-c403-4409-9dd7-b83e48eacb81
 ---
 classDiagram
   %% Qt Foundation Classes
-
-
   class QWidget {
     <<Qt>>
     +show()
     +hide()
   }
-
 
   class QTimer {
     <<Qt>>
@@ -20,13 +18,20 @@ classDiagram
   }
 
   %% Enumerations & Data Structures
-
   class GoalEvent {
     +int playerNumber
     +QString playerName
     +QString teamId
     +QString timeStamp
     +bool ownGoal
+  }
+
+  class GoalData {
+    +TeamSide scoringTeam
+    +int playerNumber
+    +QString playerName
+    +unsigned goalMinute
+    +bool isOwnGoal
   }
 
   %% Domain Model
@@ -76,27 +81,71 @@ classDiagram
     +MatchState getPhase()
   }
 
-  %% UI Components
+  %% CENTRAL CONTROLLER - All business logic
+  class MatchController {
+    <<MODEL>>
+    -Team homeTeam
+    -Team awayTeam
+    -ScoreMemory* scoreMemory
+    -MatchTimer* timer
+    -MatchState state
+    -QString homeTeamEmblem
+    -QString awayTeamEmblem
+    
+    +addPlayer(TeamSide, unsigned, QString)
+    +removePlayer(TeamSide, unsigned)
+    +importPlayersFromCsv(TeamSide, QString)
+    
+    +addGoalWithValidation(GoalData)
+    +removeLastGoal()
+    
+    +requestTimerStart()
+    +requestTimerRestart()
+    +requestTimerStop()
+    +requestMatchReset()
+    
+    +requestStateChange(MatchState, bool)
+    +startTimer() bool
+    
+    +setTeamEmblem(TeamSide, QString)
+    +getTeamEmblem(TeamSide) QString
+  }
+
+  %% UI Component - Pure View (MVC Pattern)
   class ControlWindow {
-    +void displayMatchState(MatchSnapshot snapshot)
-    +void sendUserAction(QString action, QVariantMap payload)
+    <<VIEW>>
+    -match_controller* m_controller
+    -QListWidget* listTeam1/2
+    -QPushButton* buttons
+    -QLabel* score/time
+    -QRadioButton* stateRadios
+    
+    +onAddPlayerTeam1/2()
+    +onRemovePlayerTeam1/2()
+    +onAddGoalTeam1/2()
+    +onStartTimer()
+    +onLog()
+    +onLoadEmblemTeam1/2()
+    +onImportTeam1/2()
+    +onApplyStateSelection()
+    
+    +updateTeamList1/2()
+    +updateScoreDisplay()
+    +updateTimeDisplay()
+    +setScoreboard()
+    +toggleScoreboard()
   }
 
   class ScoreBoard {
-    -MatchState m_state
+    <<VIEW>>
+    -MatchState state
     -score_memory* Score
     -timer* gameTime
-    -QWidget* controlWindow
     -QLabel* scoreLabel
     -QLabel* timeLabel
-    -QListWidget* scorerListTeam1
-    -QListWidget* scorerListTeam2
-    -QLabel* emblemTeam1
-    -QLabel* emblemTeam2
+    -QListWidget* scorerLists
+    -QLabel* emblemLabels
     -QTimer* slideshowTimer
-    -QLabel* slideshowLabel
-    -QStringList slideshowFiles
-    -int slideshowIndex
     -QString preGamePath
     -QString halfTimePath
     -QString postGamePath
@@ -106,26 +155,6 @@ classDiagram
     PreGameSlides
     HalfTimeSlides
     PostGameSlides
-  }
-
-  %% Central Controller
-  class MatchController {
-    -Team homeTeam
-    -Team awayTeam
-    -ScoreMemory* scoreMemory
-    -MatchTimer* timer
-    -ControlWindow* controlWindow
-    -ScoreBoard* scoreBoard
-    -WebSocketServer* webSocketServer
-    +void addGoal(int number, QString player, QString teamId, bool ownGoal)
-    +void removeGoal(int goalIndex)
-    +void addPlayer(QString teamId, unsigned number, QString name)
-    +void removePlayer(QString teamId, unsigned number)
-    +void startTimer()
-    +void stopTimer()
-    +void setMatchState(MatchState state)
-    +void handleCommand(MatchCommand* command)
-    +void publishSnapshot()
   }
 
   %% Web/Network Components
@@ -150,26 +179,31 @@ classDiagram
   Team --* "0..*" Player 
   ScoreMemory *-- "0..*" GoalEvent 
 
-  %% Controller to Components
+  %% MVC PATTERN: Controller to Components
   MatchController --> ScoreMemory 
   MatchController --> MatchTimer 
   MatchController --> Team 
-  MatchController --> ControlWindow 
-  MatchController --> ScoreBoard 
-  MatchController --> WebSocketServer
-
-  %% UI to Data/Controller
-  ControlWindow --> Team
-  ControlWindow --> MatchController 
   
+  %% View connections (both views use same controller)
+  ControlWindow ..> MatchController : delegates all actions
+  ScoreBoard ..> MatchController : displays state from
+  
+  %% ControlWindow only shows data from controller
+  ControlWindow --> MatchController : reads
+  ControlWindow --> MatchController : updates on
+
+  %% UI to Data access (through controller)
+  MatchController --> ScoreMemory 
+  MatchController --> MatchTimer
+
   ScoreBoard --> ScoreMemory 
   ScoreBoard --> MatchTimer
   ScoreBoard --> SlidesDataBase 
 
-  %% Web Communication
-  WebPage --> WebSocketServer : WebSocket JSON
-  WebSocketServer --> WebPage : WebSocket JSON
+  %% Web/WebInterface also delegates to same controller
+  WebPage ..> MatchController : delegates all actions
+  WebSocketServer --> WebPage : sends state
 
-
-
-
+  note for MatchController "Business Logic Layer:\nAll game logic, state management,\ndata validation, and operations"
+  note for ControlWindow "Presentation Layer:\nGUI for operator.\nAll interactions delegate to\nmatch_controller via signals/slots"
+  note for WebPage "Alternative Presentation:\nWeb UI for operators.\nSame operations, same controller"

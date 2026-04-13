@@ -25,6 +25,7 @@
 #include "score_board.h"
 #include "timer.h"
 #include "score_memory.h"
+#include "match_controller.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,13 +33,12 @@ int main(int argc, char *argv[])
 
   score_memory *ScoreMem = new score_memory();
   timer *gameTime = new timer();
+  match_controller *controller = new match_controller(ScoreMem, gameTime);
 
   Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
   scoreboard->show();
 
-  controll_window *window = new controll_window();
-  window->setScoreMemory(ScoreMem);
-  window->setTimer(gameTime);
+  controll_window *window = new controll_window(controller);
   window->show();
 
   // Set bidirectional window references for toggling
@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
   // Add emblem changed signal connection
   QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
 
-  // When operator confirms a new match state, notify the scoreboard
-  QObject::connect(window, &controll_window::matchStateChanged,
+  // Match controller is the source for interaction state changes
+  QObject::connect(controller, &match_controller::matchStateChanged,
                    scoreboard, &Score_board::setMatchState);
 
   return app.exec();

@@ -1,22 +1,29 @@
 /**
  * @file controll_window.h
- * @brief Control window for match operator to manage teams, scorers, and timer.
+ * @brief GUI Control window for match operator (View component).
  *
- * Provides interface for adding/removing players, logging goals, controlling
- * the match timer, and managing match state transitions. Synchronizes with
- * scoreboard display and score memory.
+ * Pure presentation layer that provides the operator control interface for managing
+ * matches. Displays team rosters, score, timer, and match state. All user interactions
+ * are collected via dialogs and delegated to match_controller for processing. This component
+ * receives updates from match_controller through Qt signals and updates the display accordingly.
  *
  * Features:
- * - Team roster management (add/remove players, CSV import with UTF-8).
- * - Goal logging with player selection and own-goal detection.
- * - Match timer control (start/stop/restart) with state validation.
- * - Match state machine (PreGame, FirstHalf, HalfTime, SecondHalf, PostGame).
- * - Team emblems management.
- * - Undo/reset functionality via Log dialog.
- * - Double-click toggle to hide/show scoreboard.
+ * - Team roster UI with add/remove player dialogs
+ * - Goal logging dialogs with player selection and own-goal detection
+ * - Timer control buttons with state validation feedback
+ * - Match state selection (PreGame → FirstHalf → HalfTime → SecondHalf → PostGame)
+ * - Team emblem upload and logo management
+ * - CSV import dialogs for batch player roster management
+ * - Scoreboard toggle via double-click feature
+ * - Real-time score and time display updates from controller
+ *
+ * Design Pattern:
+ * Implements View component of MVC pattern. All business logic is delegated to
+ * match_controller, enabling code reuse for web interfaces and other UI clients.
+ * Uses Qt signals/slots for communication with model.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.1, 2025-12-25
+ * @version 3.0, 2026-04-13 (Refactored for MVC pattern)
  */
 #ifndef CONTROLL_WINDOW_H
 #define CONTROLL_WINDOW_H
@@ -27,511 +34,302 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListWidget>
-#include <QDialog>
-#include <QLineEdit>
-#include <QDialogButtonBox>
-#include <QFileDialog>
 #include <QRadioButton>
 #include <QGroupBox>
 #include <QMouseEvent>
 
-#include "home_team.h"
-#include "away_team.h"
-#include "timer.h"
-#include "score_memory.h"
+#include "match_controller.h"
 
 class controll_window : public QWidget
 {
     Q_OBJECT
 
 public:
-    // Simple state machine for the match
-    enum class MatchState
-    {
-        PreGame = 0,
-        FirstHalf,
-        HalfTime,
-        SecondHalf,
-        PostGame
-    };
-
     /**
-     * @brief Constructor for the Control Window.
+     * @brief Constructs the control window and wires it to the controller.
      *
-     * Initializes the operator control interface with team management, goal logging,
-     * timer control, and match state selection. Creates UI elements for adding/removing
-     * players, importing team rosters from CSV, logging goals with player selection,
-     * uploading team emblems, and managing match phases (PreGame → FirstHalf → HalfTime
-     * → SecondHalf → PostGame).
+     * Creates all UI elements for operator interaction and connects view events
+     * to controller actions.
      *
-     * @param parent Parent widget pointer (default: nullptr)
-     *
-     * @note Constructs all UI elements and connects signals/slots for internal state
-     *       management. Does NOT require initial connections to score_memory, timer,
-     *       or Score_board; these are set later via setScoreMemory(), setTimer(), etc.
+     * @param controller Pointer to the match controller (must not be nullptr)
+     * @param parent Optional parent widget (default nullptr)
+     * @return void
      */
-    controll_window(QWidget *parent = nullptr);
+    controll_window(match_controller *controller, QWidget *parent = nullptr);
 
     /**
-     * @brief Initializes the control window with a score memory instance.
+     * @brief Sets the scoreboard widget used for visibility toggling.
      *
-     * Stores a pointer to the score memory object and connects the goalsUpdated signal
-     * to the UpdateScoreDisplay() slot for live score synchronization.
+     * Stores a reference to the scoreboard window so it can be shown or hidden
+     * from this control window.
      *
-     * @param mem Pointer to the score_memory instance managing goal data.
-     *
-     * @note Called during main window initialization in main.cpp before setTimer().
-     * @note Enables automatic score display updates when goals are logged.
-     *
-     * @see setTimer() for timer initialization
-     * @see score_memory class
-     */
-    void setScoreMemory(score_memory *mem);
-
-    /**
-     * @brief Initializes the control window with a timer instance.
-     *
-     * Stores a pointer to the timer object and connects timeUpdated and timeout signals
-     * to UpdateTimeDisplay() and handleTimerTimeout() slots respectively for live timer
-     * synchronization and half-time transition handling.
-     *
-     * @param t Pointer to the timer instance managing match time.
-     *
-     * @note Called during main window initialization in main.cpp after setScoreMemory().
-     * @note Enables automatic time display updates and half-time notifications.
-     *
-     * @see setScoreMemory() for score memory initialization
-     * @see timer class
-     * @see handleTimerTimeout()
-     */
-    void setTimer(timer *t);
-
-    /**
-     * @brief Stores a reference to the scoreboard window for toggling.
-     *
-     * Saves the scoreboard widget pointer for bidirectional window control.
-     * Enables the double-click toggle feature on the control window to show/hide the scoreboard.
-     *
-     * @param board Pointer to the Score_board widget (audience display window).
-     *
-     * @note Called during main window initialization in main.cpp.
-     * @note Enables toggleScoreboard() functionality.
-     *
-     * @see toggleScoreboard()
-     * @see Score_board::setControlWindow() for reverse reference
+     * @param board Pointer to the scoreboard widget
+     * @return void
      */
     void setScoreboard(QWidget *board);
 
     /**
-     * @brief Toggles the scoreboard window visibility (show ↔ hide).
+     * @brief Toggles scoreboard visibility.
      *
-     * If the scoreboard is currently visible, hides it. If hidden, shows it, brings it to
-     * the foreground (raises), and activates the window. This enables smooth window toggling
-     * for presentations where the audience display may need to be temporarily hidden.
+     * Shows the scoreboard if hidden and hides it if currently visible.
      *
-     * @note Triggered by double-clicking the control window (mouseDoubleClickEvent).
-     * @note Safe check: Only toggles if scoreboard pointer is non-null.
-     * @note Window management: Uses raise() and activateWindow() for proper focus handling.
-     *
-     * @see mouseDoubleClickEvent() for double-click trigger
-     * @see setScoreboard() for initialization
+     * @return void
      */
     void toggleScoreboard();
 
 signals:
     /**
-     * @brief Signal emitted when a team emblem is changed.
+     * @brief Emitted when a team emblem image has changed.
      *
-     * @param team Team designation ("Home" or "Away")
-     * @param filepath Absolute path to the selected emblem image file
+     * Notifies connected views (for example the scoreboard) to reload and
+     * display the updated emblem.
      *
-     * @note Connected to Score_board::updateEmblem() in main.cpp
+     * @param team Team identifier (e.g., "Home" or "Away")
+     * @param filepath Absolute path to the emblem image file
+     * @return void
      */
     void emblemChanged(const QString &team, const QString &filepath);
 
-    /**
-     * @brief Signal emitted when the operator confirms a new match state.
-     *
-     * Notifies other components (e.g., Score_board) of the current match phase.
-     *
-     * @param state Integer representation of MatchState enum (use static_cast<int>(MatchState))
-     *
-     * @note Connected to Score_board::setMatchState() in main.cpp
-     * @see MatchState enum for possible values
-     * @see applyStateSelection() where this signal is emitted
-     */
-    void matchStateChanged(int state);
-
 protected:
     /**
-     * @brief Handles double-click events on the control window.
+     * @brief Handles mouse double-click events on the control window.
      *
-     * Overrides the Qt mouseDoubleClickEvent to enable toggling the scoreboard window
-     * visibility. Any double-click anywhere on the control window triggers the scoreboard
-     * toggle. This provides quick access to show/hide the audience display without using
-     * a dedicated menu or button.
+     * Used as a shortcut interaction to toggle scoreboard visibility.
      *
-     * @param event Qt mouse event (unused; location of click not evaluated).
-     *
-     * @note Event parameter ignored: Double-click anywhere on window triggers toggle.
-     * @note Feature: Allows operator to quickly hide scoreboard during setup/breaks.
-     * @note Bidirectional: Scoreboard can also toggle control window via double-click.
-     *
-     * @see toggleScoreboard() for toggle implementation
-     * @see Score_board::mouseDoubleClickEvent() for scoreboard side
+     * @param event Mouse double-click event data
+     * @return void
      */
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private slots:
     /**
-     * @brief Opens a dialog to add a player to the home team.
-     *
-     * Displays a modal dialog prompting the operator to enter a player's number and name.
-     * On confirmation, validates the input and adds the player to team1. On validation failure,
-     * displays an error message. Updates the home team list on success.
-     *
-     * @note Uses Qt dialogs and signals/slots for user interaction.
-     * @note Input validation: number must be a valid integer, name must not be empty.
-     *
-     * @see AddPlayerTeam2() for away team equivalent
-     * @see RemovePlayerTeam1() for removing players
+     * @brief Opens dialog flow to add a player to team 1.
+     * @return void
      */
-    void AddPlayerTeam1();
+    void addPlayerTeam1();
 
     /**
-     * @brief Opens a dialog to add a player to the away team.
-     *
-     * Displays a modal dialog prompting the operator to enter a player's number and name.
-     * On confirmation, validates the input and adds the player to team2. On validation failure,
-     * displays an error message. Updates the away team list on success.
-     *
-     * @note Uses Qt dialogs and signals/slots for user interaction.
-     * @note Input validation: number must be a valid integer, name must not be empty.
-     *
-     * @see AddPlayerTeam1() for home team equivalent
-     * @see RemovePlayerTeam2() for removing players
+     * @brief Opens dialog flow to add a player to team 2.
+     * @return void
      */
-    void AddPlayerTeam2();
-    /**
-     * @brief Removes a selected player from the home team roster.
-     *
-     * When a home team player in the list is clicked, displays a confirmation dialog.
-     * If confirmed, extracts the player number from the list item and removes them from team1.
-     * Updates the home team list display after removal.
-     *
-     * @param item Clicked QListWidgetItem containing the player "[Number] - [Name]" text.
-     *
-     * @note Connected as a slot to listTeam1's itemClicked signal.
-     * @see RemovePlayerTeam2() for away team equivalent
-     * @see AddPlayerTeam1() for adding players
-     */
-    void RemovePlayerTeam1(QListWidgetItem *item);
+    void addPlayerTeam2();
 
     /**
-     * @brief Removes a selected player from the away team roster.
+     * @brief Removes the selected player from team 1.
      *
-     * When an away team player in the list is clicked, displays a confirmation dialog.
-     * If confirmed, extracts the player number from the list item and removes them from team2.
-     * Updates the away team list display after removal.
+     * Triggered from team list interaction with the selected list item.
      *
-     * @param item Clicked QListWidgetItem containing the player "[Number] - [Name]" text.
-     *
-     * @note Connected as a slot to listTeam2's itemClicked signal.
-     * @see RemovePlayerTeam1() for home team equivalent
-     * @see AddPlayerTeam2() for adding players
+     * @param item Pointer to the clicked/selected team 1 list item
+     * @return void
      */
-    void RemovePlayerTeam2(QListWidgetItem *item);
+    void removePlayerTeam1(QListWidgetItem *item);
 
     /**
-     * @brief Opens a dialog to log a goal for the home team.
+     * @brief Removes the selected player from team 2.
      *
-     * Displays a modal dialog with separate player lists for both teams. Operator selects
-     * a player and optionally adjusts the goal time (auto-filled from current timer +1 minute).
-     * If the selected player is from the away team (team2), prompts for own goal confirmation.
-     * On save, passes the goal data to ScoreMemory with the "Home" team designation.
+     * Triggered from team list interaction with the selected list item.
      *
-     * @note Goal time format: minutes as integer (0-90).
-     * @note Own goal logic: confirms if away team player is selected.
-     * @note Auto-time feature respects current match phase (FirstHalf/SecondHalf).
-     *
-     * @see AddGoalTeam2() for away team equivalent
-     * @see score_memory::addGoal() for goal data persistence
+     * @param item Pointer to the clicked/selected team 2 list item
+     * @return void
      */
-    void AddGoalTeam1();
+    void removePlayerTeam2(QListWidgetItem *item);
 
     /**
-     * @brief Opens a dialog to log a goal for the away team.
+     * @brief Opens goal-entry dialog for team 1.
      *
-     * Displays a modal dialog with separate player lists for both teams. Operator selects
-     * a player and optionally adjusts the goal time (auto-filled from current timer +1 minute).
-     * If the selected player is from the home team (team1), prompts for own goal confirmation.
-     * On save, passes the goal data to ScoreMemory with the "Away" team designation.
+     * Collects scorer and own-goal information and delegates processing to
+     * the controller.
      *
-     * @note Goal time format: minutes as integer (0-90).
-     * @note Own goal logic: confirms if home team player is selected.
-     * @note Auto-time feature respects current match phase (FirstHalf/SecondHalf).
-     *
-     * @see AddGoalTeam1() for home team equivalent
-     * @see score_memory::addGoal() for goal data persistence
+     * @return void
      */
-    void AddGoalTeam2();
+    void addGoalTeam1();
 
     /**
-     * @brief Starts the match timer if conditions are met.
+     * @brief Opens goal-entry dialog for team 2.
      *
-     * Starts the timer only if the current match state is FirstHalf or SecondHalf.
-     * Disables the Start Timer button during execution to prevent duplicate start signals.
-     * If the timer is already running, performs no action.
+     * Collects scorer and own-goal information and delegates processing to
+     * the controller.
      *
-     * @note Timer is managed by the timer class; this method only sends the start signal.
-     * @note Button state is managed by applyStateSelection() based on match phase.
-     * @note Debug output: logs "Time is running" or "Timer can only start in First/Second Half".
-     *
-     * @see handleTimerTimeout() for half-time transitions
-     * @see applyStateSelection() for state validation
+     * @return void
      */
-    void StartTime();
+    void addGoalTeam2();
 
     /**
-     * @brief Updates the operator's time display label.
+     * @brief Starts or advances timer state through the controller.
      *
-     * Receives the current elapsed time from the timer and updates the control window's
-     * time label. This is a slot connected to timer::timeUpdated signal for live updates
-     * during match play.
+     * Applies controller validation rules before starting match time.
      *
-     * @param elapsedTime Current elapsed time in format "MM:SS" (e.g., "15:30").
-     *
-     * @note Connected as a slot to timer::timeUpdated signal in setTimer().
-     * @see timer::timeUpdated
-     * @see UpdateScoreDisplay() for score updates
+     * @return void
      */
-    void UpdateTimeDisplay(const QString &elapsedTime);
+    void startTimer();
 
     /**
-     * @brief Updates the operator's score display label.
-     *
-     * Retrieves current home and away team scores from ScoreMemory and formats them
-     * as "[Home] : [Away]" in the control window's score label. This is a slot connected
-     * to score_memory::goalsUpdated signal for live updates.
-     *
-     * @note Connected as a slot to score_memory::goalsUpdated signal in setScoreMemory().
-     * @see score_memory::getHomeScore()
-     * @see score_memory::getAwayScore()
-     * @see UpdateTimeDisplay() for time updates
+     * @brief Logs relevant match events/state for operator tracking.
+     * @return void
      */
-    void UpdateScoreDisplay();
+    void log();
 
     /**
-     * @brief Opens a dialog with game control options (Restart, Reset, Undo Goal).
+     * @brief Opens file chooser and loads emblem for team 1.
      *
-     * Displays a modal dialog with three action buttons:
-     * - **Restart**: Restarts the timer for the current phase.
-     * - **Reset**: Resets both score and timer to match phase start; re-enables Start Timer button.
-     * - **Undo Goal**: Removes the last recorded goal from the score memory.
+     * Emits emblemChanged after a valid selection.
      *
-     * Dialog is closed via Cancel button or action selection.
-     *
-     * @note Restart: Calls timer::restart()
-     * @note Reset: Calls timer::resetToPhaseStart() and score_memory::resetGame()
-     * @note Undo Goal: Calls score_memory::removeLastGoal()
-     * @note Debug output logs which action was selected.
-     *
-     * @see score_memory::resetGame()
-     * @see score_memory::removeLastGoal()
-     * @see timer::restart()
-     * @see timer::resetToPhaseStart()
-     */
-    void Log();
-
-    /**
-     * @brief Opens a file dialog to select and upload a home team emblem image.
-     *
-     * Displays a file browser dialog for selecting an image file (PNG, JPG, BMP).
-     * On selection, stores the file path and emits the emblemChanged signal with
-     * team designation "Home" to notify the scoreboard to display the new emblem.
-     *
-     * @note Supported formats: PNG, JPG, BMP.
-     * @note Emits emblemChanged("Home", filePath) on successful selection.
-     * @note Stores file path in emblemTeam1 member variable.
-     *
-     * @see loadEmblemTeam2() for away team equivalent
-     * @see emblemChanged signal
+     * @return void
      */
     void loadEmblemTeam1();
 
     /**
-     * @brief Opens a file dialog to select and upload an away team emblem image.
+     * @brief Opens file chooser and loads emblem for team 2.
      *
-     * Displays a file browser dialog for selecting an image file (PNG, JPG, BMP).
-     * On selection, stores the file path and emits the emblemChanged signal with
-     * team designation "Away" to notify the scoreboard to display the new emblem.
+     * Emits emblemChanged after a valid selection.
      *
-     * @note Supported formats: PNG, JPG, BMP.
-     * @note Emits emblemChanged("Away", filePath) on successful selection.
-     * @note Stores file path in emblemTeam2 member variable.
-     *
-     * @see loadEmblemTeam1() for home team equivalent
-     * @see emblemChanged signal
+     * @return void
      */
     void loadEmblemTeam2();
 
     /**
-     * @brief Imports the home team player roster from a CSV file.
+     * @brief Imports team 1 roster from CSV.
      *
-     * Opens a file browser dialog to select a CSV file. Reads the file with UTF-8 encoding
-     * (supporting German umlauts ä, ö, ü) and parses player data. Supports dynamic delimiter
-     * detection: semicolon (;) or comma (,). Each line must have format: "[Number];[Name]".
-     * Parses and adds each player to team1, then updates the team list display.
-     * On file error, displays a warning message.
+     * Delegates parsing and insertion logic to controller/model components.
      *
-     * @note CSV delimiter: Semicolon (;) preferred; comma (,) as fallback.
-     * @note UTF-8 encoding: Preserves German umlauts and accents.
-     * @note Input validation: Number must be integer; name must not be empty.
-     * @note File extension: .csv or .CSV
-     *
-     * @see ImportTeam2() for away team equivalent
-     * @see updateTeamList1() for display refresh
+     * @return void
      */
-    void ImportTeam1();
+    void importTeam1();
 
     /**
-     * @brief Imports the away team player roster from a CSV file.
+     * @brief Imports team 2 roster from CSV.
      *
-     * Opens a file browser dialog to select a CSV file. Reads the file with UTF-8 encoding
-     * (supporting German umlauts ä, ö, ü) and parses player data. Supports dynamic delimiter
-     * detection: semicolon (;) or comma (,). Each line must have format: "[Number];[Name]".
-     * Parses and adds each player to team2, then updates the team list display.
-     * On file error, displays a warning message.
+     * Delegates parsing and insertion logic to controller/model components.
      *
-     * @note CSV delimiter: Semicolon (;) preferred; comma (,) as fallback.
-     * @note UTF-8 encoding: Preserves German umlauts and accents.
-     * @note Input validation: Number must be integer; name must not be empty.
-     * @note File extension: .csv or .CSV
-     *
-     * @see ImportTeam1() for home team equivalent
-     * @see updateTeamList2() for display refresh
+     * @return void
      */
-    void ImportTeam2();
+    void importTeam2();
 
     /**
-     * @brief Applies the operator's selected match state with validation and synchronization.
+     * @brief Applies currently selected match state radio option.
      *
-     * Reads the selected radio button state (PreGame, FirstHalf, HalfTime, SecondHalf, PostGame)
-     * and validates the transition. If no change is detected, returns immediately.
+     * Converts UI selection into controller state transition request.
      *
-     * If transitioning away from an active phase (FirstHalf/SecondHalf) while the timer is running,
-     * displays a confirmation dialog. User may cancel (restores radio button) or confirm (stops/resets timer).
-     *
-     * On successful state change:
-     * - Updates m_currentState
-     * - Enables/disables Start Timer button based on phase (only enabled during FirstHalf/SecondHalf)
-     * - Emits matchStateChanged() signal with new state integer value
-     * - Notifies timer of phase change via timer::setPhase()
-     *
-     * @note State machine: PreGame → FirstHalf → HalfTime → SecondHalf → PostGame
-     * @note Timer safety: Prevents accidental timer state loss during phase transitions.
-     * @note Start Timer button: Automatically managed per phase; no manual manipulation needed.
-     *
-     * @see MatchState enum
-     * @see handleTimerTimeout() for automatic half-time progression
-     * @see timer::setPhase() for timer phase synchronization
+     * @return void
      */
     void applyStateSelection();
 
     /**
-     * @brief Handles timer timeout at end of first half (45 minutes).
+     * @brief Handles second-half transition decision workflow.
      *
-     * Called automatically by the timer at the 45-minute mark during FirstHalf phase.
-     * Re-enables the Start Timer button and displays a confirmation dialog asking if the
-     * operator wants to begin the second half.
+     * Executes any confirmation logic required before entering second half.
      *
-     * If confirmed (Yes):
-     * - Sets radio button to SecondHalf
-     * - Calls applyStateSelection() to transition state
-     * - Calls StartTime() to begin second half timer
-     *
-     * If declined (No):
-     * - Leaves timer stopped and waits for operator action
-     * - Logs debug message "Second half not started."
-     *
-     * @note Connected to timer::timeout signal in setTimer().
-     * @note Operates only during FirstHalf phase; ignores timeout in other phases.
-     * @note User interaction: Modal dialog with Yes/No buttons.
-     *
-     * @see applyStateSelection() for state transition
-     * @see StartTime() for timer resumption
-     * @see timer::timeout signal
+     * @return void
      */
-    void handleTimerTimeout();
-
-private:
-    // Current state (default: PreGame)
-    MatchState m_currentState = MatchState::PreGame;
-
-    // Elements for connect with other classes
-    home_team team1;
-    away_team team2;
-
-    timer *gametime;
-    score_memory *ScoreMemory;
-    QWidget *scoreboard = nullptr;
-
-    // GUI elements for player management
-    QPushButton *btnAddPlayerTeam1;
-    QPushButton *btnAddPlayerTeam2;
-
-    // GUI elements for goal management
-    QPushButton *btnGoalTeam1;
-    QPushButton *btnGoalTeam2;
-
-    // GUI elements for timer-start and log buttons
-    QPushButton *btnStartTimer;
-    QPushButton *btnLog;
-
-    // GUI elements for match state selection (state machine)
-    QRadioButton *radioPreGame;
-    QRadioButton *radioFirstHalf;
-    QRadioButton *radioHalfTime;
-    QRadioButton *radioSecondHalf;
-    QRadioButton *radioPostGame;
-    QPushButton *btnApplyState;
-
-    QListWidget *listTeam1;
-    QListWidget *listTeam2;
-
-    // Time and score for the operator
-    QLabel *score;
-    QLabel *time;
-
-    // Emblem features
-    QPushButton *btnAddEmblemTeam1;
-    QPushButton *btnAddEmblemTeam2;
-    QString emblemTeam1;
-    QString emblemTeam2;
-
-    // Import player list buttons
-    QPushButton *btnImportTeam1;
-    QPushButton *btnImportTeam2;
+    void secondHalfDecision();
 
     /**
-     * @brief Updates the home team player list display.
+     * @brief Refreshes score label from current controller/model state.
+     * @return void
+     */
+    void updateScoreDisplay();
+
+    /**
+     * @brief Updates the time label with formatted elapsed time.
      *
-     * Clears and repopulates the home team list widget with current players from team1.
-     * Each player is displayed as "[Number] - [Name]".
-     *
-     * @see updateTeamList2() for away team equivalent
+     * @param elapsedTime Formatted time string (e.g., MM:SS)
+     * @return void
+     */
+    void updateTimeDisplay(const QString &elapsedTime);
+
+    /**
+     * @brief Rebuilds team 1 player list in the UI.
+     * @return void
      */
     void updateTeamList1();
 
     /**
-     * @brief Updates the away team player list display.
-     *
-     * Clears and repopulates the away team list widget with current players from team2.
-     * Each player is displayed as "[Number] - [Name]".
-     *
-     * @see updateTeamList1() for home team equivalent
+     * @brief Rebuilds team 2 player list in the UI.
+     * @return void
      */
     void updateTeamList2();
+
+    /**
+     * @brief Syncs radio-state selection when controller state changes.
+     *
+     * @param state Integer representation of match_controller::MatchState
+     * @return void
+     */
+    void controllerStateChanged(int state);
+
+private:
+    /**
+     * @brief Controller reference used for all business logic operations.
+     */
+    match_controller *m_controller = nullptr;
+
+    /**
+     * @brief Optional scoreboard window reference for toggling visibility.
+     */
+    QWidget *scoreboard = nullptr;
+
+    /** @brief Button to add a player to team 1. */
+    QPushButton *btnAddPlayerTeam1;
+    /** @brief Button to add a player to team 2. */
+    QPushButton *btnAddPlayerTeam2;
+    /** @brief Button to register a goal for team 1. */
+    QPushButton *btnGoalTeam1;
+    /** @brief Button to register a goal for team 2. */
+    QPushButton *btnGoalTeam2;
+    /** @brief Button to start/control timer progression. */
+    QPushButton *btnStartTimer;
+    /** @brief Button to trigger event logging action. */
+    QPushButton *btnLog;
+    /** @brief Button to apply selected match state. */
+    QPushButton *btnApplyState;
+    /** @brief Button to load emblem for team 1. */
+    QPushButton *btnAddEmblemTeam1;
+    /** @brief Button to load emblem for team 2. */
+    QPushButton *btnAddEmblemTeam2;
+    /** @brief Button to import team 1 roster from CSV. */
+    QPushButton *btnImportTeam1;
+    /** @brief Button to import team 2 roster from CSV. */
+    QPushButton *btnImportTeam2;
+
+    /** @brief List widget displaying team 1 roster. */
+    QListWidget *listTeam1;
+    /** @brief List widget displaying team 2 roster. */
+    QListWidget *listTeam2;
+
+    /** @brief Radio option for PreGame state. */
+    QRadioButton *radioPreGame;
+    /** @brief Radio option for FirstHalf state. */
+    QRadioButton *radioFirstHalf;
+    /** @brief Radio option for HalfTime state. */
+    QRadioButton *radioHalfTime;
+    /** @brief Radio option for SecondHalf state. */
+    QRadioButton *radioSecondHalf;
+    /** @brief Radio option for PostGame state. */
+    QRadioButton *radioPostGame;
+
+    /** @brief Label showing current score. */
+    QLabel *score;
+    /** @brief Label showing current elapsed match time. */
+    QLabel *time;
+
+    /**
+     * @brief Returns match state selected by radio buttons.
+     *
+     * Reads current UI radio selection and maps it to controller enum value.
+     *
+     * @return Selected match_controller::MatchState
+     */
+    match_controller::MatchState selectedState() const;
+
+    /**
+     * @brief Updates radio button selection from a given match state.
+     *
+     * Used to keep UI state synchronized with controller state.
+     *
+     * @param state Match state to reflect in radio buttons
+     * @return void
+     */
+    void setStateSelection(match_controller::MatchState state);
 };
 
 #endif // CONTROLL_WINDOW_H

@@ -1,0 +1,21 @@
+CompileFlags:
+  CompilationDatabase: Software/build/vscode
+  Add:
+    - -std=gnu++17
+    - -x
+    - c++
+    - -DQT_CORE_LIB
+    - -DQT_GUI_LIB
+    - -DQT_WIDGETS_LIB
+    - -IC:/Users/paran/Desktop/Anzeigetafel/Software/include
+    - -IC:/Users/paran/Desktop/Anzeigetafel/Software/build/vscode/anzeigetafel_autogen/include
+    - -isystem
+    - C:/Qt/6.10.0/mingw_64/include
+    - -isystem
+    - C:/Qt/6.10.0/mingw_64/include/QtCore
+    - -isystem
+    - C:/Qt/6.10.0/mingw_64/include/QtGui
+    - -isystem
+    - C:/Qt/6.10.0/mingw_64/include/QtWidgets
+    - -isystem
+    - C:/Qt/6.10.0/mingw_64/mkspecs/win32-g++
