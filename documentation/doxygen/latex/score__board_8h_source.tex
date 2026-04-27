@@ -1,0 +1,116 @@
+\doxysection{score\+\_\+board.\+h}
+\hypertarget{score__board_8h_source}{}\label{score__board_8h_source}\index{Software/include/score\_board.h@{Software/include/score\_board.h}}
+\mbox{\hyperlink{score__board_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#ifndef\ SCORE\_BOARD\_H}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ SCORE\_BOARD\_H}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <QWidget>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <QLabel>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <QVBoxLayout>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <QListWidget>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <QKeyEvent>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QMouseEvent>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <QShortcut>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <QTimer>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <QDir>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <QPixmap>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <QMouseEvent>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <QFileInfo>}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{score__memory_8h}{score\_memory.h}}"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{timer_8h}{timer.h}}"{}}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_score__board}{Score\_board}}\ :\ \textcolor{keyword}{public}\ QWidget}
+\DoxyCodeLine{00039\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8}{MatchState}}}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a554bc137278892a248cb9fd7d66a66d9}{PreGame}}\ =\ 0,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae49e0f7b63da990b8ddb40bed3acc7cd}{FirstHalf}},}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a4c80456fd750cab4a37baefdea988570}{HalfTime}},}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a8a59e14729ef3c2f7ebe45db856ca0b0}{SecondHalf}},}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae5b456c484a0ec6a32301d03121fd80b}{PostGame}}}
+\DoxyCodeLine{00061\ \ \ \ \ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{class_score__board_a42a7fddce552d01be65dc4541ffa2b96}{Score\_board}}(\mbox{\hyperlink{classscore__memory}{score\_memory}}\ *scoreMemory,\ \mbox{\hyperlink{classtimer}{timer}}\ *gameTime,\ QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_a1bcf2aaa0eb55eabbbe7a879787d3e37}{setControlWindow}}(QWidget\ *window);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8}{MatchState}}\ m\_state\ =\ \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a554bc137278892a248cb9fd7d66a66d9}{MatchState::PreGame}};}
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{classscore__memory}{score\_memory}}\ *Score;}
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{classtimer}{timer}}\ *gameTime;}
+\DoxyCodeLine{00094\ \ \ \ \ QWidget\ *controlWindow\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00097\ \ \ \ \ QLabel\ *scoreLabel;}
+\DoxyCodeLine{00099\ \ \ \ \ QLabel\ *timeLabel;}
+\DoxyCodeLine{00101\ \ \ \ \ QListWidget\ *scorerListTeam1;}
+\DoxyCodeLine{00103\ \ \ \ \ QListWidget\ *scorerListTeam2;}
+\DoxyCodeLine{00105\ \ \ \ \ QLabel\ *emblemTeam1;}
+\DoxyCodeLine{00107\ \ \ \ \ QLabel\ *emblemTeam2;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00110\ \ \ \ \ QTimer\ *slideshowTimer\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00112\ \ \ \ \ QLabel\ *slideshowLabel\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00114\ \ \ \ \ QStringList\ slideshowFiles;}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{int}\ slideshowIndex\ =\ 0;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//\ Windows\ path}}
+\DoxyCodeLine{00119\ \ \ \ \ QString\ preGamePath\ =\ \textcolor{stringliteral}{"{}C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame"{}};}
+\DoxyCodeLine{00120\ \ \ \ \ QString\ halfTimePath\ =\ \textcolor{stringliteral}{"{}C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime"{}};}
+\DoxyCodeLine{00121\ \ \ \ \ QString\ postGamePath\ =\ \textcolor{stringliteral}{"{}C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame"{}};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ Linux\ path}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//\ QString\ preGamePath\ \ =\ "{}/home/rpi/Anzeigetafel/slides/PreGame"{};}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{//\ QString\ halfTimePath\ =\ "{}/home/rpi/Anzeigetafel/slides/HalfTime"{};}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//\ QString\ postGamePath\ =\ "{}/home/rpi/Anzeigetafel/slides/PostGame"{};}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{void}\ setupLayout();}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ applyStyle();}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ adjustFontSize();}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{void}\ adjustEmblemSize();}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{void}\ updateViewForState();}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{void}\ startSlideshow(\textcolor{keyword}{const}\ QString\ \&folderPath);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keywordtype}{void}\ stopSlideshow();}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{void}\ showNextSlide();}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00190\ \ \ \ \ QStringList\ collectSlides(\textcolor{keyword}{const}\ QString\ \&folderPath);}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00198\ \ \ \ \ QStringList\ collectImages(\textcolor{keyword}{const}\ QDir\ \&dir);}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{void}\ updateScore();}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{void}\ extracted(QList<Goal>\ \&goals);}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{void}\ updateGoals();}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTime(\textcolor{keyword}{const}\ QString\ \&time);}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_afb76e5fc0107a91738d0601f372fcd58}{keyPressEvent}}(QKeyEvent\ *event)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_a97e9b9f1b8db10b4121329ea7b610407}{resizeEvent}}(QResizeEvent\ *event)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_a58ce3e5f9f00bc751090189b3364407a}{mouseDoubleClickEvent}}(QMouseEvent\ *event)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \textcolor{keyword}{public}\ slots:}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_a77c56321ce31224260e4280b9b72d82c}{updateEmblem}}(\textcolor{keyword}{const}\ QString\ \&\mbox{\hyperlink{classteam}{team}},\ \textcolor{keyword}{const}\ QString\ \&filePath);}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_a0403b27579d1787694460fc0bff5f7f4}{setMatchState}}(\textcolor{keywordtype}{int}\ state);}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_score__board_aaee006696708f8f4bde960205ed5ed08}{toggleControlWindow}}();}
+\DoxyCodeLine{00299\ \};}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SCORE\_BOARD\_H}}
+
+\end{DoxyCode}

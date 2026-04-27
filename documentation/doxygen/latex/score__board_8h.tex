@@ -1,0 +1,47 @@
+\doxysection{Software/include/score\+\_\+board.h File Reference}
+\hypertarget{score__board_8h}{}\label{score__board_8h}\index{Software/include/score\_board.h@{Software/include/score\_board.h}}
+
+
+Scoreboard display window for live match information.  
+
+
+{\ttfamily \#include $<$QWidget$>$}\newline
+{\ttfamily \#include $<$QLabel$>$}\newline
+{\ttfamily \#include $<$QVBox\+Layout$>$}\newline
+{\ttfamily \#include $<$QList\+Widget$>$}\newline
+{\ttfamily \#include $<$QKey\+Event$>$}\newline
+{\ttfamily \#include $<$QMouse\+Event$>$}\newline
+{\ttfamily \#include $<$QShortcut$>$}\newline
+{\ttfamily \#include $<$QTimer$>$}\newline
+{\ttfamily \#include $<$QDir$>$}\newline
+{\ttfamily \#include $<$QPixmap$>$}\newline
+{\ttfamily \#include $<$QFile\+Info$>$}\newline
+{\ttfamily \#include "{}score\+\_\+memory.\+h"{}}\newline
+{\ttfamily \#include "{}timer.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_score__board}{Score\+\_\+board}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Scoreboard display window for live match information. 
+
+Displays live score, match time, and goal scorer information to audience. Supports fullscreen mode, team emblems, and state-\/based content (slides for Pre\+Game/\+Half\+Time/\+Post\+Game, match stats for First\+Half/\+Second\+Half).
+
+Features\+:
+\begin{DoxyItemize}
+\item Fullscreen display with frameless window.
+\item Dynamic font scaling based on window size.
+\item Scoreboards (team emblems, score, time, goal list).
+\item Slide show for non-\/game states.
+\item Double-\/click toggle to hide/show control window.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+3.\+0, 2026-\/04-\/13 
+\end{DoxyVersion}

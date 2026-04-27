@@ -1,0 +1,641 @@
+\doxysection{match\+\_\+controller Class Reference}
+\hypertarget{classmatch__controller}{}\label{classmatch__controller}\index{match\_controller@{match\_controller}}
+Inheritance diagram for match\+\_\+controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classmatch__controller}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structmatch__controller_1_1_goal_data}{Goal\+Data}}
+\begin{DoxyCompactList}\small\item\em Input payload for adding a goal through controller validation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} \{ \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a8cf04a9734132302f96da8e113e80ce5}{Home}} = 0
+, \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a312dc56ea9c386a6bc913f988a233791}{Away}}
+ \}
+\begin{DoxyCompactList}\small\item\em Identifies which team an operation targets. \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{Match\+State}} \{ \newline
+\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a554bc137278892a248cb9fd7d66a66d9}{Pre\+Game}} = 0
+, \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae49e0f7b63da990b8ddb40bed3acc7cd}{First\+Half}}
+, \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a4c80456fd750cab4a37baefdea988570}{Half\+Time}}
+, \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a8a59e14729ef3c2f7ebe45db856ca0b0}{Second\+Half}}
+, \newline
+\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae5b456c484a0ec6a32301d03121fd80b}{Post\+Game}}
+ \}
+\begin{DoxyCompactList}\small\item\em Match phase state machine used by controller and views. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classmatch__controller_a539c2f9bc45bb0c1ba16dac7267287c1}{on\+Second\+Half\+Decision}} (bool start\+Second\+Half)
+\begin{DoxyCompactList}\small\item\em Processes user decision for starting second half. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classmatch__controller_a4f007ec1d50630393a413832d0dadc92}{home\+Players\+Changed}} ()
+\begin{DoxyCompactList}\small\item\em Emitted when home roster changes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_af1b8375b739597085c47a6a9ca507fee}{away\+Players\+Changed}} ()
+\begin{DoxyCompactList}\small\item\em Emitted when away roster changes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a067e93d0bb6b639b65bb2add3bdce553}{score\+Changed}} ()
+\begin{DoxyCompactList}\small\item\em Emitted when score values change. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a482f98d80cab03eb9e1b8590c61c72a0}{time\+Changed}} (const QString \&elapsed\+Time)
+\begin{DoxyCompactList}\small\item\em Emitted when timer display text changes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_aacc93f6db22dedabc87ad65189b1a9a2}{match\+State\+Changed}} (int state)
+\begin{DoxyCompactList}\small\item\em Emitted when match state changes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a3a56c4922c5a4512be0179297f4e4312}{start\+Timer\+Enabled\+Changed}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Emitted when UI should enable/disable timer start action. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_aa99fad43c8268f877168250739c9bb41}{second\+Half\+Decision\+Needed}} ()
+\begin{DoxyCompactList}\small\item\em Emitted when second-\/half start requires user decision. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a741baff231dbe653b98109b426aaa4c0}{emblem\+Changed}} (const QString \&\mbox{\hyperlink{classteam}{team}}, const QString \&filepath)
+\begin{DoxyCompactList}\small\item\em Emitted when a team emblem has changed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmatch__controller_a6160b92697ffde13e0d0f79ba96f9a23}{match\+\_\+controller}} (\mbox{\hyperlink{classscore__memory}{score\+\_\+memory}} \texorpdfstring{$\ast$}{*}score\+Memory, \mbox{\hyperlink{classtimer}{timer}} \texorpdfstring{$\ast$}{*}game\+Timer, QObject \texorpdfstring{$\ast$}{*}parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs the central match controller. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{Match\+State}} \mbox{\hyperlink{classmatch__controller_a24ebd4d12a7115173b66fdb086ed2a83}{current\+State}} () const
+\begin{DoxyCompactList}\small\item\em Returns the current match state. \end{DoxyCompactList}\item 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& \mbox{\hyperlink{classmatch__controller_af2d07270ec3d2e2df295eb5de7e7e06a}{get\+Home\+Players}} () const
+\begin{DoxyCompactList}\small\item\em Returns read-\/only list of home team players. \end{DoxyCompactList}\item 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& \mbox{\hyperlink{classmatch__controller_ab000e67179fa2a6aca2b3127036dfddb}{get\+Away\+Players}} () const
+\begin{DoxyCompactList}\small\item\em Returns read-\/only list of away team players. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classmatch__controller_a43145f1efad4aa2c87ccb7ce80790b04}{get\+Home\+Score}} () const
+\begin{DoxyCompactList}\small\item\em Returns current home team score. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classmatch__controller_a67bba3d0c8207be2e7463b5d87b43810}{get\+Away\+Score}} () const
+\begin{DoxyCompactList}\small\item\em Returns current away team score. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a148a4926940492f9955506f40203eaab}{add\+Player}} (\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} side, unsigned number, const QString \&name)
+\begin{DoxyCompactList}\small\item\em Adds a player to the selected team roster. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_ae72568c4936d5a4d852998854be6f6c6}{remove\+Player}} (\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} side, unsigned number)
+\begin{DoxyCompactList}\small\item\em Removes a player from the selected team roster. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classmatch__controller_afc52cbae8785bcb3aa9e5e203acac33d}{import\+Players\+From\+Csv}} (\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} side, const QString \&file\+Path, int \texorpdfstring{$\ast$}{*}imported\+Count=nullptr)
+\begin{DoxyCompactList}\small\item\em Imports a team roster from a CSV file. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classmatch__controller_ac20fec58b1abc375c1e1cbf684d76d1e}{add\+Goal\+With\+Validation}} (const \mbox{\hyperlink{structmatch__controller_1_1_goal_data}{Goal\+Data}} \&goal\+Data)
+\begin{DoxyCompactList}\small\item\em Adds a goal after applying controller-\/side validation rules. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a4ecd1f393c6413999627aa6af87a59a1}{remove\+Last\+Goal}} ()
+\begin{DoxyCompactList}\small\item\em Removes the last registered goal. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_aeb2885422eab9f7771bb4e30023eaccb}{request\+Timer\+Start}} ()
+\begin{DoxyCompactList}\small\item\em Handles UI request to start timer based on current state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a1010858b962b05efdc9b9a550f7a88be}{request\+Timer\+Restart}} ()
+\begin{DoxyCompactList}\small\item\em Handles UI request to restart timer for current phase. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_aab5887a01b03952058210d94f14902bb}{request\+Timer\+Stop}} ()
+\begin{DoxyCompactList}\small\item\em Handles UI request to stop/pause timer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_aae77dd3454d0a3fd2c8aeb4502f8fb19}{request\+Match\+Reset}} ()
+\begin{DoxyCompactList}\small\item\em Handles UI request to reset match data and state. \end{DoxyCompactList}\item 
+unsigned \mbox{\hyperlink{classmatch__controller_a84e431dd4ce252fcec277d98e87f2596}{suggested\+Goal\+Minute}} () const
+\begin{DoxyCompactList}\small\item\em Suggests current goal minute based on timer state. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classmatch__controller_ad02d242f26397da722daa4135bcb12c1}{request\+State\+Change}} (\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{Match\+State}} new\+State, bool confirmed\+Running\+Timer\+Stop)
+\begin{DoxyCompactList}\small\item\em Requests transition to a new match state. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classmatch__controller_a641444073991b588031faa8a9ab2b2f8}{start\+Timer}} ()
+\begin{DoxyCompactList}\small\item\em Starts timer if current state allows active timing. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmatch__controller_a013b82209700479cfc679b35461a68de}{set\+Team\+Emblem}} (\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} side, const QString \&emble\+Path)
+\begin{DoxyCompactList}\small\item\em Sets emblem path for selected team. \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{classmatch__controller_ac150e9c9fc108e21d4758dd2325f9e9d}{get\+Team\+Emblem}} (\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}} side) const
+\begin{DoxyCompactList}\small\item\em Returns emblem path for selected team. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}\index{match\_controller@{match\_controller}!MatchState@{MatchState}}
+\index{MatchState@{MatchState}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{MatchState}{MatchState}}
+{\footnotesize\ttfamily \label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+enum class \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{match\+\_\+controller\+::\+Match\+State}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Match phase state machine used by controller and views. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PreGame@{PreGame}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!PreGame@{PreGame}}}\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a554bc137278892a248cb9fd7d66a66d9}\label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+Pre\+Game&Before kickoff, setup and presentation phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FirstHalf@{FirstHalf}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!FirstHalf@{FirstHalf}}}\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae49e0f7b63da990b8ddb40bed3acc7cd}\label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+First\+Half&First half is running. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HalfTime@{HalfTime}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!HalfTime@{HalfTime}}}\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a4c80456fd750cab4a37baefdea988570}\label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+Half\+Time&Halftime break between first and second half. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SecondHalf@{SecondHalf}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!SecondHalf@{SecondHalf}}}\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a8a59e14729ef3c2f7ebe45db856ca0b0}\label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+Second\+Half&Second half is running. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PostGame@{PostGame}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!PostGame@{PostGame}}}\Hypertarget{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae5b456c484a0ec6a32301d03121fd80b}\label{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38} 
+Post\+Game&Match has ended. \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}\index{match\_controller@{match\_controller}!TeamSide@{TeamSide}}
+\index{TeamSide@{TeamSide}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{TeamSide}{TeamSide}}
+{\footnotesize\ttfamily \label{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76} 
+enum class \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{match\+\_\+controller\+::\+Team\+Side}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Identifies which team an operation targets. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Home@{Home}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!Home@{Home}}}\Hypertarget{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a8cf04a9734132302f96da8e113e80ce5}\label{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76} 
+Home&Home team. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Away@{Away}!match\_controller@{match\_controller}}\index{match\_controller@{match\_controller}!Away@{Away}}}\Hypertarget{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a312dc56ea9c386a6bc913f988a233791}\label{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76} 
+Away&Away team. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classmatch__controller_a6160b92697ffde13e0d0f79ba96f9a23}\index{match\_controller@{match\_controller}!match\_controller@{match\_controller}}
+\index{match\_controller@{match\_controller}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{match\_controller()}{match\_controller()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a6160b92697ffde13e0d0f79ba96f9a23} 
+match\+\_\+controller\+::match\+\_\+controller (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classscore__memory}{score\+\_\+memory}} \texorpdfstring{$\ast$}{*}}]{score\+Memory}{, }\item[{\mbox{\hyperlink{classtimer}{timer}} \texorpdfstring{$\ast$}{*}}]{game\+Timer}{, }\item[{QObject \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Constructs the central match controller. 
+
+Initializes controller state and binds model components used for score persistence and timer operations.
+
+
+\begin{DoxyParams}{Parameters}
+{\em score\+Memory} & Pointer to score data storage/logic component \\
+\hline
+{\em game\+Timer} & Pointer to match timer component \\
+\hline
+{\em parent} & Optional Qt parent object (default nullptr) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classmatch__controller_ac20fec58b1abc375c1e1cbf684d76d1e}\index{match\_controller@{match\_controller}!addGoalWithValidation@{addGoalWithValidation}}
+\index{addGoalWithValidation@{addGoalWithValidation}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{addGoalWithValidation()}{addGoalWithValidation()}}
+{\footnotesize\ttfamily \label{classmatch__controller_ac20fec58b1abc375c1e1cbf684d76d1e} 
+bool match\+\_\+controller\+::add\+Goal\+With\+Validation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structmatch__controller_1_1_goal_data}{Goal\+Data}} \&}]{goal\+Data}{}\end{DoxyParamCaption})}
+
+
+
+Adds a goal after applying controller-\/side validation rules. 
+
+Validates team/player consistency and own-\/goal behavior before committing.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+Data} & Structured goal payload from UI \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if goal was accepted and stored, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a148a4926940492f9955506f40203eaab}\index{match\_controller@{match\_controller}!addPlayer@{addPlayer}}
+\index{addPlayer@{addPlayer}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{addPlayer()}{addPlayer()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a148a4926940492f9955506f40203eaab} 
+void match\+\_\+controller\+::add\+Player (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}}}]{side}{, }\item[{unsigned}]{number}{, }\item[{const QString \&}]{name}{}\end{DoxyParamCaption})}
+
+
+
+Adds a player to the selected team roster. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em side} & Team side (Home/\+Away) \\
+\hline
+{\em number} & Jersey number of the new player \\
+\hline
+{\em name} & Display name of the new player \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_af1b8375b739597085c47a6a9ca507fee}\index{match\_controller@{match\_controller}!awayPlayersChanged@{awayPlayersChanged}}
+\index{awayPlayersChanged@{awayPlayersChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{awayPlayersChanged}{awayPlayersChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_af1b8375b739597085c47a6a9ca507fee} 
+void match\+\_\+controller\+::away\+Players\+Changed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when away roster changes. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a24ebd4d12a7115173b66fdb086ed2a83}\index{match\_controller@{match\_controller}!currentState@{currentState}}
+\index{currentState@{currentState}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{currentState()}{currentState()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a24ebd4d12a7115173b66fdb086ed2a83} 
+\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{match\+\_\+controller\+::\+Match\+State}} match\+\_\+controller\+::current\+State (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns the current match state. 
+
+\begin{DoxyReturn}{Returns}
+Current Match\+State value 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a741baff231dbe653b98109b426aaa4c0}\index{match\_controller@{match\_controller}!emblemChanged@{emblemChanged}}
+\index{emblemChanged@{emblemChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{emblemChanged}{emblemChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_a741baff231dbe653b98109b426aaa4c0} 
+void match\+\_\+controller\+::emblem\+Changed (\begin{DoxyParamCaption}\item[{const QString \&}]{team}{, }\item[{const QString \&}]{filepath}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when a team emblem has changed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em team} & Team identifier string used by views (e.\+g., "{}\+Home"{}/"{}\+Away"{}) \\
+\hline
+{\em filepath} & Updated emblem file path \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_ab000e67179fa2a6aca2b3127036dfddb}\index{match\_controller@{match\_controller}!getAwayPlayers@{getAwayPlayers}}
+\index{getAwayPlayers@{getAwayPlayers}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{getAwayPlayers()}{getAwayPlayers()}}
+{\footnotesize\ttfamily \label{classmatch__controller_ab000e67179fa2a6aca2b3127036dfddb} 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& match\+\_\+controller\+::get\+Away\+Players (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns read-\/only list of away team players. 
+
+\begin{DoxyReturn}{Returns}
+Const reference to away team player container 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a67bba3d0c8207be2e7463b5d87b43810}\index{match\_controller@{match\_controller}!getAwayScore@{getAwayScore}}
+\index{getAwayScore@{getAwayScore}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{getAwayScore()}{getAwayScore()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a67bba3d0c8207be2e7463b5d87b43810} 
+int match\+\_\+controller\+::get\+Away\+Score (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns current away team score. 
+
+\begin{DoxyReturn}{Returns}
+Away goals count 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_af2d07270ec3d2e2df295eb5de7e7e06a}\index{match\_controller@{match\_controller}!getHomePlayers@{getHomePlayers}}
+\index{getHomePlayers@{getHomePlayers}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{getHomePlayers()}{getHomePlayers()}}
+{\footnotesize\ttfamily \label{classmatch__controller_af2d07270ec3d2e2df295eb5de7e7e06a} 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& match\+\_\+controller\+::get\+Home\+Players (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns read-\/only list of home team players. 
+
+\begin{DoxyReturn}{Returns}
+Const reference to home team player container 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a43145f1efad4aa2c87ccb7ce80790b04}\index{match\_controller@{match\_controller}!getHomeScore@{getHomeScore}}
+\index{getHomeScore@{getHomeScore}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{getHomeScore()}{getHomeScore()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a43145f1efad4aa2c87ccb7ce80790b04} 
+int match\+\_\+controller\+::get\+Home\+Score (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns current home team score. 
+
+\begin{DoxyReturn}{Returns}
+Home goals count 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_ac150e9c9fc108e21d4758dd2325f9e9d}\index{match\_controller@{match\_controller}!getTeamEmblem@{getTeamEmblem}}
+\index{getTeamEmblem@{getTeamEmblem}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{getTeamEmblem()}{getTeamEmblem()}}
+{\footnotesize\ttfamily \label{classmatch__controller_ac150e9c9fc108e21d4758dd2325f9e9d} 
+QString match\+\_\+controller\+::get\+Team\+Emblem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}}}]{side}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns emblem path for selected team. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em side} & Team side (Home/\+Away) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Emblem image file path for the selected team 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a4f007ec1d50630393a413832d0dadc92}\index{match\_controller@{match\_controller}!homePlayersChanged@{homePlayersChanged}}
+\index{homePlayersChanged@{homePlayersChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{homePlayersChanged}{homePlayersChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_a4f007ec1d50630393a413832d0dadc92} 
+void match\+\_\+controller\+::home\+Players\+Changed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when home roster changes. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_afc52cbae8785bcb3aa9e5e203acac33d}\index{match\_controller@{match\_controller}!importPlayersFromCsv@{importPlayersFromCsv}}
+\index{importPlayersFromCsv@{importPlayersFromCsv}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{importPlayersFromCsv()}{importPlayersFromCsv()}}
+{\footnotesize\ttfamily \label{classmatch__controller_afc52cbae8785bcb3aa9e5e203acac33d} 
+bool match\+\_\+controller\+::import\+Players\+From\+Csv (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}}}]{side}{, }\item[{const QString \&}]{file\+Path}{, }\item[{int \texorpdfstring{$\ast$}{*}}]{imported\+Count}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Imports a team roster from a CSV file. 
+
+Parses player rows and appends valid entries to the target team.
+
+
+\begin{DoxyParams}{Parameters}
+{\em side} & Team side receiving imported players \\
+\hline
+{\em file\+Path} & Absolute or relative path to CSV file \\
+\hline
+{\em imported\+Count} & Optional output pointer for number of imported players \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if import completed successfully, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_aacc93f6db22dedabc87ad65189b1a9a2}\index{match\_controller@{match\_controller}!matchStateChanged@{matchStateChanged}}
+\index{matchStateChanged@{matchStateChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{matchStateChanged}{matchStateChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_aacc93f6db22dedabc87ad65189b1a9a2} 
+void match\+\_\+controller\+::match\+State\+Changed (\begin{DoxyParamCaption}\item[{int}]{state}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when match state changes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & Integer representation of Match\+State enum \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a539c2f9bc45bb0c1ba16dac7267287c1}\index{match\_controller@{match\_controller}!onSecondHalfDecision@{onSecondHalfDecision}}
+\index{onSecondHalfDecision@{onSecondHalfDecision}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{onSecondHalfDecision}{onSecondHalfDecision}}
+{\footnotesize\ttfamily \label{classmatch__controller_a539c2f9bc45bb0c1ba16dac7267287c1} 
+void match\+\_\+controller\+::on\+Second\+Half\+Decision (\begin{DoxyParamCaption}\item[{bool}]{start\+Second\+Half}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+Processes user decision for starting second half. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start\+Second\+Half} & True to continue into second half, false otherwise \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a4ecd1f393c6413999627aa6af87a59a1}\index{match\_controller@{match\_controller}!removeLastGoal@{removeLastGoal}}
+\index{removeLastGoal@{removeLastGoal}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{removeLastGoal()}{removeLastGoal()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a4ecd1f393c6413999627aa6af87a59a1} 
+void match\+\_\+controller\+::remove\+Last\+Goal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Removes the last registered goal. 
+
+Updates score and goal history accordingly.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_ae72568c4936d5a4d852998854be6f6c6}\index{match\_controller@{match\_controller}!removePlayer@{removePlayer}}
+\index{removePlayer@{removePlayer}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{removePlayer()}{removePlayer()}}
+{\footnotesize\ttfamily \label{classmatch__controller_ae72568c4936d5a4d852998854be6f6c6} 
+void match\+\_\+controller\+::remove\+Player (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}}}]{side}{, }\item[{unsigned}]{number}{}\end{DoxyParamCaption})}
+
+
+
+Removes a player from the selected team roster. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em side} & Team side (Home/\+Away) \\
+\hline
+{\em number} & Jersey number of the player to remove \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_aae77dd3454d0a3fd2c8aeb4502f8fb19}\index{match\_controller@{match\_controller}!requestMatchReset@{requestMatchReset}}
+\index{requestMatchReset@{requestMatchReset}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{requestMatchReset()}{requestMatchReset()}}
+{\footnotesize\ttfamily \label{classmatch__controller_aae77dd3454d0a3fd2c8aeb4502f8fb19} 
+void match\+\_\+controller\+::request\+Match\+Reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Handles UI request to reset match data and state. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_ad02d242f26397da722daa4135bcb12c1}\index{match\_controller@{match\_controller}!requestStateChange@{requestStateChange}}
+\index{requestStateChange@{requestStateChange}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{requestStateChange()}{requestStateChange()}}
+{\footnotesize\ttfamily \label{classmatch__controller_ad02d242f26397da722daa4135bcb12c1} 
+bool match\+\_\+controller\+::request\+State\+Change (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{Match\+State}}}]{new\+State}{, }\item[{bool}]{confirmed\+Running\+Timer\+Stop}{}\end{DoxyParamCaption})}
+
+
+
+Requests transition to a new match state. 
+
+Applies transition rules, including handling active timer constraints.
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+State} & Target match state \\
+\hline
+{\em confirmed\+Running\+Timer\+Stop} & Whether user confirmed stopping running timer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if transition was applied, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a1010858b962b05efdc9b9a550f7a88be}\index{match\_controller@{match\_controller}!requestTimerRestart@{requestTimerRestart}}
+\index{requestTimerRestart@{requestTimerRestart}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{requestTimerRestart()}{requestTimerRestart()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a1010858b962b05efdc9b9a550f7a88be} 
+void match\+\_\+controller\+::request\+Timer\+Restart (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Handles UI request to restart timer for current phase. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_aeb2885422eab9f7771bb4e30023eaccb}\index{match\_controller@{match\_controller}!requestTimerStart@{requestTimerStart}}
+\index{requestTimerStart@{requestTimerStart}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{requestTimerStart()}{requestTimerStart()}}
+{\footnotesize\ttfamily \label{classmatch__controller_aeb2885422eab9f7771bb4e30023eaccb} 
+void match\+\_\+controller\+::request\+Timer\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Handles UI request to start timer based on current state. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_aab5887a01b03952058210d94f14902bb}\index{match\_controller@{match\_controller}!requestTimerStop@{requestTimerStop}}
+\index{requestTimerStop@{requestTimerStop}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{requestTimerStop()}{requestTimerStop()}}
+{\footnotesize\ttfamily \label{classmatch__controller_aab5887a01b03952058210d94f14902bb} 
+void match\+\_\+controller\+::request\+Timer\+Stop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Handles UI request to stop/pause timer. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a067e93d0bb6b639b65bb2add3bdce553}\index{match\_controller@{match\_controller}!scoreChanged@{scoreChanged}}
+\index{scoreChanged@{scoreChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{scoreChanged}{scoreChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_a067e93d0bb6b639b65bb2add3bdce553} 
+void match\+\_\+controller\+::score\+Changed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when score values change. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_aa99fad43c8268f877168250739c9bb41}\index{match\_controller@{match\_controller}!secondHalfDecisionNeeded@{secondHalfDecisionNeeded}}
+\index{secondHalfDecisionNeeded@{secondHalfDecisionNeeded}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{secondHalfDecisionNeeded}{secondHalfDecisionNeeded}}
+{\footnotesize\ttfamily \label{classmatch__controller_aa99fad43c8268f877168250739c9bb41} 
+void match\+\_\+controller\+::second\+Half\+Decision\+Needed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when second-\/half start requires user decision. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a013b82209700479cfc679b35461a68de}\index{match\_controller@{match\_controller}!setTeamEmblem@{setTeamEmblem}}
+\index{setTeamEmblem@{setTeamEmblem}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{setTeamEmblem()}{setTeamEmblem()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a013b82209700479cfc679b35461a68de} 
+void match\+\_\+controller\+::set\+Team\+Emblem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{Team\+Side}}}]{side}{, }\item[{const QString \&}]{emble\+Path}{}\end{DoxyParamCaption})}
+
+
+
+Sets emblem path for selected team. 
+
+Emits emblem\+Changed so views can refresh displayed logos.
+
+
+\begin{DoxyParams}{Parameters}
+{\em side} & Team side whose emblem should be updated \\
+\hline
+{\em emble\+Path} & Image file path for the emblem \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a641444073991b588031faa8a9ab2b2f8}\index{match\_controller@{match\_controller}!startTimer@{startTimer}}
+\index{startTimer@{startTimer}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{startTimer()}{startTimer()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a641444073991b588031faa8a9ab2b2f8} 
+bool match\+\_\+controller\+::start\+Timer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Starts timer if current state allows active timing. 
+
+\begin{DoxyReturn}{Returns}
+true if timer was started, otherwise false 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a3a56c4922c5a4512be0179297f4e4312}\index{match\_controller@{match\_controller}!startTimerEnabledChanged@{startTimerEnabledChanged}}
+\index{startTimerEnabledChanged@{startTimerEnabledChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{startTimerEnabledChanged}{startTimerEnabledChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_a3a56c4922c5a4512be0179297f4e4312} 
+void match\+\_\+controller\+::start\+Timer\+Enabled\+Changed (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when UI should enable/disable timer start action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em enabled} & True if starting timer is currently allowed \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a84e431dd4ce252fcec277d98e87f2596}\index{match\_controller@{match\_controller}!suggestedGoalMinute@{suggestedGoalMinute}}
+\index{suggestedGoalMinute@{suggestedGoalMinute}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{suggestedGoalMinute()}{suggestedGoalMinute()}}
+{\footnotesize\ttfamily \label{classmatch__controller_a84e431dd4ce252fcec277d98e87f2596} 
+unsigned match\+\_\+controller\+::suggested\+Goal\+Minute (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Suggests current goal minute based on timer state. 
+
+Useful for pre-\/filling goal dialogs with a reasonable default minute.
+
+\begin{DoxyReturn}{Returns}
+Suggested match minute 
+\end{DoxyReturn}
+\Hypertarget{classmatch__controller_a482f98d80cab03eb9e1b8590c61c72a0}\index{match\_controller@{match\_controller}!timeChanged@{timeChanged}}
+\index{timeChanged@{timeChanged}!match\_controller@{match\_controller}}
+\doxysubsubsection{\texorpdfstring{timeChanged}{timeChanged}}
+{\footnotesize\ttfamily \label{classmatch__controller_a482f98d80cab03eb9e1b8590c61c72a0} 
+void match\+\_\+controller\+::time\+Changed (\begin{DoxyParamCaption}\item[{const QString \&}]{elapsed\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when timer display text changes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em elapsed\+Time} & Formatted elapsed match time (e.\+g., MM\+:SS) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{match__controller_8h}{match\+\_\+controller.\+h}}\item 
+Software/build/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+match\+\_\+controller.\+cpp\item 
+Software/build/vscode/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+match\+\_\+controller.\+cpp\item 
+Software/src/match\+\_\+controller.\+cpp\end{DoxyCompactItemize}

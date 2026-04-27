@@ -1,0 +1,41 @@
+\doxysection{Software/include/timer.h File Reference}
+\hypertarget{timer_8h}{}\label{timer_8h}\index{Software/include/timer.h@{Software/include/timer.h}}
+
+
+Match timer with phase-\/aware time tracking.  
+
+
+{\ttfamily \#include "{}qobjectdefs.\+h"{}}\newline
+{\ttfamily \#include $<$QObject$>$}\newline
+{\ttfamily \#include $<$QElapsed\+Timer$>$}\newline
+{\ttfamily \#include $<$QTimer$>$}\newline
+{\ttfamily \#include $<$QString$>$}\newline
+{\ttfamily \#include "{}QDebug"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classtimer}{timer}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Match timer with phase-\/aware time tracking. 
+
+Manages elapsed time for different game phases (Pre\+Game, First\+Half, Half\+Time, Second\+Half, Post\+Game). Tracks elapsed time independently for each half and emits updates every second. Automatically stops at 45-\/minute mark for halves or based on phase-\/specific timing.
+
+Features\+:
+\begin{DoxyItemize}
+\item Phase-\/aware time tracking for match states
+\item Independent timing for First\+Half and Second\+Half
+\item Automatic timeout emission at phase end
+\item Per-\/second time update signals for display
+\item Play/pause capability with restart functionality
+\item Total elapsed time and phase-\/specific time retrieval
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+3.\+0, 2026-\/04-\/13 
+\end{DoxyVersion}

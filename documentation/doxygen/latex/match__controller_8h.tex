@@ -1,0 +1,47 @@
+\doxysection{Software/include/match\+\_\+controller.h File Reference}
+\hypertarget{match__controller_8h}{}\label{match__controller_8h}\index{Software/include/match\_controller.h@{Software/include/match\_controller.h}}
+
+
+Central controller for match logic and state management.  
+
+
+{\ttfamily \#include $<$QObject$>$}\newline
+{\ttfamily \#include $<$QString$>$}\newline
+{\ttfamily \#include $<$QString\+List$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include "{}team.\+h"{}}\newline
+{\ttfamily \#include "{}score\+\_\+memory.\+h"{}}\newline
+{\ttfamily \#include "{}timer.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classmatch__controller}{match\+\_\+controller}}
+\item 
+struct \mbox{\hyperlink{structmatch__controller_1_1_goal_data}{match\+\_\+controller\+::\+Goal\+Data}}
+\begin{DoxyCompactList}\small\item\em Input payload for adding a goal through controller validation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Central controller for match logic and state management. 
+
+The \doxylink{classmatch__controller}{match\+\_\+controller} is the business logic layer (Model in MVC pattern) that manages all match-\/related operations including team rosters, scoring, timer control, and state transitions. All user interactions from the GUI (\doxylink{classcontroll__window}{controll\+\_\+window}) or web interface are delegated to this controller, which processes them and emits signals for view updates.
+
+Features\+:
+\begin{DoxyItemize}
+\item Team roster management (add/remove players, CSV import)
+\item \doxylink{struct_goal}{Goal} logging with validation and emblem management
+\item Match timer control (start, stop, restart) with phase transitions
+\item Match state machine (Pre\+Game → First\+Half → Half\+Time → Second\+Half → Post\+Game)
+\item Data persistence through \doxylink{classscore__memory}{score\+\_\+memory} and timer components
+\item Signal-\/based communication for MVC pattern
+\end{DoxyItemize}
+
+Design Pattern\+: Implements Model-\/\+View-\/\+Controller (MVC) where \doxylink{classcontroll__window}{controll\+\_\+window} and future web interface are views that delegate all business logic to this controller. This enables code reuse across multiple UI implementations.
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+3.\+0, 2026-\/04-\/13 (Refactored for MVC pattern) 
+\end{DoxyVersion}

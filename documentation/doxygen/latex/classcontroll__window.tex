@@ -1,0 +1,140 @@
+\doxysection{controll\+\_\+window Class Reference}
+\hypertarget{classcontroll__window}{}\label{classcontroll__window}\index{controll\_window@{controll\_window}}
+Inheritance diagram for controll\+\_\+window\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classcontroll__window}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classcontroll__window_af8ef38538f48af4952c7496b2ee7e85f}{emblem\+Changed}} (const QString \&\mbox{\hyperlink{classteam}{team}}, const QString \&filepath)
+\begin{DoxyCompactList}\small\item\em Emitted when a team emblem image has changed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcontroll__window_a01b4fa49f5e1b8675dc2784419b03c7f}{controll\+\_\+window}} (\mbox{\hyperlink{classmatch__controller}{match\+\_\+controller}} \texorpdfstring{$\ast$}{*}controller, QWidget \texorpdfstring{$\ast$}{*}parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs the control window and wires it to the controller. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcontroll__window_a94176c81f8d193ec6927ad4a72a12aca}{set\+Scoreboard}} (QWidget \texorpdfstring{$\ast$}{*}board)
+\begin{DoxyCompactList}\small\item\em Sets the scoreboard widget used for visibility toggling. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcontroll__window_ac8dfb5d74be1c4df26be4af683a04ee9}{toggle\+Scoreboard}} ()
+\begin{DoxyCompactList}\small\item\em Toggles scoreboard visibility. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classcontroll__window_a28f1041fbf5412600ed02eef1d2cb0fb}{mouse\+Double\+Click\+Event}} (QMouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\begin{DoxyCompactList}\small\item\em Handles mouse double-\/click events on the control window. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classcontroll__window_a01b4fa49f5e1b8675dc2784419b03c7f}\index{controll\_window@{controll\_window}!controll\_window@{controll\_window}}
+\index{controll\_window@{controll\_window}!controll\_window@{controll\_window}}
+\doxysubsubsection{\texorpdfstring{controll\_window()}{controll\_window()}}
+{\footnotesize\ttfamily \label{classcontroll__window_a01b4fa49f5e1b8675dc2784419b03c7f} 
+controll\+\_\+window\+::controll\+\_\+window (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classmatch__controller}{match\+\_\+controller}} \texorpdfstring{$\ast$}{*}}]{controller}{, }\item[{QWidget \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Constructs the control window and wires it to the controller. 
+
+Creates all UI elements for operator interaction and connects view events to controller actions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em controller} & Pointer to the match controller (must not be nullptr) \\
+\hline
+{\em parent} & Optional parent widget (default nullptr) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classcontroll__window_af8ef38538f48af4952c7496b2ee7e85f}\index{controll\_window@{controll\_window}!emblemChanged@{emblemChanged}}
+\index{emblemChanged@{emblemChanged}!controll\_window@{controll\_window}}
+\doxysubsubsection{\texorpdfstring{emblemChanged}{emblemChanged}}
+{\footnotesize\ttfamily \label{classcontroll__window_af8ef38538f48af4952c7496b2ee7e85f} 
+void controll\+\_\+window\+::emblem\+Changed (\begin{DoxyParamCaption}\item[{const QString \&}]{team}{, }\item[{const QString \&}]{filepath}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when a team emblem image has changed. 
+
+Notifies connected views (for example the scoreboard) to reload and display the updated emblem.
+
+
+\begin{DoxyParams}{Parameters}
+{\em team} & Team identifier (e.\+g., "{}\+Home"{} or "{}\+Away"{}) \\
+\hline
+{\em filepath} & Absolute path to the emblem image file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classcontroll__window_a28f1041fbf5412600ed02eef1d2cb0fb}\index{controll\_window@{controll\_window}!mouseDoubleClickEvent@{mouseDoubleClickEvent}}
+\index{mouseDoubleClickEvent@{mouseDoubleClickEvent}!controll\_window@{controll\_window}}
+\doxysubsubsection{\texorpdfstring{mouseDoubleClickEvent()}{mouseDoubleClickEvent()}}
+{\footnotesize\ttfamily \label{classcontroll__window_a28f1041fbf5412600ed02eef1d2cb0fb} 
+void controll\+\_\+window\+::mouse\+Double\+Click\+Event (\begin{DoxyParamCaption}\item[{QMouse\+Event \texorpdfstring{$\ast$}{*}}]{event}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Handles mouse double-\/click events on the control window. 
+
+Used as a shortcut interaction to toggle scoreboard visibility.
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & Mouse double-\/click event data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classcontroll__window_a94176c81f8d193ec6927ad4a72a12aca}\index{controll\_window@{controll\_window}!setScoreboard@{setScoreboard}}
+\index{setScoreboard@{setScoreboard}!controll\_window@{controll\_window}}
+\doxysubsubsection{\texorpdfstring{setScoreboard()}{setScoreboard()}}
+{\footnotesize\ttfamily \label{classcontroll__window_a94176c81f8d193ec6927ad4a72a12aca} 
+void controll\+\_\+window\+::set\+Scoreboard (\begin{DoxyParamCaption}\item[{QWidget \texorpdfstring{$\ast$}{*}}]{board}{}\end{DoxyParamCaption})}
+
+
+
+Sets the scoreboard widget used for visibility toggling. 
+
+Stores a reference to the scoreboard window so it can be shown or hidden from this control window.
+
+
+\begin{DoxyParams}{Parameters}
+{\em board} & Pointer to the scoreboard widget \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classcontroll__window_ac8dfb5d74be1c4df26be4af683a04ee9}\index{controll\_window@{controll\_window}!toggleScoreboard@{toggleScoreboard}}
+\index{toggleScoreboard@{toggleScoreboard}!controll\_window@{controll\_window}}
+\doxysubsubsection{\texorpdfstring{toggleScoreboard()}{toggleScoreboard()}}
+{\footnotesize\ttfamily \label{classcontroll__window_ac8dfb5d74be1c4df26be4af683a04ee9} 
+void controll\+\_\+window\+::toggle\+Scoreboard (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Toggles scoreboard visibility. 
+
+Shows the scoreboard if hidden and hides it if currently visible.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{controll__window_8h}{controll\+\_\+window.\+h}}\item 
+Software/build/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+controll\+\_\+window.\+cpp\item 
+Software/build/vscode/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+controll\+\_\+window.\+cpp\item 
+Software/src/\mbox{\hyperlink{controll__window_8cpp}{controll\+\_\+window.\+cpp}}\end{DoxyCompactItemize}

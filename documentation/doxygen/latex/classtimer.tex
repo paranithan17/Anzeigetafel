@@ -1,0 +1,281 @@
+\doxysection{timer Class Reference}
+\hypertarget{classtimer}{}\label{classtimer}\index{timer@{timer}}
+Inheritance diagram for timer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classtimer}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{Game\+Phase}} \{ \newline
+\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1a554bc137278892a248cb9fd7d66a66d9}{Pre\+Game}} = 0
+, \mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1ae49e0f7b63da990b8ddb40bed3acc7cd}{First\+Half}}
+, \mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1a4c80456fd750cab4a37baefdea988570}{Half\+Time}}
+, \mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1a8a59e14729ef3c2f7ebe45db856ca0b0}{Second\+Half}}
+, \newline
+\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1ae5b456c484a0ec6a32301d03121fd80b}{Post\+Game}}
+ \}
+\begin{DoxyCompactList}\small\item\em Game phase enumeration for state machine integration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classtimer_a9a1d92be422244ea4d1f0fa6013be71f}{timeout}} ()
+\begin{DoxyCompactList}\small\item\em Emitted when 45 minutes elapsed. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a1fc101b389b0badd96556614ede54e36}{time\+Updated}} (const QString \&elapsed\+Time)
+\begin{DoxyCompactList}\small\item\em Emitted every second with formatted time. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtimer_a2682ccf17a58b856f47c9a47d0d94db0}{timer}} (QObject \texorpdfstring{$\ast$}{*}parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs match timer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a9aa894a57748b2bdf3adce46f5736794}{start}} ()
+\begin{DoxyCompactList}\small\item\em Starts timer for current phase. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a3218d61649e284071544b17c8c915ecc}{stop}} ()
+\begin{DoxyCompactList}\small\item\em Stops timer and pauses time tracking. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a09a54e31eb5383d7db43fcfefb80f120}{restart}} ()
+\begin{DoxyCompactList}\small\item\em Restarts elapsed time counter to zero. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a6878c00ad13ba64e1933fc06b279f8d9}{reset\+To\+Phase\+Start}} ()
+\begin{DoxyCompactList}\small\item\em Resets timer to phase baseline and emits baseline time. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classtimer_a514e76ef88dc694c0511f2313a654daf}{is\+Running}} () const
+\begin{DoxyCompactList}\small\item\em Checks if timer is currently running. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtimer_a4bc2822bae585c58f767319d6c455f28}{set\+Phase}} (\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{Game\+Phase}} \mbox{\hyperlink{classtimer_aef12b8c3611714e341ede98cf2fa7179}{phase}})
+\begin{DoxyCompactList}\small\item\em Sets current game phase. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{Game\+Phase}} \mbox{\hyperlink{classtimer_aef12b8c3611714e341ede98cf2fa7179}{phase}} () const
+\begin{DoxyCompactList}\small\item\em Gets current game phase. \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{classtimer_a4b5a080fd331c96ef2c8f58594dc081f}{firsthalf}} ()
+\begin{DoxyCompactList}\small\item\em Formats elapsed time for first half (00\+:00 -\/ 45\+:00). \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{classtimer_ab3c20c6b7cc1bc639565dc3cf3ab1c7f}{secondhalf}} ()
+\begin{DoxyCompactList}\small\item\em Formats elapsed time for second half (45\+:00 -\/ 90\+:00). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1}\index{timer@{timer}!GamePhase@{GamePhase}}
+\index{GamePhase@{GamePhase}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{GamePhase}{GamePhase}}
+{\footnotesize\ttfamily \label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+enum class \mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{timer\+::\+Game\+Phase}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Game phase enumeration for state machine integration. 
+
+Defines match phases to control timer behavior. \begin{DoxySeeAlso}{See also}
+controll\+\_\+window\+::\+Match\+State 
+\end{DoxySeeAlso}
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PreGame@{PreGame}!timer@{timer}}\index{timer@{timer}!PreGame@{PreGame}}}\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1a554bc137278892a248cb9fd7d66a66d9}\label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+Pre\+Game&Before kickoff, no active match timing. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FirstHalf@{FirstHalf}!timer@{timer}}\index{timer@{timer}!FirstHalf@{FirstHalf}}}\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1ae49e0f7b63da990b8ddb40bed3acc7cd}\label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+First\+Half&First-\/half active timing window. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HalfTime@{HalfTime}!timer@{timer}}\index{timer@{timer}!HalfTime@{HalfTime}}}\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1a4c80456fd750cab4a37baefdea988570}\label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+Half\+Time&Halftime break phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SecondHalf@{SecondHalf}!timer@{timer}}\index{timer@{timer}!SecondHalf@{SecondHalf}}}\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1a8a59e14729ef3c2f7ebe45db856ca0b0}\label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+Second\+Half&Second-\/half active timing window. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PostGame@{PostGame}!timer@{timer}}\index{timer@{timer}!PostGame@{PostGame}}}\Hypertarget{classtimer_a3365b2706ed62ccba2d93805adee98f1ae5b456c484a0ec6a32301d03121fd80b}\label{classtimer_a3365b2706ed62ccba2d93805adee98f1} 
+Post\+Game&Match finished phase. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classtimer_a2682ccf17a58b856f47c9a47d0d94db0}\index{timer@{timer}!timer@{timer}}
+\index{timer@{timer}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{timer()}{timer()}}
+{\footnotesize\ttfamily \label{classtimer_a2682ccf17a58b856f47c9a47d0d94db0} 
+timer\+::timer (\begin{DoxyParamCaption}\item[{QObject \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Constructs match timer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Parent QObject (default nullptr) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classtimer_a4b5a080fd331c96ef2c8f58594dc081f}\index{timer@{timer}!firsthalf@{firsthalf}}
+\index{firsthalf@{firsthalf}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{firsthalf()}{firsthalf()}}
+{\footnotesize\ttfamily \label{classtimer_a4b5a080fd331c96ef2c8f58594dc081f} 
+QString timer\+::firsthalf (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Formats elapsed time for first half (00\+:00 -\/ 45\+:00). 
+
+\begin{DoxyReturn}{Returns}
+Formatted time string 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a514e76ef88dc694c0511f2313a654daf}\index{timer@{timer}!isRunning@{isRunning}}
+\index{isRunning@{isRunning}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{isRunning()}{isRunning()}}
+{\footnotesize\ttfamily \label{classtimer_a514e76ef88dc694c0511f2313a654daf} 
+bool timer\+::is\+Running (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Checks if timer is currently running. 
+
+\begin{DoxyReturn}{Returns}
+true if timer is active, false otherwise 
+\end{DoxyReturn}
+\Hypertarget{classtimer_aef12b8c3611714e341ede98cf2fa7179}\index{timer@{timer}!phase@{phase}}
+\index{phase@{phase}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{phase()}{phase()}}
+{\footnotesize\ttfamily \label{classtimer_aef12b8c3611714e341ede98cf2fa7179} 
+\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{Game\+Phase}} timer\+::phase (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets current game phase. 
+
+\begin{DoxyReturn}{Returns}
+Current Game\+Phase 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a6878c00ad13ba64e1933fc06b279f8d9}\index{timer@{timer}!resetToPhaseStart@{resetToPhaseStart}}
+\index{resetToPhaseStart@{resetToPhaseStart}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{resetToPhaseStart()}{resetToPhaseStart()}}
+{\footnotesize\ttfamily \label{classtimer_a6878c00ad13ba64e1933fc06b279f8d9} 
+void timer\+::reset\+To\+Phase\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Resets timer to phase baseline and emits baseline time. 
+
+Stops timing and emits "{}00\+:00"{} for First\+Half or "{}45\+:00"{} for Second\+Half.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a09a54e31eb5383d7db43fcfefb80f120}\index{timer@{timer}!restart@{restart}}
+\index{restart@{restart}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{restart()}{restart()}}
+{\footnotesize\ttfamily \label{classtimer_a09a54e31eb5383d7db43fcfefb80f120} 
+void timer\+::restart (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Restarts elapsed time counter to zero. 
+
+Resets internal QElapsed\+Timer without changing phase.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_ab3c20c6b7cc1bc639565dc3cf3ab1c7f}\index{timer@{timer}!secondhalf@{secondhalf}}
+\index{secondhalf@{secondhalf}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{secondhalf()}{secondhalf()}}
+{\footnotesize\ttfamily \label{classtimer_ab3c20c6b7cc1bc639565dc3cf3ab1c7f} 
+QString timer\+::secondhalf (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Formats elapsed time for second half (45\+:00 -\/ 90\+:00). 
+
+\begin{DoxyReturn}{Returns}
+Formatted time string 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a4bc2822bae585c58f767319d6c455f28}\index{timer@{timer}!setPhase@{setPhase}}
+\index{setPhase@{setPhase}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{setPhase()}{setPhase()}}
+{\footnotesize\ttfamily \label{classtimer_a4bc2822bae585c58f767319d6c455f28} 
+void timer\+::set\+Phase (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtimer_a3365b2706ed62ccba2d93805adee98f1}{Game\+Phase}}}]{phase}{}\end{DoxyParamCaption})}
+
+
+
+Sets current game phase. 
+
+Does not auto-\/start/stop timer; caller controls timing.
+
+
+\begin{DoxyParams}{Parameters}
+{\em phase} & New game phase \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a9aa894a57748b2bdf3adce46f5736794}\index{timer@{timer}!start@{start}}
+\index{start@{start}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily \label{classtimer_a9aa894a57748b2bdf3adce46f5736794} 
+void timer\+::start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Starts timer for current phase. 
+
+Only starts during First\+Half or Second\+Half phases. Emits time\+Updated signal every second.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a3218d61649e284071544b17c8c915ecc}\index{timer@{timer}!stop@{stop}}
+\index{stop@{stop}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{stop()}{stop()}}
+{\footnotesize\ttfamily \label{classtimer_a3218d61649e284071544b17c8c915ecc} 
+void timer\+::stop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Stops timer and pauses time tracking. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a9a1d92be422244ea4d1f0fa6013be71f}\index{timer@{timer}!timeout@{timeout}}
+\index{timeout@{timeout}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{timeout}{timeout}}
+{\footnotesize\ttfamily \label{classtimer_a9a1d92be422244ea4d1f0fa6013be71f} 
+void timer\+::timeout (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted when 45 minutes elapsed. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classtimer_a1fc101b389b0badd96556614ede54e36}\index{timer@{timer}!timeUpdated@{timeUpdated}}
+\index{timeUpdated@{timeUpdated}!timer@{timer}}
+\doxysubsubsection{\texorpdfstring{timeUpdated}{timeUpdated}}
+{\footnotesize\ttfamily \label{classtimer_a1fc101b389b0badd96556614ede54e36} 
+void timer\+::time\+Updated (\begin{DoxyParamCaption}\item[{const QString \&}]{elapsed\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted every second with formatted time. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em elapsed\+Time} & Time string in MM\+:SS format \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{timer_8h}{timer.\+h}}\item 
+Software/build/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+timer.\+cpp\item 
+Software/build/vscode/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+timer.\+cpp\item 
+Software/src/\mbox{\hyperlink{timer_8cpp}{timer.\+cpp}}\end{DoxyCompactItemize}

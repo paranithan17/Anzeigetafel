@@ -1,0 +1,31 @@
+\doxysection{team.\+h}
+\hypertarget{team_8h_source}{}\label{team_8h_source}\index{Software/include/team.h@{Software/include/team.h}}
+\mbox{\hyperlink{team_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ TEAM\_H}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ TEAM\_H}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{player_8h}{player.h}}"{}}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classteam}{team}}}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{classteam_a6650acaf604affb5dc5d98a953b6ba50}{team}}();}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classteam_a647791fa6d02f9eb4e10dca510507de9}{addPlayer}}(\textcolor{keywordtype}{unsigned}\ number,\ \textcolor{keyword}{const}\ QString\ \&name);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classteam_ad71deba31251c0874707781d8e72fd96}{removePlayer}}(\textcolor{keywordtype}{unsigned}\ number);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::shared\_ptr<player>>\ \&\mbox{\hyperlink{classteam_a6d079eabea360bc9764d127f864cff27}{getPlayers}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00050\ \ \ \ \ std::vector<std::shared\_ptr<player>>\ players;}
+\DoxyCodeLine{00051\ \};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ TEAM\_H}}
+
+\end{DoxyCode}
