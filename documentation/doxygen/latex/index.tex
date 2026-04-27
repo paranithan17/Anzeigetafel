@@ -1,10 +1,10 @@
 \chapter{Anzeigetafel -\/ Football Scoreboard Application}
-\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{Anzeigetafel -\/ Football Scoreboard Application@{Anzeigetafel -\/ Football Scoreboard Application}}
-\label{md__r_e_a_d_m_e_anzeigetafel---football-scoreboard-application}%
-\Hypertarget{md__r_e_a_d_m_e_anzeigetafel---football-scoreboard-application}%
+\hypertarget{index}{}\label{index}\index{Anzeigetafel -\/ Football Scoreboard Application@{Anzeigetafel -\/ Football Scoreboard Application}}
+\label{index_md__r_e_a_d_m_e}%
+\Hypertarget{index_md__r_e_a_d_m_e}%
 
 
-A modular Qt application to manage and display live football match events.\hypertarget{md__r_e_a_d_m_e_branch-status}{}\doxysection{\texorpdfstring{Branch Status}{Branch Status}}\label{md__r_e_a_d_m_e_branch-status}
+A modular Qt application to manage and display live football match events.\hypertarget{index_branch-status}{}\doxysection{\texorpdfstring{Branch Status}{Branch Status}}\label{index_branch-status}
 
 \begin{DoxyItemize}
 \item Active branch\+: {\ttfamily CPP\+\_\+\+Spinoff\+\_\+\+Project}
@@ -12,7 +12,7 @@ A modular Qt application to manage and display live football match events.\hyper
 \item Last major change\+: MVC refactor to a controller-\/based architecture
 \end{DoxyItemize}
 
-This README is updated to match the current branch structure and code.\hypertarget{md__r_e_a_d_m_e_author}{}\doxysection{\texorpdfstring{Author}{Author}}\label{md__r_e_a_d_m_e_author}
+This README is updated to match the current branch structure and code.\hypertarget{index_author}{}\doxysection{\texorpdfstring{Author}{Author}}\label{index_author}
 {\bfseries{Paranithan Paramalingam}}
 
 Bachelor of Engineering, BFH
@@ -21,14 +21,29 @@ Course\+: BTE5512 -\/ Projektarbeit \texorpdfstring{$\vert$}{|} BTE5540 -\/ Bach
 
 \begin{quote}
 This project was developed with assistance from AI tools (Chat\+GPT/\+Git\+Hub Copilot) for code generation and documentation. \end{quote}
-\hypertarget{md__r_e_a_d_m_e_project-overview}{}\doxysection{\texorpdfstring{Project Overview}{Project Overview}}\label{md__r_e_a_d_m_e_project-overview}
-The application provides two synchronized windows\+:\hypertarget{md__r_e_a_d_m_e_control-window}{}\doxysubsection{\texorpdfstring{Control Window}{Control Window}}\label{md__r_e_a_d_m_e_control-window}
+\hypertarget{index_project-overview}{}\doxysection{\texorpdfstring{Project Overview}{Project Overview}}\label{index_project-overview}
+The application provides two synchronized windows\+:\hypertarget{index_control-window}{}\doxysubsection{\texorpdfstring{Control Window}{Control Window}}\label{index_control-window}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{Controll_Window_PreGame.png}
+\doxyfigcaption{Control Window -\/ Pre\+Game}
+\end{DoxyImage}
+   
 
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{Controll_Window_FH.png}
+\doxyfigcaption{Control Window -\/ First Half}
+\end{DoxyImage}
+   
 
-
-
-{\itshape Operator interface for managing teams, goals, timer, and match state.}\hypertarget{md__r_e_a_d_m_e_scoreboard-display}{}\doxysubsection{\texorpdfstring{Scoreboard Display}{Scoreboard Display}}\label{md__r_e_a_d_m_e_scoreboard-display}
-
+{\itshape Operator interface for managing teams, goals, timer, and match state.}\hypertarget{index_scoreboard-display}{}\doxysubsection{\texorpdfstring{Scoreboard Display}{Scoreboard Display}}\label{index_scoreboard-display}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{score_board.png}
+\doxyfigcaption{Scoreboard Display}
+\end{DoxyImage}
+   
 
 {\itshape Fullscreen audience display with score, time, emblems, and goal scorers.}
 
@@ -40,23 +55,38 @@ Core runtime behavior\+:
 \item Team roster management with CSV import
 \item Match state workflow\+: {\ttfamily Pre\+Game -\/\texorpdfstring{$>$}{>} First\+Half -\/\texorpdfstring{$>$}{>} Half\+Time -\/\texorpdfstring{$>$}{>} Second\+Half -\/\texorpdfstring{$>$}{>} Post\+Game}
 \item Slideshow mode for non-\/live phases (Pre\+Game/\+Half\+Time/\+Post\+Game)
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_branch-highlights-recent}{}\doxysection{\texorpdfstring{Branch Highlights (Recent)}{Branch Highlights (Recent)}}\label{md__r_e_a_d_m_e_branch-highlights-recent}
+\end{DoxyItemize}\hypertarget{index_branch-highlights-recent}{}\doxysection{\texorpdfstring{Branch Highlights (Recent)}{Branch Highlights (Recent)}}\label{index_branch-highlights-recent}
 
 \begin{DoxyItemize}
 \item {\bfseries{MVC Refactor}}\+: Business logic moved into {\ttfamily \doxylink{classmatch__controller}{match\+\_\+controller}}
 \item {\bfseries{Unified Team Model}}\+: {\ttfamily home\+\_\+team}/{\ttfamily away\+\_\+team} replaced by {\ttfamily team} abstraction
 \item {\bfseries{Documentation Update}}\+: Extended class and use-\/case diagrams added
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_architecture-current-branch}{}\doxysection{\texorpdfstring{Architecture (Current Branch)}{Architecture (Current Branch)}}\label{md__r_e_a_d_m_e_architecture-current-branch}
-\hypertarget{md__r_e_a_d_m_e_use-case-diagram}{}\doxysubsection{\texorpdfstring{Use Case Diagram}{Use Case Diagram}}\label{md__r_e_a_d_m_e_use-case-diagram}
+\end{DoxyItemize}\hypertarget{index_architecture-current-branch}{}\doxysection{\texorpdfstring{Architecture (Current Branch)}{Architecture (Current Branch)}}\label{index_architecture-current-branch}
+\hypertarget{index_use-case-diagram}{}\doxysubsection{\texorpdfstring{Use Case Diagram}{Use Case Diagram}}\label{index_use-case-diagram}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{usecase_diagramm.drawio.png}
+\doxyfigcaption{Use Case Diagram}
+\end{DoxyImage}
+   
 
+{\itshape User interactions and system workflows for match operators and audience.}\hypertarget{index_data-flow-diagram}{}\doxysubsection{\texorpdfstring{Data Flow Diagram}{Data Flow Diagram}}\label{index_data-flow-diagram}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{DFTDiagramm.drawio.png}
+\doxyfigcaption{Data Flow Diagram}
+\end{DoxyImage}
+   
 
-{\itshape User interactions and system workflows for match operators and audience.}\hypertarget{md__r_e_a_d_m_e_data-flow-diagram}{}\doxysubsection{\texorpdfstring{Data Flow Diagram}{Data Flow Diagram}}\label{md__r_e_a_d_m_e_data-flow-diagram}
+{\itshape Data flow between external inputs, processing units, data storage, and display outputs.}\hypertarget{index_system-class-diagram}{}\doxysubsection{\texorpdfstring{System Class Diagram}{System Class Diagram}}\label{index_system-class-diagram}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{scoreboard_system.png}
+\doxyfigcaption{Class Diagram}
+\end{DoxyImage}
+   
 
-
-{\itshape Data flow between external inputs, processing units, data storage, and display outputs.}\hypertarget{md__r_e_a_d_m_e_system-class-diagram}{}\doxysubsection{\texorpdfstring{System Class Diagram}{System Class Diagram}}\label{md__r_e_a_d_m_e_system-class-diagram}
-
-
-{\itshape Complete class structure showing inheritance, composition, and relationships in the MVC architecture.}\hypertarget{md__r_e_a_d_m_e_main-components}{}\doxysubsection{\texorpdfstring{Main Components}{Main Components}}\label{md__r_e_a_d_m_e_main-components}
+{\itshape Complete class structure showing inheritance, composition, and relationships in the MVC architecture.}\hypertarget{index_main-components}{}\doxysubsection{\texorpdfstring{Main Components}{Main Components}}\label{index_main-components}
 
 \begin{DoxyItemize}
 \item {\ttfamily \doxylink{classmatch__controller}{match\+\_\+controller}} -\/ central business logic and match state management (MVC controller/model layer)
@@ -65,28 +95,28 @@ Core runtime behavior\+:
 \item {\ttfamily \doxylink{classscore__memory}{score\+\_\+memory}} -\/ goal events and score state storage
 \item {\ttfamily timer} -\/ phase-\/aware match timer logic
 \item {\ttfamily team} / {\ttfamily player} -\/ roster and player domain model
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_important-runtime-connections}{}\doxysubsection{\texorpdfstring{Important Runtime Connections}{Important Runtime Connections}}\label{md__r_e_a_d_m_e_important-runtime-connections}
+\end{DoxyItemize}\hypertarget{index_important-runtime-connections}{}\doxysubsection{\texorpdfstring{Important Runtime Connections}{Important Runtime Connections}}\label{index_important-runtime-connections}
 
 \begin{DoxyItemize}
 \item {\ttfamily \doxylink{classcontroll__window}{controll\+\_\+window}} delegates user actions to {\ttfamily \doxylink{classmatch__controller}{match\+\_\+controller}}
 \item {\ttfamily \doxylink{classmatch__controller_aacc93f6db22dedabc87ad65189b1a9a2}{match\+\_\+controller\+::match\+State\+Changed}} updates scoreboard state ({\ttfamily \doxylink{class_score__board_a0403b27579d1787694460fc0bff5f7f4}{Score\+\_\+board\+::set\+Match\+State}})
 \item {\ttfamily \doxylink{classcontroll__window_af8ef38538f48af4952c7496b2ee7e85f}{controll\+\_\+window\+::emblem\+Changed}} updates scoreboard emblems ({\ttfamily \doxylink{class_score__board_a77c56321ce31224260e4280b9b72d82c}{Score\+\_\+board\+::update\+Emblem}})
 \item {\ttfamily \doxylink{classscore__memory}{score\+\_\+memory}} and {\ttfamily timer} signals update UI labels/lists in both windows
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_build-and-run}{}\doxysection{\texorpdfstring{Build and Run}{Build and Run}}\label{md__r_e_a_d_m_e_build-and-run}
-\hypertarget{md__r_e_a_d_m_e_requirements}{}\doxysubsection{\texorpdfstring{Requirements}{Requirements}}\label{md__r_e_a_d_m_e_requirements}
+\end{DoxyItemize}\hypertarget{index_build-and-run}{}\doxysection{\texorpdfstring{Build and Run}{Build and Run}}\label{index_build-and-run}
+\hypertarget{index_requirements}{}\doxysubsection{\texorpdfstring{Requirements}{Requirements}}\label{index_requirements}
 
 \begin{DoxyItemize}
 \item Qt 6.\+6 or newer (Qt Widgets)
 \item C++17 compatible compiler
 \item CMake 3.\+16 or newer
 \item Windows, Linux, or mac\+OS
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_build-with-qt-creator}{}\doxysubsection{\texorpdfstring{Build with Qt Creator}{Build with Qt Creator}}\label{md__r_e_a_d_m_e_build-with-qt-creator}
+\end{DoxyItemize}\hypertarget{index_build-with-qt-creator}{}\doxysubsection{\texorpdfstring{Build with Qt Creator}{Build with Qt Creator}}\label{index_build-with-qt-creator}
 
 \begin{DoxyEnumerate}
 \item Open {\ttfamily Software/\+CMake\+Lists.\+txt} in Qt Creator
 \item Select a Desktop Qt 6 kit
 \item Configure, build, and run {\ttfamily anzeigetafel}
-\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e_build-with-cmake-command-line}{}\doxysubsection{\texorpdfstring{Build with CMake (Command Line)}{Build with CMake (Command Line)}}\label{md__r_e_a_d_m_e_build-with-cmake-command-line}
+\end{DoxyEnumerate}\hypertarget{index_build-with-cmake-command-line}{}\doxysubsection{\texorpdfstring{Build with CMake (Command Line)}{Build with CMake (Command Line)}}\label{index_build-with-cmake-command-line}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{cmake\ -\/S\ Software\ -\/B\ Software/build}
@@ -101,7 +131,7 @@ Run executable\+:
 \begin{DoxyItemize}
 \item Windows\+: {\ttfamily Software/build/anzeigetafel.\+exe}
 \item Linux/mac\+OS\+: {\ttfamily Software/build/anzeigetafel}
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_current-project-structure}{}\doxysection{\texorpdfstring{Current Project Structure}{Current Project Structure}}\label{md__r_e_a_d_m_e_current-project-structure}
+\end{DoxyItemize}\hypertarget{index_current-project-structure}{}\doxysection{\texorpdfstring{Current Project Structure}{Current Project Structure}}\label{index_current-project-structure}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{Anzeigetafel/}
@@ -135,7 +165,7 @@ Run executable\+:
 \end{DoxyCode}
 
 
-Note\+: All UI elements are created programmatically (no {\ttfamily .ui} files).\hypertarget{md__r_e_a_d_m_e_known-limitations}{}\doxysection{\texorpdfstring{Known Limitations}{Known Limitations}}\label{md__r_e_a_d_m_e_known-limitations}
+Note\+: All UI elements are created programmatically (no {\ttfamily .ui} files).\hypertarget{index_known-limitations}{}\doxysection{\texorpdfstring{Known Limitations}{Known Limitations}}\label{index_known-limitations}
 
 \begin{DoxyItemize}
 \item Fixed for standard 2 x 45 minute football flow
@@ -144,7 +174,7 @@ Note\+: All UI elements are created programmatically (no {\ttfamily .ui} files).
 \item No persistent match-\/state storage (restart clears runtime state)
 \item Slideshow directories are expected to exist under {\ttfamily slides/\+Pre\+Game}, {\ttfamily slides/\+Half\+Time}, and {\ttfamily slides/\+Post\+Game}
 \item {\ttfamily \doxylink{class_score__board}{Score\+\_\+board}} currently uses hardcoded slideshow base paths that may need adjustment per deployment target
-\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_future-enhancements}{}\doxysection{\texorpdfstring{Future Enhancements}{Future Enhancements}}\label{md__r_e_a_d_m_e_future-enhancements}
+\end{DoxyItemize}\hypertarget{index_future-enhancements}{}\doxysection{\texorpdfstring{Future Enhancements}{Future Enhancements}}\label{index_future-enhancements}
 
 \begin{DoxyItemize}
 \item Persist match events and results in storage/database

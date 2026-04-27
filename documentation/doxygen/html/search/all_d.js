@@ -8,6 +8,6 @@ var searchData=
   ['playernumber_5',['playerNumber',['../structmatch__controller_1_1_goal_data.html#a08cbd130a15418ac07647e7032558692',1,'match_controller::GoalData::playerNumber'],['../struct_goal.html#abaafda609315a3260fb26a8fa056f63b',1,'Goal::playerNumber']]],
   ['postgame_6',['PostGame',['../classmatch__controller.html#adbdf4ca278961c21156e5e2533c28e38ae5b456c484a0ec6a32301d03121fd80b',1,'match_controller::PostGame'],['../class_score__board.html#a8054ea245f3c77aea6098d130772bcd8ae5b456c484a0ec6a32301d03121fd80b',1,'Score_board::PostGame'],['../classtimer.html#a3365b2706ed62ccba2d93805adee98f1ae5b456c484a0ec6a32301d03121fd80b',1,'timer::PostGame']]],
   ['pregame_7',['PreGame',['../classmatch__controller.html#adbdf4ca278961c21156e5e2533c28e38a554bc137278892a248cb9fd7d66a66d9',1,'match_controller::PreGame'],['../class_score__board.html#a8054ea245f3c77aea6098d130772bcd8a554bc137278892a248cb9fd7d66a66d9',1,'Score_board::PreGame'],['../classtimer.html#a3365b2706ed62ccba2d93805adee98f1a554bc137278892a248cb9fd7d66a66d9',1,'timer::PreGame']]],
-  ['project_20overview_8',['Project Overview',['../md__r_e_a_d_m_e.html#autotoc_md3',1,'']]],
-  ['project_20structure_9',['Current Project Structure',['../md__r_e_a_d_m_e.html#autotoc_md13',1,'']]]
+  ['project_20overview_8',['Project Overview',['../index.html#project-overview',1,'']]],
+  ['project_20structure_9',['Current Project Structure',['../index.html#current-project-structure',1,'']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['main_20components_0',['Main Components',['../md__r_e_a_d_m_e.html#autotoc_md6',1,'']]],
+  ['main_20components_0',['Main Components',['../index.html#main-components',1,'']]],
   ['main_2ecpp_1',['main.cpp',['../main_8cpp.html',1,'']]],
   ['match_5fcontroller_2',['match_controller',['../classmatch__controller.html',1,'match_controller'],['../classmatch__controller.html#a6160b92697ffde13e0d0f79ba96f9a23',1,'match_controller::match_controller()']]],
   ['match_5fcontroller_2eh_3',['match_controller.h',['../match__controller_8h.html',1,'']]],

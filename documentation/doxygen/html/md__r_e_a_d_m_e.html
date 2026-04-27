@@ -99,9 +99,9 @@ $(function(){initNavTree('md__r_e_a_d_m_e.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Anzeigetafel - Football Scoreboard Application</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a></p>
+<div class="textblock"><p><a class="anchor" id="anzeigetafel---football-scoreboard-application"></a></p>
 <p>A modular Qt application to manage and display live football match events.</p>
-<h1><a class="anchor" id="autotoc_md1"></a>
+<h1><a class="anchor" id="branch-status"></a>
 Branch Status</h1>
 <ul>
 <li>Active branch: <code>CPP_Spinoff_Project</code></li>
@@ -109,7 +109,7 @@ Branch Status</h1>
 <li>Last major change: MVC refactor to a controller-based architecture</li>
 </ul>
 <p>This README is updated to match the current branch structure and code.</p>
-<h1><a class="anchor" id="autotoc_md2"></a>
+<h1><a class="anchor" id="author"></a>
 Author</h1>
 <p><b>Paranithan Paramalingam</b></p>
 <p>Bachelor of Engineering, BFH</p>
@@ -117,13 +117,18 @@ Author</h1>
 <blockquote class="doxtable">
 <p>&zwj;This project was developed with assistance from AI tools (ChatGPT/GitHub Copilot) for code generation and documentation. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md3"></a>
+<h1><a class="anchor" id="project-overview"></a>
 Project Overview</h1>
 <p>The application provides two synchronized windows:</p>
-<ul>
-<li><b>Control window</b> for the operator</li>
-<li><b>Scoreboard window</b> for the audience display</li>
-</ul>
+<h2><a class="anchor" id="control-window"></a>
+Control Window</h2>
+<p><img src="documentation/screenshots/Controll_Window_PreGame.png" alt="Control Window - PreGame" class="inline"/></p>
+<p><img src="documentation/screenshots/Controll_Window_FH.png" alt="Control Window - First Half" class="inline"/></p>
+<p><em>Operator interface for managing teams, goals, timer, and match state.</em></p>
+<h2><a class="anchor" id="scoreboard-display"></a>
+Scoreboard Display</h2>
+<p><img src="documentation/screenshots/score_board.png" alt="Scoreboard Display" class="inline"/></p>
+<p><em>Fullscreen audience display with score, time, emblems, and goal scorers.</em></p>
 <p>Core runtime behavior:</p>
 <ul>
 <li>Real-time score, goal, and timer updates via Qt signal-slot connections</li>
@@ -131,16 +136,28 @@ Project Overview</h1>
 <li>Match state workflow: <code>PreGame -&gt; FirstHalf -&gt; HalfTime -&gt; SecondHalf -&gt; PostGame</code></li>
 <li>Slideshow mode for non-live phases (PreGame/HalfTime/PostGame)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<h1><a class="anchor" id="branch-highlights-recent"></a>
 Branch Highlights (Recent)</h1>
 <ul>
 <li><b>MVC Refactor</b>: Business logic moved into <code><a class="el" href="classmatch__controller.html">match_controller</a></code></li>
 <li><b>Unified Team Model</b>: <code>home_team</code>/<code>away_team</code> replaced by <code>team</code> abstraction</li>
 <li><b>Documentation Update</b>: Extended class and use-case diagrams added</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="architecture-current-branch"></a>
 Architecture (Current Branch)</h1>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="use-case-diagram"></a>
+Use Case Diagram</h2>
+<p><img src="documentation/usecase_diagram/usecase_diagramm.drawio.png" alt="Use Case Diagram" class="inline"/></p>
+<p><em>User interactions and system workflows for match operators and audience.</em></p>
+<h2><a class="anchor" id="data-flow-diagram"></a>
+Data Flow Diagram</h2>
+<p><img src="documentation/dft_diagram/DFTDiagramm.drawio.png" alt="Data Flow Diagram" class="inline"/></p>
+<p><em>Data flow between external inputs, processing units, data storage, and display outputs.</em></p>
+<h2><a class="anchor" id="system-class-diagram"></a>
+System Class Diagram</h2>
+<p><img src="documentation/class_diagram/scoreboard_system.png" alt="Class Diagram" class="inline"/></p>
+<p><em>Complete class structure showing inheritance, composition, and relationships in the MVC architecture.</em></p>
+<h2><a class="anchor" id="main-components"></a>
 Main Components</h2>
 <ul>
 <li><code><a class="el" href="classmatch__controller.html">match_controller</a></code> - central business logic and match state management (MVC controller/model layer)</li>
@@ -150,7 +167,7 @@ Main Components</h2>
 <li><code>timer</code> - phase-aware match timer logic</li>
 <li><code>team</code> / <code>player</code> - roster and player domain model</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="important-runtime-connections"></a>
 Important Runtime Connections</h2>
 <ul>
 <li><code><a class="el" href="classcontroll__window.html">controll_window</a></code> delegates user actions to <code><a class="el" href="classmatch__controller.html">match_controller</a></code></li>
@@ -158,17 +175,9 @@ Important Runtime Connections</h2>
 <li><code><a class="el" href="classcontroll__window.html#af8ef38538f48af4952c7496b2ee7e85f" title="Emitted when a team emblem image has changed.">controll_window::emblemChanged</a></code> updates scoreboard emblems (<code><a class="el" href="class_score__board.html#a77c56321ce31224260e4280b9b72d82c" title="Updates team emblem display.">Score_board::updateEmblem</a></code>)</li>
 <li><code><a class="el" href="classscore__memory.html">score_memory</a></code> and <code>timer</code> signals update UI labels/lists in both windows</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md8"></a>
-Diagrams</h2>
-<ul>
-<li>Class diagram (Mermaid): <code>documentation/class_diagramm/classdiagramm.mmd</code></li>
-<li>Class diagram (PNG): <code>documentation/class_diagramm/scoreboard_system.png</code></li>
-<li>Data flow diagram (draw.io): <code>documentation/DFTDiagramm.drawio</code></li>
-<li>Use case diagram (draw.io): <code>documentation/usecase_diagramm/usecase_diagramm.drawio</code></li>
-</ul>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="build-and-run"></a>
 Build and Run</h1>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="requirements"></a>
 Requirements</h2>
 <ul>
 <li>Qt 6.6 or newer (Qt Widgets)</li>
@@ -176,14 +185,14 @@ Requirements</h2>
 <li>CMake 3.16 or newer</li>
 <li>Windows, Linux, or macOS</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="build-with-qt-creator"></a>
 Build with Qt Creator</h2>
 <ol type="1">
 <li>Open <code>Software/CMakeLists.txt</code> in Qt Creator</li>
 <li>Select a Desktop Qt 6 kit</li>
 <li>Configure, build, and run <code>anzeigetafel</code></li>
 </ol>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="build-with-cmake-command-line"></a>
 Build with CMake (Command Line)</h2>
 <div class="fragment"><div class="line">cmake -S Software -B Software/build</div>
 <div class="line">cmake --build Software/build --config Release</div>
@@ -192,7 +201,7 @@ Build with CMake (Command Line)</h2>
 <li>Windows: <code>Software/build/anzeigetafel.exe</code></li>
 <li>Linux/macOS: <code>Software/build/anzeigetafel</code></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="current-project-structure"></a>
 Current Project Structure</h1>
 <div class="fragment"><div class="line">Anzeigetafel/</div>
 <div class="line">|- README.md</div>
@@ -222,7 +231,7 @@ Current Project Structure</h1>
 <div class="line">      |- team.cpp</div>
 <div class="line">      `- timer.cpp</div>
 </div><!-- fragment --><p>Note: All UI elements are created programmatically (no <code>.ui</code> files).</p>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="known-limitations"></a>
 Known Limitations</h1>
 <ul>
 <li>Fixed for standard 2 x 45 minute football flow</li>
@@ -232,7 +241,7 @@ Known Limitations</h1>
 <li>Slideshow directories are expected to exist under <code>slides/PreGame</code>, <code>slides/HalfTime</code>, and <code>slides/PostGame</code></li>
 <li><code><a class="el" href="class_score__board.html">Score_board</a></code> currently uses hardcoded slideshow base paths that may need adjustment per deployment target</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md15"></a>
+<h1><a class="anchor" id="future-enhancements"></a>
 Future Enhancements</h1>
 <ul>
 <li>Persist match events and results in storage/database</li>

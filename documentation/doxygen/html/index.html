@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Anzeigetafel: Main Page</title>
+<title>Anzeigetafel: Anzeigetafel - Football Scoreboard Application</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -95,10 +95,180 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Anzeigetafel Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">Anzeigetafel - Football Scoreboard Application </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a></p>
+<p>A modular Qt application to manage and display live football match events.</p>
+<h1><a class="anchor" id="branch-status"></a>
+Branch Status</h1>
+<ul>
+<li>Active branch: <code>CPP_Spinoff_Project</code></li>
+<li>Current software version on this branch: <b>3.0</b></li>
+<li>Last major change: MVC refactor to a controller-based architecture</li>
+</ul>
+<p>This README is updated to match the current branch structure and code.</p>
+<h1><a class="anchor" id="author"></a>
+Author</h1>
+<p><b>Paranithan Paramalingam</b></p>
+<p>Bachelor of Engineering, BFH</p>
+<p>Course: BTE5512 - Projektarbeit | BTE5540 - Bachelor Thesis</p>
+<blockquote class="doxtable">
+<p>&zwj;This project was developed with assistance from AI tools (ChatGPT/GitHub Copilot) for code generation and documentation. </p>
+</blockquote>
+<h1><a class="anchor" id="project-overview"></a>
+Project Overview</h1>
+<p>The application provides two synchronized windows:</p>
+<h2><a class="anchor" id="control-window"></a>
+Control Window</h2>
+<div class="image">
+<img src="Controll_Window_PreGame.png" alt=""/>
+<div class="caption">
+Control Window - PreGame</div></div>
+    <div class="image">
+<img src="Controll_Window_FH.png" alt=""/>
+<div class="caption">
+Control Window - First Half</div></div>
+    <p><em>Operator interface for managing teams, goals, timer, and match state.</em></p>
+<h2><a class="anchor" id="scoreboard-display"></a>
+Scoreboard Display</h2>
+<div class="image">
+<img src="score_board.png" alt=""/>
+<div class="caption">
+Scoreboard Display</div></div>
+    <p><em>Fullscreen audience display with score, time, emblems, and goal scorers.</em></p>
+<p>Core runtime behavior:</p>
+<ul>
+<li>Real-time score, goal, and timer updates via Qt signal-slot connections</li>
+<li>Team roster management with CSV import</li>
+<li>Match state workflow: <code>PreGame -&gt; FirstHalf -&gt; HalfTime -&gt; SecondHalf -&gt; PostGame</code></li>
+<li>Slideshow mode for non-live phases (PreGame/HalfTime/PostGame)</li>
+</ul>
+<h1><a class="anchor" id="branch-highlights-recent"></a>
+Branch Highlights (Recent)</h1>
+<ul>
+<li><b>MVC Refactor</b>: Business logic moved into <code><a class="el" href="classmatch__controller.html">match_controller</a></code></li>
+<li><b>Unified Team Model</b>: <code>home_team</code>/<code>away_team</code> replaced by <code>team</code> abstraction</li>
+<li><b>Documentation Update</b>: Extended class and use-case diagrams added</li>
+</ul>
+<h1><a class="anchor" id="architecture-current-branch"></a>
+Architecture (Current Branch)</h1>
+<h2><a class="anchor" id="use-case-diagram"></a>
+Use Case Diagram</h2>
+<div class="image">
+<img src="usecase_diagramm.drawio.png" alt=""/>
+<div class="caption">
+Use Case Diagram</div></div>
+    <p><em>User interactions and system workflows for match operators and audience.</em></p>
+<h2><a class="anchor" id="data-flow-diagram"></a>
+Data Flow Diagram</h2>
+<div class="image">
+<img src="DFTDiagramm.drawio.png" alt=""/>
+<div class="caption">
+Data Flow Diagram</div></div>
+    <p><em>Data flow between external inputs, processing units, data storage, and display outputs.</em></p>
+<h2><a class="anchor" id="system-class-diagram"></a>
+System Class Diagram</h2>
+<div class="image">
+<img src="scoreboard_system.png" alt=""/>
+<div class="caption">
+Class Diagram</div></div>
+    <p><em>Complete class structure showing inheritance, composition, and relationships in the MVC architecture.</em></p>
+<h2><a class="anchor" id="main-components"></a>
+Main Components</h2>
+<ul>
+<li><code><a class="el" href="classmatch__controller.html">match_controller</a></code> - central business logic and match state management (MVC controller/model layer)</li>
+<li><code><a class="el" href="classcontroll__window.html">controll_window</a></code> - operator UI (view layer)</li>
+<li><code><a class="el" href="class_score__board.html">Score_board</a></code> - public display window with score/timer/goals/slideshow</li>
+<li><code><a class="el" href="classscore__memory.html">score_memory</a></code> - goal events and score state storage</li>
+<li><code>timer</code> - phase-aware match timer logic</li>
+<li><code>team</code> / <code>player</code> - roster and player domain model</li>
+</ul>
+<h2><a class="anchor" id="important-runtime-connections"></a>
+Important Runtime Connections</h2>
+<ul>
+<li><code><a class="el" href="classcontroll__window.html">controll_window</a></code> delegates user actions to <code><a class="el" href="classmatch__controller.html">match_controller</a></code></li>
+<li><code><a class="el" href="classmatch__controller.html#aacc93f6db22dedabc87ad65189b1a9a2" title="Emitted when match state changes.">match_controller::matchStateChanged</a></code> updates scoreboard state (<code><a class="el" href="class_score__board.html#a0403b27579d1787694460fc0bff5f7f4" title="Changes match state and updates display mode.">Score_board::setMatchState</a></code>)</li>
+<li><code><a class="el" href="classcontroll__window.html#af8ef38538f48af4952c7496b2ee7e85f" title="Emitted when a team emblem image has changed.">controll_window::emblemChanged</a></code> updates scoreboard emblems (<code><a class="el" href="class_score__board.html#a77c56321ce31224260e4280b9b72d82c" title="Updates team emblem display.">Score_board::updateEmblem</a></code>)</li>
+<li><code><a class="el" href="classscore__memory.html">score_memory</a></code> and <code>timer</code> signals update UI labels/lists in both windows</li>
+</ul>
+<h1><a class="anchor" id="build-and-run"></a>
+Build and Run</h1>
+<h2><a class="anchor" id="requirements"></a>
+Requirements</h2>
+<ul>
+<li>Qt 6.6 or newer (Qt Widgets)</li>
+<li>C++17 compatible compiler</li>
+<li>CMake 3.16 or newer</li>
+<li>Windows, Linux, or macOS</li>
+</ul>
+<h2><a class="anchor" id="build-with-qt-creator"></a>
+Build with Qt Creator</h2>
+<ol type="1">
+<li>Open <code>Software/CMakeLists.txt</code> in Qt Creator</li>
+<li>Select a Desktop Qt 6 kit</li>
+<li>Configure, build, and run <code>anzeigetafel</code></li>
+</ol>
+<h2><a class="anchor" id="build-with-cmake-command-line"></a>
+Build with CMake (Command Line)</h2>
+<div class="fragment"><div class="line">cmake -S Software -B Software/build</div>
+<div class="line">cmake --build Software/build --config Release</div>
+</div><!-- fragment --><p>Run executable:</p>
+<ul>
+<li>Windows: <code>Software/build/anzeigetafel.exe</code></li>
+<li>Linux/macOS: <code>Software/build/anzeigetafel</code></li>
+</ul>
+<h1><a class="anchor" id="current-project-structure"></a>
+Current Project Structure</h1>
+<div class="fragment"><div class="line">Anzeigetafel/</div>
+<div class="line">|- README.md</div>
+<div class="line">|- documentation/</div>
+<div class="line">|- Import/</div>
+<div class="line">|- slides/</div>
+<div class="line">|- LED_wall/</div>
+<div class="line">`- Software/</div>
+<div class="line">   |- CMakeLists.txt</div>
+<div class="line">   |- CMakePresets.json</div>
+<div class="line">   |- main.cpp</div>
+<div class="line">   |- resources.qrc</div>
+<div class="line">   |- include/</div>
+<div class="line">   |  |- controll_window.h</div>
+<div class="line">   |  |- match_controller.h</div>
+<div class="line">   |  |- player.h</div>
+<div class="line">   |  |- score_board.h</div>
+<div class="line">   |  |- score_memory.h</div>
+<div class="line">   |  |- team.h</div>
+<div class="line">   |  `- timer.h</div>
+<div class="line">   `- src/</div>
+<div class="line">      |- controll_window.cpp</div>
+<div class="line">      |- match_controller.cpp</div>
+<div class="line">      |- player.cpp</div>
+<div class="line">      |- score_board.cpp</div>
+<div class="line">      |- score_memory.cpp</div>
+<div class="line">      |- team.cpp</div>
+<div class="line">      `- timer.cpp</div>
+</div><!-- fragment --><p>Note: All UI elements are created programmatically (no <code>.ui</code> files).</p>
+<h1><a class="anchor" id="known-limitations"></a>
+Known Limitations</h1>
+<ul>
+<li>Fixed for standard 2 x 45 minute football flow</li>
+<li>No extra time, injury time, or penalty shootout mode</li>
+<li>No duplicate jersey-number validation in roster input</li>
+<li>No persistent match-state storage (restart clears runtime state)</li>
+<li>Slideshow directories are expected to exist under <code>slides/PreGame</code>, <code>slides/HalfTime</code>, and <code>slides/PostGame</code></li>
+<li><code><a class="el" href="class_score__board.html">Score_board</a></code> currently uses hardcoded slideshow base paths that may need adjustment per deployment target</li>
+</ul>
+<h1><a class="anchor" id="future-enhancements"></a>
+Future Enhancements</h1>
+<ul>
+<li>Persist match events and results in storage/database</li>
+<li>Configurable match durations and sport presets</li>
+<li>Network output for remote displays/stream overlays</li>
+<li>Exportable event log (CSV/JSON)</li>
+<li>Cross-platform configuration for slide/media paths </li>
+</ul>
+</div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 </div><!-- doc-content -->

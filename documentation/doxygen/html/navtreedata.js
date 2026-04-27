@@ -25,25 +25,7 @@
 var NAVTREE =
 [
   [ "Anzeigetafel", "index.html", [
-    [ "Anzeigetafel - Football Scoreboard Application", "md__r_e_a_d_m_e.html", [
-      [ "Branch Status", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
-      [ "Author", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "Project Overview", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
-      [ "Branch Highlights (Recent)", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
-      [ "Architecture (Current Branch)", "md__r_e_a_d_m_e.html#autotoc_md5", [
-        [ "Main Components", "md__r_e_a_d_m_e.html#autotoc_md6", null ],
-        [ "Important Runtime Connections", "md__r_e_a_d_m_e.html#autotoc_md7", null ],
-        [ "Diagrams", "md__r_e_a_d_m_e.html#autotoc_md8", null ]
-      ] ],
-      [ "Build and Run", "md__r_e_a_d_m_e.html#autotoc_md9", [
-        [ "Requirements", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
-        [ "Build with Qt Creator", "md__r_e_a_d_m_e.html#autotoc_md11", null ],
-        [ "Build with CMake (Command Line)", "md__r_e_a_d_m_e.html#autotoc_md12", null ]
-      ] ],
-      [ "Current Project Structure", "md__r_e_a_d_m_e.html#autotoc_md13", null ],
-      [ "Known Limitations", "md__r_e_a_d_m_e.html#autotoc_md14", null ],
-      [ "Future Enhancements", "md__r_e_a_d_m_e.html#autotoc_md15", null ]
-    ] ],
+    [ "Anzeigetafel - Football Scoreboard Application", "index.html", "index" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
