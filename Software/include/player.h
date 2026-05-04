@@ -2,8 +2,15 @@
  * @file player.h
  * @brief Player data model for roster management.
  *
- * Represents a player with number and name.
- * Used by team rosters for tracking player information.
+ * Represents a single player with identification number and name.
+ * Used by team rosters (team) for tracking player information.
+ * Players are managed through shared pointers for efficient memory management and
+ * automatic cleanup.
+ *
+ * Features:
+ * - Player number and name storage
+ * - Getter and setter methods for player attributes
+ * - Lightweight data model for roster management
  *
  * @author Paranithan Paramalingam (BFH-Ti)
  * @version 2.0, 2025-06-01

@@ -1,0 +1,68 @@
+\doxysection{team Class Reference}
+\hypertarget{classteam}{}\label{classteam}\index{team@{team}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classteam_a6650acaf604affb5dc5d98a953b6ba50}\label{classteam_a6650acaf604affb5dc5d98a953b6ba50} 
+{\bfseries team} ()
+\begin{DoxyCompactList}\small\item\em Constructs empty team roster. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classteam_a647791fa6d02f9eb4e10dca510507de9}{add\+Player}} (unsigned number, const QString \&name)
+\begin{DoxyCompactList}\small\item\em Adds player to team roster. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classteam_ad71deba31251c0874707781d8e72fd96}{remove\+Player}} (unsigned number)
+\begin{DoxyCompactList}\small\item\em Removes player from team roster by jersey number. \end{DoxyCompactList}\item 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& \mbox{\hyperlink{classteam_a6d079eabea360bc9764d127f864cff27}{get\+Players}} () const
+\begin{DoxyCompactList}\small\item\em Gets all players in team roster. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classteam_a647791fa6d02f9eb4e10dca510507de9}\index{team@{team}!addPlayer@{addPlayer}}
+\index{addPlayer@{addPlayer}!team@{team}}
+\doxysubsubsection{\texorpdfstring{addPlayer()}{addPlayer()}}
+{\footnotesize\ttfamily \label{classteam_a647791fa6d02f9eb4e10dca510507de9} 
+void team\+::add\+Player (\begin{DoxyParamCaption}\item[{unsigned}]{number}{, }\item[{const QString \&}]{name}{}\end{DoxyParamCaption})}
+
+
+
+Adds player to team roster. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em number} & Player jersey number \\
+\hline
+{\em name} & Player name \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classteam_a6d079eabea360bc9764d127f864cff27}\index{team@{team}!getPlayers@{getPlayers}}
+\index{getPlayers@{getPlayers}!team@{team}}
+\doxysubsubsection{\texorpdfstring{getPlayers()}{getPlayers()}}
+{\footnotesize\ttfamily \label{classteam_a6d079eabea360bc9764d127f864cff27} 
+const std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{classplayer}{player}} $>$ $>$ \& team\+::get\+Players (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Gets all players in team roster. 
+
+\begin{DoxyReturn}{Returns}
+Const reference to vector of player shared pointers 
+\end{DoxyReturn}
+\Hypertarget{classteam_ad71deba31251c0874707781d8e72fd96}\index{team@{team}!removePlayer@{removePlayer}}
+\index{removePlayer@{removePlayer}!team@{team}}
+\doxysubsubsection{\texorpdfstring{removePlayer()}{removePlayer()}}
+{\footnotesize\ttfamily \label{classteam_ad71deba31251c0874707781d8e72fd96} 
+void team\+::remove\+Player (\begin{DoxyParamCaption}\item[{unsigned}]{number}{}\end{DoxyParamCaption})}
+
+
+
+Removes player from team roster by jersey number. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em number} & Jersey number of player to remove \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{team_8h}{team.\+h}}\item 
+Software/src/\mbox{\hyperlink{team_8cpp}{team.\+cpp}}\end{DoxyCompactItemize}

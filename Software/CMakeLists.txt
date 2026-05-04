@@ -20,16 +20,16 @@ add_executable(anzeigetafel
     src/score_board.cpp
     src/score_memory.cpp
     src/player.cpp
-    src/home_team.cpp
-    src/away_team.cpp
+    src/team.cpp
     src/timer.cpp
+    src/match_controller.cpp
     include/controll_window.h
     include/score_board.h
     include/score_memory.h
     include/player.h
-    include/home_team.h
-    include/away_team.h
+    include/team.h
     include/timer.h
+    include/match_controller.h
     resources.qrc
 )
 

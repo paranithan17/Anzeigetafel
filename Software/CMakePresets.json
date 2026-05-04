@@ -1,0 +1,30 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "qt6-mingw-debug",
+      "displayName": "Qt6 MinGW Debug",
+      "description": "Build with Qt 6.10.0 MinGW, avoiding Anaconda Qt mismatch",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "CMAKE_PREFIX_PATH": "C:/Qt/6.10.0/mingw_64",
+        "Qt6_DIR": "C:/Qt/6.10.0/mingw_64/lib/cmake/Qt6"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "qt6-mingw-debug",
+      "configurePreset": "qt6-mingw-debug"
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+\doxysection{score\+\_\+memory Class Reference}
+\hypertarget{classscore__memory}{}\label{classscore__memory}\index{score\_memory@{score\_memory}}
+Inheritance diagram for score\+\_\+memory\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classscore__memory}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classscore__memory_a31263335d5855c93f962dc0c0fed6abc}{goals\+Updated}} ()
+\begin{DoxyCompactList}\small\item\em Emitted whenever goal history changes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classscore__memory_acc0dea03df4a61429c334180d24b372e}{score\+\_\+memory}} (QObject \texorpdfstring{$\ast$}{*}parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs score memory storage object. \end{DoxyCompactList}\item 
+QList$<$ \mbox{\hyperlink{struct_goal}{Goal}} $>$ \mbox{\hyperlink{classscore__memory_afe0eab080e7b11fb524074aedbba5b6f}{get\+Goals}} () const
+\begin{DoxyCompactList}\small\item\em Returns all recorded goal events. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classscore__memory_a37f2799ecd45d5a53c9c33cf21a7dc3f}{get\+Home\+Score}} () const
+\begin{DoxyCompactList}\small\item\em Calculates current home team score. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classscore__memory_a03a462ec297c783d54f5d6a0ba708b64}{get\+Away\+Score}} () const
+\begin{DoxyCompactList}\small\item\em Calculates current away team score. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classscore__memory_adf95b4c80f61aa8752808553ff68cfd9}{add\+Goal}} (int number, QString \mbox{\hyperlink{classplayer}{player}}, const QString \&time\+Stamp, const QString \&\mbox{\hyperlink{classteam}{team}}, bool own\+Goal)
+\begin{DoxyCompactList}\small\item\em Adds a goal event to match history. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classscore__memory_a2c77882aa421f475b342350ba4ede552}{remove\+Last\+Goal}} ()
+\begin{DoxyCompactList}\small\item\em Removes the most recently added goal event. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classscore__memory_a7b6e3ec5c82e5161ab5ccc5240b34f9a}{reset\+Game}} ()
+\begin{DoxyCompactList}\small\item\em Clears all goal events and resets match score state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+@caption The \doxylink{classscore__memory}{score\+\_\+memory} stores data (scores, goals, event time, player), which provides data to \doxylink{classcontroll__window}{controll\+\_\+window} and score\+\_\+board \begin{DoxyAuthor}{Author}
+Paranithan Paramalingam. BFH-\/\+Ti 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+V1.\+0, 27.\+05.\+2025
+\end{DoxyVersion}
+\begin{DoxyNote}{Note}
+This code has been created with help of chatgpt 
+\end{DoxyNote}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classscore__memory_acc0dea03df4a61429c334180d24b372e}\index{score\_memory@{score\_memory}!score\_memory@{score\_memory}}
+\index{score\_memory@{score\_memory}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{score\_memory()}{score\_memory()}}
+{\footnotesize\ttfamily \label{classscore__memory_acc0dea03df4a61429c334180d24b372e} 
+score\+\_\+memory\+::score\+\_\+memory (\begin{DoxyParamCaption}\item[{QObject \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Constructs score memory storage object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Optional Qt parent object (default nullptr) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classscore__memory_adf95b4c80f61aa8752808553ff68cfd9}\index{score\_memory@{score\_memory}!addGoal@{addGoal}}
+\index{addGoal@{addGoal}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{addGoal()}{addGoal()}}
+{\footnotesize\ttfamily \label{classscore__memory_adf95b4c80f61aa8752808553ff68cfd9} 
+void score\+\_\+memory\+::add\+Goal (\begin{DoxyParamCaption}\item[{int}]{number}{, }\item[{QString}]{player}{, }\item[{const QString \&}]{time\+Stamp}{, }\item[{const QString \&}]{team}{, }\item[{bool}]{own\+Goal}{}\end{DoxyParamCaption})}
+
+
+
+Adds a goal event to match history. 
+
+Appends the goal, updates score views through signal emission, and preserves complete event metadata for logs.
+
+
+\begin{DoxyParams}{Parameters}
+{\em number} & Scorer jersey number \\
+\hline
+{\em player} & Scorer display name \\
+\hline
+{\em time\+Stamp} & Formatted match timestamp when goal occurred \\
+\hline
+{\em team} & Team identifier associated with this event \\
+\hline
+{\em own\+Goal} & True if the event is an own goal \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+adds the \doxylink{struct_goal}{Goal} events of the full game.\Hypertarget{classscore__memory_a03a462ec297c783d54f5d6a0ba708b64}\index{score\_memory@{score\_memory}!getAwayScore@{getAwayScore}}
+\index{getAwayScore@{getAwayScore}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{getAwayScore()}{getAwayScore()}}
+{\footnotesize\ttfamily \label{classscore__memory_a03a462ec297c783d54f5d6a0ba708b64} 
+int score\+\_\+memory\+::get\+Away\+Score (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Calculates current away team score. 
+
+Own goals from home team are counted for away team.
+
+\begin{DoxyReturn}{Returns}
+Current away score 
+\end{DoxyReturn}
+Memorizes the score of the Team 2\Hypertarget{classscore__memory_afe0eab080e7b11fb524074aedbba5b6f}\index{score\_memory@{score\_memory}!getGoals@{getGoals}}
+\index{getGoals@{getGoals}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{getGoals()}{getGoals()}}
+{\footnotesize\ttfamily \label{classscore__memory_afe0eab080e7b11fb524074aedbba5b6f} 
+QList$<$ \mbox{\hyperlink{struct_goal}{Goal}} $>$ score\+\_\+memory\+::get\+Goals (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns all recorded goal events. 
+
+\begin{DoxyReturn}{Returns}
+Copy of goal-\/event list in insertion order 
+\end{DoxyReturn}
+\Hypertarget{classscore__memory_a37f2799ecd45d5a53c9c33cf21a7dc3f}\index{score\_memory@{score\_memory}!getHomeScore@{getHomeScore}}
+\index{getHomeScore@{getHomeScore}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{getHomeScore()}{getHomeScore()}}
+{\footnotesize\ttfamily \label{classscore__memory_a37f2799ecd45d5a53c9c33cf21a7dc3f} 
+int score\+\_\+memory\+::get\+Home\+Score (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Calculates current home team score. 
+
+Own goals from away team are counted for home team.
+
+\begin{DoxyReturn}{Returns}
+Current home score 
+\end{DoxyReturn}
+Memorizes the score of the Team 1\Hypertarget{classscore__memory_a31263335d5855c93f962dc0c0fed6abc}\index{score\_memory@{score\_memory}!goalsUpdated@{goalsUpdated}}
+\index{goalsUpdated@{goalsUpdated}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{goalsUpdated}{goalsUpdated}}
+{\footnotesize\ttfamily \label{classscore__memory_a31263335d5855c93f962dc0c0fed6abc} 
+void score\+\_\+memory\+::goals\+Updated (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Emitted whenever goal history changes. 
+
+Triggered after add, remove, or reset operations.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{classscore__memory_a2c77882aa421f475b342350ba4ede552}\index{score\_memory@{score\_memory}!removeLastGoal@{removeLastGoal}}
+\index{removeLastGoal@{removeLastGoal}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{removeLastGoal()}{removeLastGoal()}}
+{\footnotesize\ttfamily \label{classscore__memory_a2c77882aa421f475b342350ba4ede552} 
+void score\+\_\+memory\+::remove\+Last\+Goal (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Removes the most recently added goal event. 
+
+Has no effect if history is empty.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+Removes the previous goal in the memory.\Hypertarget{classscore__memory_a7b6e3ec5c82e5161ab5ccc5240b34f9a}\index{score\_memory@{score\_memory}!resetGame@{resetGame}}
+\index{resetGame@{resetGame}!score\_memory@{score\_memory}}
+\doxysubsubsection{\texorpdfstring{resetGame()}{resetGame()}}
+{\footnotesize\ttfamily \label{classscore__memory_a7b6e3ec5c82e5161ab5ccc5240b34f9a} 
+void score\+\_\+memory\+::reset\+Game (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Clears all goal events and resets match score state. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+Resets the goals totally
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{score__memory_8h}{score\+\_\+memory.\+h}}\item 
+Software/build/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+score\+\_\+memory.\+cpp\item 
+Software/build/vscode/anzeigetafel\+\_\+autogen/6\+YEA5652\+QU/moc\+\_\+score\+\_\+memory.\+cpp\item 
+Software/src/\mbox{\hyperlink{score__memory_8cpp}{score\+\_\+memory.\+cpp}}\end{DoxyCompactItemize}

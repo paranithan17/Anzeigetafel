@@ -1,0 +1,41 @@
+digraph "Software/include/timer.h"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [id="Node000001",label="Software/include/timer.h",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Match timer with phase-aware time tracking."];
+  Node1 -> Node2 [id="edge19_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="Software/build/anzeigetafel\l_autogen/6YEA5652QU/moc\l_timer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__timer_8cpp_source.html",tooltip=" "];
+  Node1 -> Node3 [id="edge20_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="Software/build/vscode\l/anzeigetafel_autogen\l/6YEA5652QU/moc_timer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$vscode_2anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__timer_8cpp_source.html",tooltip=" "];
+  Node1 -> Node4 [id="edge21_Node000001_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="Software/include/match\l_controller.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$match__controller_8h.html",tooltip="Central controller for match logic and state management."];
+  Node4 -> Node5 [id="edge22_Node000004_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="Software/build/anzeigetafel\l_autogen/6YEA5652QU/moc\l_match_controller.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__match__controller_8cpp_source.html",tooltip=" "];
+  Node4 -> Node6 [id="edge23_Node000004_Node000006",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node6 [id="Node000006",label="Software/build/vscode\l/anzeigetafel_autogen\l/6YEA5652QU/moc_match\l_controller.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$vscode_2anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__match__controller_8cpp_source.html",tooltip=" "];
+  Node4 -> Node7 [id="edge24_Node000004_Node000007",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node7 [id="Node000007",label="Software/include/controll\l_window.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$controll__window_8h.html",tooltip="GUI Control window for match operator (View component)."];
+  Node7 -> Node8 [id="edge25_Node000007_Node000008",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node8 [id="Node000008",label="Software/build/anzeigetafel\l_autogen/6YEA5652QU/moc\l_controll_window.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__controll__window_8cpp_source.html",tooltip=" "];
+  Node7 -> Node9 [id="edge26_Node000007_Node000009",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node9 [id="Node000009",label="Software/build/vscode\l/anzeigetafel_autogen\l/6YEA5652QU/moc_controll\l_window.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$vscode_2anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__controll__window_8cpp_source.html",tooltip=" "];
+  Node7 -> Node10 [id="edge27_Node000007_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node10 [id="Node000010",label="Software/main.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$main_8cpp.html",tooltip="Application entry point for the Football Scoreboard."];
+  Node7 -> Node11 [id="edge28_Node000007_Node000011",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node11 [id="Node000011",label="Software/src/controll\l_window.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$controll__window_8cpp.html",tooltip="GUI Implementation of the Control Window for match operator."];
+  Node4 -> Node10 [id="edge29_Node000004_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node12 [id="edge30_Node000001_Node000012",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node12 [id="Node000012",label="Software/include/score\l_board.h",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$score__board_8h.html",tooltip="Scoreboard display window for live match information."];
+  Node12 -> Node13 [id="edge31_Node000012_Node000013",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node13 [id="Node000013",label="Software/build/anzeigetafel\l_autogen/6YEA5652QU/moc\l_score_board.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__score__board_8cpp_source.html",tooltip=" "];
+  Node12 -> Node14 [id="edge32_Node000012_Node000014",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node14 [id="Node000014",label="Software/build/vscode\l/anzeigetafel_autogen\l/6YEA5652QU/moc_score\l_board.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$vscode_2anzeigetafel__autogen_26_y_e_a5652_q_u_2moc__score__board_8cpp_source.html",tooltip=" "];
+  Node12 -> Node10 [id="edge33_Node000012_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node12 -> Node15 [id="edge34_Node000012_Node000015",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node15 [id="Node000015",label="Software/src/score\l_board.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$score__board_8cpp.html",tooltip="Implementation of the Scoreboard display window."];
+  Node1 -> Node10 [id="edge35_Node000001_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node16 [id="edge36_Node000001_Node000016",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node16 [id="Node000016",label="Software/src/timer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$timer_8cpp.html",tooltip="Implementation of match timer."];
+}

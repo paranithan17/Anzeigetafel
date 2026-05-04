@@ -1,0 +1,113 @@
+\doxysection{controll\+\_\+window.\+h}
+\hypertarget{controll__window_8h_source}{}\label{controll__window_8h_source}\index{Software/include/controll\_window.h@{Software/include/controll\_window.h}}
+\mbox{\hyperlink{controll__window_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#ifndef\ CONTROLL\_WINDOW\_H}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ CONTROLL\_WINDOW\_H}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <QWidget>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <QPushButton>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <QVBoxLayout>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <QHBoxLayout>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <QLabel>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <QListWidget>}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <QRadioButton>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <QGroupBox>}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <QMouseEvent>}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{match__controller_8h}{match\_controller.h}}"{}}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classcontroll__window}{controll\_window}}\ :\ \textcolor{keyword}{public}\ QWidget}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classcontroll__window_a01b4fa49f5e1b8675dc2784419b03c7f}{controll\_window}}(\mbox{\hyperlink{classmatch__controller}{match\_controller}}\ *controller,\ QWidget\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcontroll__window_a94176c81f8d193ec6927ad4a72a12aca}{setScoreboard}}(QWidget\ *board);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcontroll__window_ac8dfb5d74be1c4df26be4af683a04ee9}{toggleScoreboard}}();}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ signals:}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcontroll__window_af8ef38538f48af4952c7496b2ee7e85f}{emblemChanged}}(\textcolor{keyword}{const}\ QString\ \&\mbox{\hyperlink{classteam}{team}},\ \textcolor{keyword}{const}\ QString\ \&filepath);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcontroll__window_a28f1041fbf5412600ed02eef1d2cb0fb}{mouseDoubleClickEvent}}(QMouseEvent\ *event)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{void}\ addPlayerTeam1();}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ addPlayerTeam2();}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ removePlayerTeam1(QListWidgetItem\ *item);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{void}\ removePlayerTeam2(QListWidgetItem\ *item);}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ addGoalTeam1();}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordtype}{void}\ addGoalTeam2();}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ startTimer();}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{void}\ log();}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{void}\ loadEmblemTeam1();}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{void}\ loadEmblemTeam2();}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{void}\ importTeam1();}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{void}\ importTeam2();}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordtype}{void}\ applyStateSelection();}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{void}\ secondHalfDecision();}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{void}\ updateScoreDisplay();}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTimeDisplay(\textcolor{keyword}{const}\ QString\ \&elapsedTime);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTeamList1();}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordtype}{void}\ updateTeamList2();}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{keywordtype}{void}\ controllerStateChanged(\textcolor{keywordtype}{int}\ state);}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00264\ \ \ \ \ \mbox{\hyperlink{classmatch__controller}{match\_controller}}\ *m\_controller\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00269\ \ \ \ \ QWidget\ *scoreboard\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00272\ \ \ \ \ QPushButton\ *btnAddPlayerTeam1;}
+\DoxyCodeLine{00274\ \ \ \ \ QPushButton\ *btnAddPlayerTeam2;}
+\DoxyCodeLine{00276\ \ \ \ \ QPushButton\ *btnGoalTeam1;}
+\DoxyCodeLine{00278\ \ \ \ \ QPushButton\ *btnGoalTeam2;}
+\DoxyCodeLine{00280\ \ \ \ \ QPushButton\ *btnStartTimer;}
+\DoxyCodeLine{00282\ \ \ \ \ QPushButton\ *btnLog;}
+\DoxyCodeLine{00284\ \ \ \ \ QPushButton\ *btnApplyState;}
+\DoxyCodeLine{00286\ \ \ \ \ QPushButton\ *btnAddEmblemTeam1;}
+\DoxyCodeLine{00288\ \ \ \ \ QPushButton\ *btnAddEmblemTeam2;}
+\DoxyCodeLine{00290\ \ \ \ \ QPushButton\ *btnImportTeam1;}
+\DoxyCodeLine{00292\ \ \ \ \ QPushButton\ *btnImportTeam2;}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00295\ \ \ \ \ QListWidget\ *listTeam1;}
+\DoxyCodeLine{00297\ \ \ \ \ QListWidget\ *listTeam2;}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00300\ \ \ \ \ QRadioButton\ *radioPreGame;}
+\DoxyCodeLine{00302\ \ \ \ \ QRadioButton\ *radioFirstHalf;}
+\DoxyCodeLine{00304\ \ \ \ \ QRadioButton\ *radioHalfTime;}
+\DoxyCodeLine{00306\ \ \ \ \ QRadioButton\ *radioSecondHalf;}
+\DoxyCodeLine{00308\ \ \ \ \ QRadioButton\ *radioPostGame;}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00311\ \ \ \ \ QLabel\ *score;}
+\DoxyCodeLine{00313\ \ \ \ \ QLabel\ *time;}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00322\ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{match\_controller::MatchState}}\ selectedState()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keywordtype}{void}\ setStateSelection(\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{match\_controller::MatchState}}\ state);}
+\DoxyCodeLine{00333\ \};}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONTROLL\_WINDOW\_H}}
+
+\end{DoxyCode}

@@ -14,9 +14,32 @@
     "cmake.ignoreCMakeListsMissing": false,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.default.compileCommands": "${workspaceFolder}/Software/build/vscode/compile_commands.json",
+    "C_Cpp.intelliSenseEngine": "Disabled",
+    "C_Cpp.errorSquiggles": "Disabled",
     "clangd.path": "C:/Qt/Tools/QtCreator/bin/clang/bin/clangd.exe",
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}/Software/build/vscode"
+        "--compile-commands-dir=C:/Users/paran/Desktop/Anzeigetafel/Software/build/vscode",
+        "--query-driver=C:/Qt/Tools/mingw1310_64/bin/g++.exe,C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "--background-index"
     ],
+    "clangd.fallbackFlags": [
+        "-std=gnu++17",
+        "-x",
+        "c++",
+        "-IC:/Users/paran/Desktop/Anzeigetafel/Software/include",
+        "-IC:/Users/paran/Desktop/Anzeigetafel/Software/build/vscode/anzeigetafel_autogen/include",
+        "-isystem",
+        "C:/Qt/6.10.0/mingw_64/include",
+        "-isystem",
+        "C:/Qt/6.10.0/mingw_64/include/QtCore",
+        "-isystem",
+        "C:/Qt/6.10.0/mingw_64/include/QtGui",
+        "-isystem",
+        "C:/Qt/6.10.0/mingw_64/include/QtWidgets"
+    ],
+    "files.associations": {
+        "*.h": "cpp",
+        "*.hpp": "cpp"
+    },
     "chatgpt.openOnStartup": false
 }

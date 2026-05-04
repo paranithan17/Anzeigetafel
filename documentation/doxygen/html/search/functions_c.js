@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['score_5fboard_0',['Score_board',['../class_score__board.html#a42a7fddce552d01be65dc4541ffa2b96',1,'Score_board']]],
+  ['score_5fmemory_1',['score_memory',['../classscore__memory.html#acc0dea03df4a61429c334180d24b372e',1,'score_memory']]],
+  ['scorechanged_2',['scoreChanged',['../classmatch__controller.html#a067e93d0bb6b639b65bb2add3bdce553',1,'match_controller']]],
+  ['secondhalf_3',['secondhalf',['../classtimer.html#ab3c20c6b7cc1bc639565dc3cf3ab1c7f',1,'timer']]],
+  ['secondhalfdecisionneeded_4',['secondHalfDecisionNeeded',['../classmatch__controller.html#aa99fad43c8268f877168250739c9bb41',1,'match_controller']]],
+  ['setcontrolwindow_5',['setControlWindow',['../class_score__board.html#a1bcf2aaa0eb55eabbbe7a879787d3e37',1,'Score_board']]],
+  ['setmatchstate_6',['setMatchState',['../class_score__board.html#a0403b27579d1787694460fc0bff5f7f4',1,'Score_board']]],
+  ['setname_7',['setName',['../classplayer.html#ab35e9a5221473a436472847021c1d96d',1,'player']]],
+  ['setnumber_8',['setNumber',['../classplayer.html#ace3f2c9fed84260ddc31784e08a6d86c',1,'player']]],
+  ['setphase_9',['setPhase',['../classtimer.html#a4bc2822bae585c58f767319d6c455f28',1,'timer']]],
+  ['setscoreboard_10',['setScoreboard',['../classcontroll__window.html#a94176c81f8d193ec6927ad4a72a12aca',1,'controll_window']]],
+  ['setteamemblem_11',['setTeamEmblem',['../classmatch__controller.html#a013b82209700479cfc679b35461a68de',1,'match_controller']]],
+  ['start_12',['start',['../classtimer.html#a9aa894a57748b2bdf3adce46f5736794',1,'timer']]],
+  ['starttimer_13',['startTimer',['../classmatch__controller.html#a641444073991b588031faa8a9ab2b2f8',1,'match_controller']]],
+  ['starttimerenabledchanged_14',['startTimerEnabledChanged',['../classmatch__controller.html#a3a56c4922c5a4512be0179297f4e4312',1,'match_controller']]],
+  ['stop_15',['stop',['../classtimer.html#a3218d61649e284071544b17c8c915ecc',1,'timer']]],
+  ['suggestedgoalminute_16',['suggestedGoalMinute',['../classmatch__controller.html#a84e431dd4ce252fcec277d98e87f2596',1,'match_controller']]]
+];
