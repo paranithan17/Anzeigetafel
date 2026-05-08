@@ -193,8 +193,44 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
     else if (type == "goal")
     {
         const QString team = obj.value("team").toString();
-        qDebug() << "Goal request from browser for team:" << team;
-        // TODO: Implement adding goal via match_controller with proper payload
+
+        // Accept both new payload keys (playerNumber/playerName) and legacy keys (number/name)
+        int playerNumber = obj.value("playerNumber").toInt(-1);
+        if (playerNumber < 0)
+        {
+            playerNumber = obj.value("number").toInt(-1);
+        }
+
+        QString playerName = obj.value("playerName").toString();
+        if (playerName.isEmpty())
+        {
+            playerName = obj.value("name").toString();
+        }
+
+        unsigned goalMinute = static_cast<unsigned>(obj.value("goalMinute").toInt(-1));
+        if (goalMinute == static_cast<unsigned>(-1))
+        {
+            goalMinute = m_controller->suggestedGoalMinute();
+        }
+
+        const bool isOwnGoal = obj.value("isOwnGoal").toBool(false);
+
+        if (team != "Home" && team != "Away")
+        {
+            qDebug() << "Goal request rejected: invalid team:" << team;
+            return;
+        }
+
+        match_controller::GoalData goalData;
+        goalData.scoringTeam = (team == "Home") ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+        goalData.playerNumber = playerNumber;
+        goalData.playerName = playerName;
+        goalData.goalMinute = goalMinute;
+        goalData.isOwnGoal = isOwnGoal;
+
+        const bool added = m_controller->addGoalWithValidation(goalData);
+        qDebug() << "Goal request from browser:" << team << "#" << playerNumber << playerName
+                 << "minute=" << goalMinute << "ownGoal=" << isOwnGoal << "accepted=" << added;
     }
     else if (type == "addPlayer")
     {

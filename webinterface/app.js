@@ -305,7 +305,9 @@ class AnzeigetafelClient {
       });
     }
 
-    const homeAddPlayerShowBtn = document.getElementById("homeAddPlayerShowBtn");
+    const homeAddPlayerShowBtn = document.getElementById(
+      "homeAddPlayerShowBtn",
+    );
     if (homeAddPlayerShowBtn) {
       homeAddPlayerShowBtn.addEventListener("click", () => {
         this.showModal("homeAddPlayerModal");
@@ -319,14 +321,18 @@ class AnzeigetafelClient {
       });
     }
 
-    const homeAddPlayerCancelBtn = document.getElementById("homeAddPlayerCancelBtn");
+    const homeAddPlayerCancelBtn = document.getElementById(
+      "homeAddPlayerCancelBtn",
+    );
     if (homeAddPlayerCancelBtn) {
       homeAddPlayerCancelBtn.addEventListener("click", () => {
         this.hideModal("homeAddPlayerModal");
       });
     }
 
-    const homeAddPlayerConfirmBtn = document.getElementById("homeAddPlayerConfirmBtn");
+    const homeAddPlayerConfirmBtn = document.getElementById(
+      "homeAddPlayerConfirmBtn",
+    );
     if (homeAddPlayerConfirmBtn) {
       homeAddPlayerConfirmBtn.addEventListener("click", () => {
         const num = document.getElementById("homePlayerNum").value;
@@ -358,7 +364,9 @@ class AnzeigetafelClient {
       });
     }
 
-    const awayAddPlayerShowBtn = document.getElementById("awayAddPlayerShowBtn");
+    const awayAddPlayerShowBtn = document.getElementById(
+      "awayAddPlayerShowBtn",
+    );
     if (awayAddPlayerShowBtn) {
       awayAddPlayerShowBtn.addEventListener("click", () => {
         this.showModal("awayAddPlayerModal");
@@ -372,14 +380,18 @@ class AnzeigetafelClient {
       });
     }
 
-    const awayAddPlayerCancelBtn = document.getElementById("awayAddPlayerCancelBtn");
+    const awayAddPlayerCancelBtn = document.getElementById(
+      "awayAddPlayerCancelBtn",
+    );
     if (awayAddPlayerCancelBtn) {
       awayAddPlayerCancelBtn.addEventListener("click", () => {
         this.hideModal("awayAddPlayerModal");
       });
     }
 
-    const awayAddPlayerConfirmBtn = document.getElementById("awayAddPlayerConfirmBtn");
+    const awayAddPlayerConfirmBtn = document.getElementById(
+      "awayAddPlayerConfirmBtn",
+    );
     if (awayAddPlayerConfirmBtn) {
       awayAddPlayerConfirmBtn.addEventListener("click", () => {
         const num = document.getElementById("awayPlayerNum").value;
@@ -440,11 +452,11 @@ class AnzeigetafelClient {
     reader.onload = (e) => {
       try {
         const csv = e.target.result;
-        const lines = csv.split('\n').filter(line => line.trim());
+        const lines = csv.split("\n").filter((line) => line.trim());
         const players = [];
 
         for (const line of lines) {
-          const [numStr, name] = line.split(/[,;]/).map(s => s.trim());
+          const [numStr, name] = line.split(/[,;]/).map((s) => s.trim());
           const num = parseInt(numStr);
           if (!isNaN(num) && name) {
             players.push({ number: num, name });
@@ -453,7 +465,9 @@ class AnzeigetafelClient {
 
         if (players.length > 0) {
           this.sendImportPlayers(team, players);
-          console.log(`[Players] Imported ${players.length} players for ${team} team`);
+          console.log(
+            `[Players] Imported ${players.length} players for ${team} team`,
+          );
         }
       } catch (err) {
         console.error("[Players] Failed to parse CSV:", err);
@@ -489,7 +503,12 @@ class AnzeigetafelClient {
     const message = { type: "importPlayers", team, players };
     try {
       this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent importPlayers:", team, players.length, "players");
+      console.log(
+        "[WebSocket] Sent importPlayers:",
+        team,
+        players.length,
+        "players",
+      );
       return true;
     } catch (err) {
       console.error("[WebSocket] Failed to send importPlayers", err);
@@ -501,7 +520,9 @@ class AnzeigetafelClient {
    * Handle players list update from server
    */
   handlePlayersListUpdate(team, players) {
-    console.log(`[Players] Received ${players.length} players for ${team} team`);
+    console.log(
+      `[Players] Received ${players.length} players for ${team} team`,
+    );
     // store latest players in memory
     this.players[team] = Array.isArray(players) ? players : [];
     this.displayPlayersList(team, this.players[team]);
@@ -516,11 +537,12 @@ class AnzeigetafelClient {
     if (!listElement) return;
 
     if (!players || players.length === 0) {
-      listElement.innerHTML = '<p style="color:#666; font-size:12px;">No players</p>';
+      listElement.innerHTML =
+        '<p style="color:#666; font-size:12px;">No players</p>';
       return;
     }
 
-    let html = '';
+    let html = "";
     for (const player of players) {
       html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; color:#ddd; font-size:12px;">
         <span><strong>#${player.number}</strong> ${player.name}</span>
@@ -530,9 +552,9 @@ class AnzeigetafelClient {
     listElement.innerHTML = html;
 
     // Attach remove handlers
-    const removeBtns = listElement.querySelectorAll('.player-remove-btn');
-    removeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    const removeBtns = listElement.querySelectorAll(".player-remove-btn");
+    removeBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         const t = e.target.dataset.team;
         const n = parseInt(e.target.dataset.number);
         this.sendRemovePlayer(t, n);
@@ -544,18 +566,19 @@ class AnzeigetafelClient {
    * Populate the goal selection modal lists with current players
    */
   populateGoalSelectionModal() {
-    const homeList = document.getElementById('goalHomeList');
-    const awayList = document.getElementById('goalAwayList');
+    const homeList = document.getElementById("goalHomeList");
+    const awayList = document.getElementById("goalAwayList");
     if (!homeList || !awayList) return;
 
     const renderList = (element, team) => {
       const players = this.players[team] || [];
       if (!players || players.length === 0) {
-        element.innerHTML = '<p style="color:#666; font-size:12px;">No players</p>';
+        element.innerHTML =
+          '<p style="color:#666; font-size:12px;">No players</p>';
         return;
       }
 
-      let html = '';
+      let html = "";
       for (const player of players) {
         html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
             <span style="color:#ddd;"><strong>#${player.number}</strong> ${player.name}</span>
@@ -565,20 +588,20 @@ class AnzeigetafelClient {
       element.innerHTML = html;
 
       // attach handlers
-      const btns = element.querySelectorAll('.scorer-btn');
-      btns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+      const btns = element.querySelectorAll(".scorer-btn");
+      btns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
           const t = e.currentTarget.dataset.team;
           const n = parseInt(e.currentTarget.dataset.number);
           const name = e.currentTarget.dataset.name;
           this.sendGoalWithPlayer(t, { number: n, name });
-          this.hideModal('goalSelectModal');
+          this.hideModal("goalSelectModal");
         });
       });
     };
 
-    renderList(homeList, 'Home');
-    renderList(awayList, 'Away');
+    renderList(homeList, "Home");
+    renderList(awayList, "Away");
   }
 
   /**
@@ -588,16 +611,16 @@ class AnzeigetafelClient {
     // ensure lists are up to date
     this.populateGoalSelectionModal();
     // show modal
-    this.showModal('goalSelectModal');
+    this.showModal("goalSelectModal");
 
     // close and cancel handlers
-    const closeBtn = document.getElementById('goalModalClose');
+    const closeBtn = document.getElementById("goalModalClose");
     if (closeBtn) {
-      closeBtn.onclick = () => this.hideModal('goalSelectModal');
+      closeBtn.onclick = () => this.hideModal("goalSelectModal");
     }
-    const cancelBtn = document.getElementById('goalCancelBtn');
+    const cancelBtn = document.getElementById("goalCancelBtn");
     if (cancelBtn) {
-      cancelBtn.onclick = () => this.hideModal('goalSelectModal');
+      cancelBtn.onclick = () => this.hideModal("goalSelectModal");
     }
   }
 
@@ -606,19 +629,27 @@ class AnzeigetafelClient {
    */
   sendGoalWithPlayer(team, player) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      this.showNotification('Not connected to server', 'error');
+      this.showNotification("Not connected to server", "error");
       return false;
     }
 
-    const message = { type: 'goal', team, playerNumber: player.number, playerName: player.name };
+    const message = {
+      type: "goal",
+      team,
+      playerNumber: player.number,
+      playerName: player.name,
+    };
     try {
       this.socket.send(JSON.stringify(message));
-      console.log('[WebSocket] Sent goal for', team, player);
-      this.showNotification(`${player.name} (#${player.number}) recorded for ${team}`, 'success');
+      console.log("[WebSocket] Sent goal for", team, player);
+      this.showNotification(
+        `${player.name} (#${player.number}) recorded for ${team}`,
+        "success",
+      );
       return true;
     } catch (err) {
-      console.error('[WebSocket] Failed to send goal', err);
-      this.showNotification('Failed to send goal', 'error');
+      console.error("[WebSocket] Failed to send goal", err);
+      this.showNotification("Failed to send goal", "error");
       return false;
     }
   }
