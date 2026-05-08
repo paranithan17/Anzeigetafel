@@ -134,6 +134,20 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
         // true = confirms state change even if timer must be stopped
         m_controller->requestStateChange(newState, true);
     }
+    else if (type == "startTimer")
+    {
+        if (m_controller)
+        {
+            const bool started = m_controller->startTimer();
+            qDebug() << "Start timer requested from browser, started=" << started;
+        }
+    }
+    else if (type == "goal")
+    {
+        const QString team = obj.value("team").toString();
+        qDebug() << "Goal request from browser for team:" << team;
+        // TODO: Implement adding goal via match_controller with proper payload
+    }
 }
 
 // Send match state to all connected browsers

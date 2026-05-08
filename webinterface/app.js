@@ -174,6 +174,13 @@ class AnzeigetafelClient {
 
     // Update UI display
     this.updateStateDisplay(stateId, stateName);
+
+    // Enable Start Timer only in FirstHalf (1) or SecondHalf (3)
+    const startBtn = document.getElementById("startTimerBtn");
+    if (startBtn) {
+      const enabled = stateId === 1 || stateId === 3;
+      startBtn.disabled = !enabled;
+    }
   }
 
   /**
@@ -250,6 +257,66 @@ class AnzeigetafelClient {
         console.log(`[UI] Radio selected: ${e.target.value}`);
       });
     });
+
+    // Goal buttons
+    const homeGoal = document.getElementById("homeGoalBtn");
+    if (homeGoal) {
+      homeGoal.addEventListener("click", () => {
+        console.log("[UI] Home Goal button clicked");
+        this.sendGoal("Home");
+      });
+    }
+
+    const awayGoal = document.getElementById("awayGoalBtn");
+    if (awayGoal) {
+      awayGoal.addEventListener("click", () => {
+        console.log("[UI] Away Goal button clicked");
+        this.sendGoal("Away");
+      });
+    }
+
+    // Start timer button
+    const startBtn = document.getElementById("startTimerBtn");
+    if (startBtn) {
+      startBtn.addEventListener("click", () => {
+        console.log("[UI] Start Timer clicked");
+        this.sendStartTimer();
+      });
+    }
+  }
+
+  /**
+   * Send start timer request to server
+   */
+  sendStartTimer() {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+
+    const message = { type: "startTimer" };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log("[WebSocket] Sent startTimer");
+      return true;
+    } catch (err) {
+      console.error("[WebSocket] Failed to send startTimer", err);
+      return false;
+    }
+  }
+
+  /**
+   * Send minimal goal request to server
+   */
+  sendGoal(team) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+
+    const message = { type: "goal", team };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log("[WebSocket] Sent goal for", team);
+      return true;
+    } catch (err) {
+      console.error("[WebSocket] Failed to send goal", err);
+      return false;
+    }
   }
 
   /**

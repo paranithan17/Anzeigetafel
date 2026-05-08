@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anzeigetafel - Match State</title>
+    <title>Anzeigetafel</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -46,6 +46,31 @@
                 </div>
             </form>
         </div>
+    </div>
+
+    <div class="container">
+        <!-- Teams row: Home (left) and Away (right) -->
+        <div class="teams-row" style="margin-top:20px; display:flex; gap:20px;">
+            <div class="team-container" id="homeTeam">
+                <h3>Home Team</h3>
+                <div style="margin-top:10px;">
+                    <button id="homeGoalBtn" class="btn btn-primary">Goal</button>
+                </div>
+            </div>
+
+            <div class="team-container" id="awayTeam">
+                <h3>Away Team</h3>
+                <div style="margin-top:10px;">
+                    <button id="awayGoalBtn" class="btn btn-primary">Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer control button -->
+    <div style="margin-top:20px; display:flex; justify-content:center;">
+        <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+    </div>
     </div>
 
     <script src="app.js"></script>
