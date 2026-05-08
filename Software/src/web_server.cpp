@@ -38,7 +38,8 @@ web_server::web_server(match_controller *controller, QObject *parent)
 // Start WebSocket server
 bool web_server::start(quint16 port)
 {
-    const bool ok = m_server.listen(QHostAddress::AnyIPv4, port);
+    const QHostAddress serverAddress(QStringLiteral("192.168.1.36"));
+    const bool ok = m_server.listen(serverAddress, port);
 
     if (ok)
         qDebug() << "WebSocket server started on" << m_server.serverAddress().toString() << "port" << port;
