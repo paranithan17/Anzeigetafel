@@ -51,26 +51,101 @@
     <div class="container">
         <!-- Teams row: Home (left) and Away (right) -->
         <div class="teams-row" style="margin-top:20px; display:flex; gap:20px;">
+            <!-- Home Team -->
             <div class="team-container" id="homeTeam">
                 <h3>Home Team</h3>
                 <div style="margin-top:10px;">
                     <button id="homeGoalBtn" class="btn btn-primary">Goal</button>
                 </div>
+
+                <!-- Players section in Home container -->
+                <div style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
+                    <h4 style="color:#e0e0e0; font-size:14px; margin-bottom:8px;">Players</h4>
+                    
+                    <!-- Control buttons -->
+                    <div style="display:flex; gap:8px; margin-bottom:10px;">
+                        <button id="homeAddPlayerShowBtn" class="btn btn-primary" style="flex:1; padding:6px;">+</button>
+                        <button id="homeImportBtn" class="btn btn-primary" style="flex:1; padding:6px;">Import</button>
+                        <input type="file" id="homeImportFile" accept=".csv" style="display:none;">
+                    </div>
+                    
+                    <!-- Player list -->
+                    <div id="homePlayersList" style="max-height:150px; overflow-y:auto; border:1px solid #444; border-radius:4px; padding:8px; background-color:#1a1a1a;">
+                        <p style="color:#666; font-size:12px;">No players</p>
+                    </div>
+                </div>
             </div>
 
+            <!-- Away Team -->
             <div class="team-container" id="awayTeam">
                 <h3>Away Team</h3>
                 <div style="margin-top:10px;">
                     <button id="awayGoalBtn" class="btn btn-primary">Goal</button>
                 </div>
+
+                <!-- Players section in Away container -->
+                <div style="margin-top:20px; border-top:1px solid #444; padding-top:15px;">
+                    <h4 style="color:#e0e0e0; font-size:14px; margin-bottom:8px;">Players</h4>
+                    
+                    <!-- Control buttons -->
+                    <div style="display:flex; gap:8px; margin-bottom:10px;">
+                        <button id="awayAddPlayerShowBtn" class="btn btn-primary" style="flex:1; padding:6px;">+</button>
+                        <button id="awayImportBtn" class="btn btn-primary" style="flex:1; padding:6px;">Import</button>
+                        <input type="file" id="awayImportFile" accept=".csv" style="display:none;">
+                    </div>
+                    
+                    <!-- Player list -->
+                    <div id="awayPlayersList" style="max-height:150px; overflow-y:auto; border:1px solid #444; border-radius:4px; padding:8px; background-color:#1a1a1a;">
+                        <p style="color:#666; font-size:12px;">No players</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer control button -->
+        <div style="margin-top:20px; display:flex; justify-content:center;">
+            <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+        </div>
+    </div>
+
+    <!-- Home Team Add Player Modal -->
+    <div id="homeAddPlayerModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Player - Home Team</h3>
+                <button class="modal-close" id="homeModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:8px; margin-bottom:12px; flex-direction:column;">
+                    <input type="number" id="homePlayerNum" placeholder="Jersey Number" min="0" style="padding:8px; background-color:#1a1a1a; border:1px solid #444; color:#fff; border-radius:3px;">
+                    <input type="text" id="homePlayerName" placeholder="Player Name" style="padding:8px; background-color:#1a1a1a; border:1px solid #444; color:#fff; border-radius:3px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="homeAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
+                <button id="homeAddPlayerCancelBtn" class="btn btn-primary" style="background-color:#555;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Timer control button -->
-    <div style="margin-top:20px; display:flex; justify-content:center;">
-        <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
-    </div>
+    <!-- Away Team Add Player Modal -->
+    <div id="awayAddPlayerModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Player - Away Team</h3>
+                <button class="modal-close" id="awayModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:8px; margin-bottom:12px; flex-direction:column;">
+                    <input type="number" id="awayPlayerNum" placeholder="Jersey Number" min="0" style="padding:8px; background-color:#1a1a1a; border:1px solid #444; color:#fff; border-radius:3px;">
+                    <input type="text" id="awayPlayerName" placeholder="Player Name" style="padding:8px; background-color:#1a1a1a; border:1px solid #444; color:#fff; border-radius:3px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="awayAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
+                <button id="awayAddPlayerCancelBtn" class="btn btn-primary" style="background-color:#555;">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

@@ -73,6 +73,16 @@ private slots:
      */
     void broadcastMatchState(int state);
 
+    /**
+     * @brief Broadcasts home team players list to all browsers.
+     */
+    void broadcastHomePlayersList();
+
+    /**
+     * @brief Broadcasts away team players list to all browsers.
+     */
+    void broadcastAwayPlayersList();
+
 private:
     QWebSocketServer m_server;          ///< WebSocket server instance
     QList<QWebSocket *> m_clients;      ///< Connected browser clients
@@ -92,6 +102,14 @@ private:
      * @return JSON text message
      */
     QString createMatchStateJson(int state) const;
+
+    /**
+     * @brief Broadcasts a team's player list to all connected browsers.
+     *
+     * @param team Team identifier ("Home" or "Away")
+     * @param players Vector of player objects
+     */
+    void broadcastPlayersList(const QString &team, const std::vector<std::shared_ptr<player>> &players);
 };
 
 #endif // WEB_SERVER_H

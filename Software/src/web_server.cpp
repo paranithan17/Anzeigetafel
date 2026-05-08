@@ -10,6 +10,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 web_server::web_server(match_controller *controller, QObject *parent)
@@ -32,6 +33,16 @@ web_server::web_server(match_controller *controller, QObject *parent)
                 &match_controller::matchStateChanged,
                 this,
                 &web_server::broadcastMatchState);
+
+        connect(m_controller,
+                &match_controller::homePlayersChanged,
+                this,
+                &web_server::broadcastHomePlayersList);
+
+        connect(m_controller,
+                &match_controller::awayPlayersChanged,
+                this,
+                &web_server::broadcastAwayPlayersList);
     }
 }
 
@@ -74,6 +85,43 @@ void web_server::onNewConnection()
     {
         client->sendTextMessage(
             createMatchStateJson(static_cast<int>(m_controller->currentState())));
+
+        // Send current player lists
+        const auto homePlayers = m_controller->getHomePlayers();
+        QJsonObject homeObj;
+        homeObj["type"] = "playersList";
+        homeObj["team"] = "Home";
+        QJsonArray homeArray;
+        for (const auto &p : homePlayers)
+        {
+            if (p)
+            {
+                QJsonObject playerObj;
+                playerObj["number"] = static_cast<int>(p->getNumber());
+                playerObj["name"] = p->getName();
+                homeArray.append(playerObj);
+            }
+        }
+        homeObj["players"] = homeArray;
+        client->sendTextMessage(QString::fromUtf8(QJsonDocument(homeObj).toJson(QJsonDocument::Compact)));
+
+        const auto awayPlayers = m_controller->getAwayPlayers();
+        QJsonObject awayObj;
+        awayObj["type"] = "playersList";
+        awayObj["team"] = "Away";
+        QJsonArray awayArray;
+        for (const auto &p : awayPlayers)
+        {
+            if (p)
+            {
+                QJsonObject playerObj;
+                playerObj["number"] = static_cast<int>(p->getNumber());
+                playerObj["name"] = p->getName();
+                awayArray.append(playerObj);
+            }
+        }
+        awayObj["players"] = awayArray;
+        client->sendTextMessage(QString::fromUtf8(QJsonDocument(awayObj).toJson(QJsonDocument::Compact)));
     }
 }
 
@@ -148,6 +196,53 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
         qDebug() << "Goal request from browser for team:" << team;
         // TODO: Implement adding goal via match_controller with proper payload
     }
+    else if (type == "addPlayer")
+    {
+        const QString team = obj.value("team").toString();
+        const int number = obj.value("number").toInt(-1);
+        const QString name = obj.value("name").toString();
+
+        if (number >= 0 && !name.isEmpty())
+        {
+            const auto side = (team == "Home") ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+            m_controller->addPlayer(side, static_cast<unsigned>(number), name);
+            qDebug() << "Added player:" << team << "#" << number << name;
+        }
+    }
+    else if (type == "importPlayers")
+    {
+        const QString team = obj.value("team").toString();
+        const QJsonArray playersArray = obj.value("players").toArray();
+
+        // For browser import, build a temporary CSV and use importPlayersFromCsv
+        // or directly add each player
+        for (const QJsonValue &val : playersArray)
+        {
+            const QJsonObject playerObj = val.toObject();
+            const int number = playerObj.value("number").toInt(-1);
+            const QString name = playerObj.value("name").toString();
+
+            if (number >= 0 && !name.isEmpty())
+            {
+                const auto side = (team == "Home") ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+                m_controller->addPlayer(side, static_cast<unsigned>(number), name);
+            }
+        }
+
+        qDebug() << "Imported" << playersArray.size() << "players for team:" << team;
+    }
+    else if (type == "removePlayer")
+    {
+        const QString team = obj.value("team").toString();
+        const int number = obj.value("number").toInt(-1);
+
+        if (number >= 0)
+        {
+            const auto side = (team == "Home") ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+            m_controller->removePlayer(side, static_cast<unsigned>(number));
+            qDebug() << "Removed player:" << team << "#" << number;
+        }
+    }
 }
 
 // Send match state to all connected browsers
@@ -162,6 +257,26 @@ void web_server::broadcastMatchState(int state)
             client->sendTextMessage(json);
         }
     }
+}
+
+// Broadcast home team players list to all browsers
+void web_server::broadcastHomePlayersList()
+{
+    if (!m_controller)
+        return;
+
+    const auto players = m_controller->getHomePlayers();
+    broadcastPlayersList("Home", players);
+}
+
+// Broadcast away team players list to all browsers
+void web_server::broadcastAwayPlayersList()
+{
+    if (!m_controller)
+        return;
+
+    const auto players = m_controller->getAwayPlayers();
+    broadcastPlayersList("Away", players);
 }
 
 // Create JSON message for browser
@@ -195,4 +310,36 @@ QString web_server::createMatchStateJson(int state) const
     }
 
     return QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+}
+
+// Broadcast player list to all browsers
+void web_server::broadcastPlayersList(const QString &team, const std::vector<std::shared_ptr<player>> &players)
+{
+    QJsonObject obj;
+    obj["type"] = "playersList";
+    obj["team"] = team;
+
+    QJsonArray playersArray;
+    for (const auto &p : players)
+    {
+        if (p)
+        {
+            QJsonObject playerObj;
+            playerObj["number"] = static_cast<int>(p->getNumber());
+            playerObj["name"] = p->getName();
+            playersArray.append(playerObj);
+        }
+    }
+
+    obj["players"] = playersArray;
+
+    const QString json = QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+
+    for (QWebSocket *client : std::as_const(m_clients))
+    {
+        if (client && client->isValid())
+        {
+            client->sendTextMessage(json);
+        }
+    }
 }

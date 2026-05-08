@@ -85,6 +85,8 @@ class AnzeigetafelClient {
 
       if (data.type === "matchState") {
         this.handleMatchStateUpdate(data.state, data.stateName);
+      } else if (data.type === "playersList") {
+        this.handlePlayersListUpdate(data.team, data.players);
       }
     } catch (error) {
       console.error("[WebSocket] Failed to parse message:", error, event.data);
@@ -283,6 +285,112 @@ class AnzeigetafelClient {
         this.sendStartTimer();
       });
     }
+
+    // Home team player handlers
+    const homeImportFile = document.getElementById("homeImportFile");
+    if (homeImportFile) {
+      homeImportFile.addEventListener("change", (e) => {
+        this.handlePlayerImportFile(e.target.files[0], "Home");
+        homeImportFile.value = "";
+      });
+    }
+
+    const homeImportBtn = document.getElementById("homeImportBtn");
+    if (homeImportBtn) {
+      homeImportBtn.addEventListener("click", () => {
+        document.getElementById("homeImportFile").click();
+      });
+    }
+
+    const homeAddPlayerShowBtn = document.getElementById("homeAddPlayerShowBtn");
+    if (homeAddPlayerShowBtn) {
+      homeAddPlayerShowBtn.addEventListener("click", () => {
+        this.showModal("homeAddPlayerModal");
+      });
+    }
+
+    const homeModalClose = document.getElementById("homeModalClose");
+    if (homeModalClose) {
+      homeModalClose.addEventListener("click", () => {
+        this.hideModal("homeAddPlayerModal");
+      });
+    }
+
+    const homeAddPlayerCancelBtn = document.getElementById("homeAddPlayerCancelBtn");
+    if (homeAddPlayerCancelBtn) {
+      homeAddPlayerCancelBtn.addEventListener("click", () => {
+        this.hideModal("homeAddPlayerModal");
+      });
+    }
+
+    const homeAddPlayerConfirmBtn = document.getElementById("homeAddPlayerConfirmBtn");
+    if (homeAddPlayerConfirmBtn) {
+      homeAddPlayerConfirmBtn.addEventListener("click", () => {
+        const num = document.getElementById("homePlayerNum").value;
+        const name = document.getElementById("homePlayerName").value;
+        if (num && name) {
+          this.sendAddPlayer("Home", parseInt(num), name);
+          document.getElementById("homePlayerNum").value = "";
+          document.getElementById("homePlayerName").value = "";
+          this.hideModal("homeAddPlayerModal");
+        } else {
+          this.showNotification("Please enter number and name", "warning");
+        }
+      });
+    }
+
+    // Away team player handlers
+    const awayImportFile = document.getElementById("awayImportFile");
+    if (awayImportFile) {
+      awayImportFile.addEventListener("change", (e) => {
+        this.handlePlayerImportFile(e.target.files[0], "Away");
+        awayImportFile.value = "";
+      });
+    }
+
+    const awayImportBtn = document.getElementById("awayImportBtn");
+    if (awayImportBtn) {
+      awayImportBtn.addEventListener("click", () => {
+        document.getElementById("awayImportFile").click();
+      });
+    }
+
+    const awayAddPlayerShowBtn = document.getElementById("awayAddPlayerShowBtn");
+    if (awayAddPlayerShowBtn) {
+      awayAddPlayerShowBtn.addEventListener("click", () => {
+        this.showModal("awayAddPlayerModal");
+      });
+    }
+
+    const awayModalClose = document.getElementById("awayModalClose");
+    if (awayModalClose) {
+      awayModalClose.addEventListener("click", () => {
+        this.hideModal("awayAddPlayerModal");
+      });
+    }
+
+    const awayAddPlayerCancelBtn = document.getElementById("awayAddPlayerCancelBtn");
+    if (awayAddPlayerCancelBtn) {
+      awayAddPlayerCancelBtn.addEventListener("click", () => {
+        this.hideModal("awayAddPlayerModal");
+      });
+    }
+
+    const awayAddPlayerConfirmBtn = document.getElementById("awayAddPlayerConfirmBtn");
+    if (awayAddPlayerConfirmBtn) {
+      awayAddPlayerConfirmBtn.addEventListener("click", () => {
+        const num = document.getElementById("awayPlayerNum").value;
+        const name = document.getElementById("awayPlayerName").value;
+        if (num && name) {
+          this.sendAddPlayer("Away", parseInt(num), name);
+          document.getElementById("awayPlayerNum").value = "";
+          document.getElementById("awayPlayerName").value = "";
+          this.hideModal("awayAddPlayerModal");
+        } else {
+          this.showNotification("Please enter number and name", "warning");
+        }
+      });
+    }
   }
 
   /**
@@ -316,6 +424,153 @@ class AnzeigetafelClient {
     } catch (err) {
       console.error("[WebSocket] Failed to send goal", err);
       return false;
+    }
+  }
+
+  /**
+   * Handle CSV file import (read and send to server)
+   */
+  handlePlayerImportFile(file, team) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const csv = e.target.result;
+        const lines = csv.split('\n').filter(line => line.trim());
+        const players = [];
+
+        for (const line of lines) {
+          const [numStr, name] = line.split(/[,;]/).map(s => s.trim());
+          const num = parseInt(numStr);
+          if (!isNaN(num) && name) {
+            players.push({ number: num, name });
+          }
+        }
+
+        if (players.length > 0) {
+          this.sendImportPlayers(team, players);
+          console.log(`[Players] Imported ${players.length} players for ${team} team`);
+        }
+      } catch (err) {
+        console.error("[Players] Failed to parse CSV:", err);
+        this.showNotification(`Failed to parse CSV for ${team}`, "error");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /**
+   * Send add player request to server
+   */
+  sendAddPlayer(team, number, name) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+
+    const message = { type: "addPlayer", team, number, name };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log("[WebSocket] Sent addPlayer:", team, number, name);
+      return true;
+    } catch (err) {
+      console.error("[WebSocket] Failed to send addPlayer", err);
+      return false;
+    }
+  }
+
+  /**
+   * Send import players request to server
+   */
+  sendImportPlayers(team, players) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+
+    const message = { type: "importPlayers", team, players };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log("[WebSocket] Sent importPlayers:", team, players.length, "players");
+      return true;
+    } catch (err) {
+      console.error("[WebSocket] Failed to send importPlayers", err);
+      return false;
+    }
+  }
+
+  /**
+   * Handle players list update from server
+   */
+  handlePlayersListUpdate(team, players) {
+    console.log(`[Players] Received ${players.length} players for ${team} team`);
+    this.displayPlayersList(team, players);
+  }
+
+  /**
+   * Display player list in UI
+   */
+  displayPlayersList(team, players) {
+    const listId = team === "Home" ? "homePlayersList" : "awayPlayersList";
+    const listElement = document.getElementById(listId);
+    if (!listElement) return;
+
+    if (!players || players.length === 0) {
+      listElement.innerHTML = '<p style="color:#666; font-size:12px;">No players</p>';
+      return;
+    }
+
+    let html = '';
+    for (const player of players) {
+      html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; color:#ddd; font-size:12px;">
+        <span><strong>#${player.number}</strong> ${player.name}</span>
+        <button class="player-remove-btn" data-team="${team}" data-number="${player.number}" style="padding:2px 8px; background:#555; border:none; color:#fff; cursor:pointer; border-radius:3px; font-size:10px;">Remove</button>
+      </div>`;
+    }
+    listElement.innerHTML = html;
+
+    // Attach remove handlers
+    const removeBtns = listElement.querySelectorAll('.player-remove-btn');
+    removeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const t = e.target.dataset.team;
+        const n = parseInt(e.target.dataset.number);
+        this.sendRemovePlayer(t, n);
+      });
+    });
+  }
+
+  /**
+   * Send remove player request to server
+   */
+  sendRemovePlayer(team, number) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+
+    const message = { type: "removePlayer", team, number };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log("[WebSocket] Sent removePlayer:", team, number);
+      return true;
+    } catch (err) {
+      console.error("[WebSocket] Failed to send removePlayer", err);
+      return false;
+    }
+  }
+
+  /**
+   * Show modal dialog
+   */
+  showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "flex";
+      modal.classList.add("show");
+    }
+  }
+
+  /**
+   * Hide modal dialog
+   */
+  hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "none";
+      modal.classList.remove("show");
     }
   }
 
