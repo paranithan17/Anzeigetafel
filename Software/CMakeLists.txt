@@ -10,8 +10,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Find Qt (Qt6 preferred, falls back to Qt5)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets WebSockets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets WebSockets)
 
 # ---- List your sources explicitly (match new folder structure) ----
 add_executable(anzeigetafel
@@ -23,6 +23,7 @@ add_executable(anzeigetafel
     src/team.cpp
     src/timer.cpp
     src/match_controller.cpp
+    src/web_server.cpp
     include/controll_window.h
     include/score_board.h
     include/score_memory.h
@@ -30,14 +31,15 @@ add_executable(anzeigetafel
     include/team.h
     include/timer.h
     include/match_controller.h
+    include/web_server.h
     resources.qrc
 )
 
 # If your headers live in the include folder:
 target_include_directories(anzeigetafel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Link Qt Widgets
-target_link_libraries(anzeigetafel PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+# Link Qt Widgets and WebSockets
+target_link_libraries(anzeigetafel PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebSockets)
 
 # Optional: install target (nice for 'make install')
 install(TARGETS anzeigetafel RUNTIME DESTINATION bin)

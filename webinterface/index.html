@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anzeigetafel - Match State</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="top-bar">
+        <div id="connectionStatus" class="connection-status status-connecting">Connecting...</div>
+    </div>
+
+    <div class="container">
+        <div class="match-state-section">
+            <h2>Match State</h2>
+
+            <form id="matchStateForm">
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="pregame" name="matchState" value="pregame" checked>
+                        <label for="pregame">Pre game</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="firsthalf" name="matchState" value="firsthalf">
+                        <label for="firsthalf">First half</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="halftime" name="matchState" value="halftime">
+                        <label for="halftime">Half time</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="secondhalf" name="matchState" value="secondhalf">
+                        <label for="secondhalf">Second half</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="postgame" name="matchState" value="postgame">
+                        <label for="postgame">Post game</label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Apply state</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -26,6 +26,7 @@
 #include "timer.h"
 #include "score_memory.h"
 #include "match_controller.h"
+#include "web_server.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,6 +35,12 @@ int main(int argc, char *argv[])
   score_memory *ScoreMem = new score_memory();
   timer *gameTime = new timer();
   match_controller *controller = new match_controller(ScoreMem, gameTime);
+
+  // Set up web server for browser control
+  web_server *websocket_server = new web_server(controller);
+
+  // Start WebSocket server on port 8080
+  websocket_server->start(8080); 
 
   Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
   scoreboard->show();
