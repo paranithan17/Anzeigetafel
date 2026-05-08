@@ -33,6 +33,9 @@ class AnzeigetafelClient {
       4: "Post game",
     };
 
+    // Keep the latest players lists in memory for quick access
+    this.players = { Home: [], Away: [] };
+
     this.init();
   }
 
@@ -265,7 +268,7 @@ class AnzeigetafelClient {
     if (homeGoal) {
       homeGoal.addEventListener("click", () => {
         console.log("[UI] Home Goal button clicked");
-        this.sendGoal("Home");
+        this.showGoalSelector("Home");
       });
     }
 
@@ -273,7 +276,7 @@ class AnzeigetafelClient {
     if (awayGoal) {
       awayGoal.addEventListener("click", () => {
         console.log("[UI] Away Goal button clicked");
-        this.sendGoal("Away");
+        this.showGoalSelector("Away");
       });
     }
 
@@ -499,7 +502,9 @@ class AnzeigetafelClient {
    */
   handlePlayersListUpdate(team, players) {
     console.log(`[Players] Received ${players.length} players for ${team} team`);
-    this.displayPlayersList(team, players);
+    // store latest players in memory
+    this.players[team] = Array.isArray(players) ? players : [];
+    this.displayPlayersList(team, this.players[team]);
   }
 
   /**
@@ -533,6 +538,89 @@ class AnzeigetafelClient {
         this.sendRemovePlayer(t, n);
       });
     });
+  }
+
+  /**
+   * Populate the goal selection modal lists with current players
+   */
+  populateGoalSelectionModal() {
+    const homeList = document.getElementById('goalHomeList');
+    const awayList = document.getElementById('goalAwayList');
+    if (!homeList || !awayList) return;
+
+    const renderList = (element, team) => {
+      const players = this.players[team] || [];
+      if (!players || players.length === 0) {
+        element.innerHTML = '<p style="color:#666; font-size:12px;">No players</p>';
+        return;
+      }
+
+      let html = '';
+      for (const player of players) {
+        html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#ddd;"><strong>#${player.number}</strong> ${player.name}</span>
+            <button class="scorer-btn" data-team="${team}" data-number="${player.number}" data-name="${player.name}" style="padding:6px 10px; background:#007acc; border:none; color:#fff; cursor:pointer; border-radius:3px;">Select</button>
+          </div>`;
+      }
+      element.innerHTML = html;
+
+      // attach handlers
+      const btns = element.querySelectorAll('.scorer-btn');
+      btns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const t = e.currentTarget.dataset.team;
+          const n = parseInt(e.currentTarget.dataset.number);
+          const name = e.currentTarget.dataset.name;
+          this.sendGoalWithPlayer(t, { number: n, name });
+          this.hideModal('goalSelectModal');
+        });
+      });
+    };
+
+    renderList(homeList, 'Home');
+    renderList(awayList, 'Away');
+  }
+
+  /**
+   * Show the goal selector modal and populate with players
+   */
+  showGoalSelector(requestingTeam) {
+    // ensure lists are up to date
+    this.populateGoalSelectionModal();
+    // show modal
+    this.showModal('goalSelectModal');
+
+    // close and cancel handlers
+    const closeBtn = document.getElementById('goalModalClose');
+    if (closeBtn) {
+      closeBtn.onclick = () => this.hideModal('goalSelectModal');
+    }
+    const cancelBtn = document.getElementById('goalCancelBtn');
+    if (cancelBtn) {
+      cancelBtn.onclick = () => this.hideModal('goalSelectModal');
+    }
+  }
+
+  /**
+   * Send goal event including player info
+   */
+  sendGoalWithPlayer(team, player) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      this.showNotification('Not connected to server', 'error');
+      return false;
+    }
+
+    const message = { type: 'goal', team, playerNumber: player.number, playerName: player.name };
+    try {
+      this.socket.send(JSON.stringify(message));
+      console.log('[WebSocket] Sent goal for', team, player);
+      this.showNotification(`${player.name} (#${player.number}) recorded for ${team}`, 'success');
+      return true;
+    } catch (err) {
+      console.error('[WebSocket] Failed to send goal', err);
+      this.showNotification('Failed to send goal', 'error');
+      return false;
+    }
   }
 
   /**
