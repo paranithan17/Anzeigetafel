@@ -9,7 +9,7 @@
  */
 
 class AnzeigetafelClient {
-  constructor(serverUrl = "ws://localhost:8080") {
+  constructor(serverUrl = "ws://localhost:80") {
     this.serverUrl = serverUrl;
     this.socket = null;
     this.reconnectAttempts = 0;
