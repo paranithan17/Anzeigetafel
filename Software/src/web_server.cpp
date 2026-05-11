@@ -400,7 +400,7 @@ void web_server::sendSavedEmblems()
 {
     QJsonArray emblemArray;
 
-    QDir dir("/home/scorerboard/Anzeigetafel/emblems");
+    QDir dir("/home/scorerboard/Anzeigetafel/Import");
 
     if (!dir.exists())
     {
