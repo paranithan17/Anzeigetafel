@@ -183,7 +183,7 @@ class WebSocketClient {
       team: team,
       fileName: fileName,
       mimeType: mimeType,
-      data: dataUrl,
+      dataUrl: dataUrl,
     });
   }
 

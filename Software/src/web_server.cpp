@@ -12,6 +12,39 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+#include <QSet>
+#include <QCoreApplication>
+
+namespace
+{
+    QString resolveEmblemImportDir()
+    {
+        const QString preferred = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
+
+        QDir preferredDir(preferred);
+        if ((!preferredDir.exists() && preferredDir.mkpath(".")) || preferredDir.exists())
+        {
+            const QFileInfo preferredInfo(preferredDir.absolutePath());
+            if (preferredInfo.exists() && preferredInfo.isWritable())
+            {
+                return preferredDir.absolutePath();
+            }
+        }
+
+        QDir fallback(QCoreApplication::applicationDirPath());
+        if (fallback.cdUp())
+        {
+            const QString candidate = fallback.absoluteFilePath(QStringLiteral("Import"));
+            QDir candidateDir(candidate);
+            if ((!candidateDir.exists() && candidateDir.mkpath(".")) || candidateDir.exists())
+            {
+                return candidateDir.absolutePath();
+            }
+        }
+
+        return QDir::current().absoluteFilePath(QStringLiteral("Import"));
+    }
+}
 
 web_server::web_server(match_controller *controller, QObject *parent)
     : QObject(parent),
@@ -284,16 +317,27 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
         sendSavedEmblems();
         return;
     }
-    else if (type == "importEmblem")
+    else if (type == "selectSavedEmblem")
+    {
+        const QString team = obj.value("team").toString();
+        const QString filePath = obj.value("filePath").toString();
+
+        handleSelectSavedEmblem(team, filePath);
+        return;
+    }
+    else if (type == "importEmblem" || type == "setEmblem")
     {
         const QString team = obj.value("team").toString();
         const QString fileName = obj.value("fileName").toString();
-        const QString dataUrl = obj.value("dataUrl").toString();
+        QString dataUrl = obj.value("dataUrl").toString();
+
+        if (dataUrl.isEmpty())
+        {
+            dataUrl = obj.value("data").toString();
+        }
 
         handleSetEmblem(team, fileName, dataUrl);
         return;
-        // Handle emblem import (e.g., save to disk, update model, etc.)
-        qDebug() << "Received emblem for team:" << team << "file:" << fileName;
     }
 }
 
@@ -400,49 +444,66 @@ void web_server::sendSavedEmblems()
 {
     QJsonArray emblemArray;
 
-    QDir dir("/home/scorerboard/Anzeigetafel/Import");
+    const QString importDirPath = resolveEmblemImportDir();
+    const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/emblems");
 
-    if (!dir.exists())
+    QSet<QString> seenPaths;
+    const QStringList searchDirs = {importDirPath, legacyDirPath};
+
+    for (const QString &dirPath : searchDirs)
     {
-        dir.mkpath(".");
-    }
-
-    QFileInfoList files = dir.entryInfoList(
-        {"*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp"},
-        QDir::Files | QDir::Readable,
-        QDir::Name);
-
-    for (const QFileInfo &fileInfo : files)
-    {
-        QFile file(fileInfo.absoluteFilePath());
-
-        if (!file.open(QIODevice::ReadOnly))
+        QDir dir(dirPath);
+        if (!dir.exists())
+        {
             continue;
+        }
 
-        QByteArray imageData = file.readAll();
-        file.close();
+        const QFileInfoList files = dir.entryInfoList(
+            {"*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp"},
+            QDir::Files | QDir::Readable,
+            QDir::Name);
 
-        QString suffix = fileInfo.suffix().toLower();
-        QString mimeType = "image/png";
+        for (const QFileInfo &fileInfo : files)
+        {
+            const QString absolutePath = fileInfo.absoluteFilePath();
+            if (seenPaths.contains(absolutePath))
+            {
+                continue;
+            }
 
-        if (suffix == "jpg" || suffix == "jpeg")
-            mimeType = "image/jpeg";
-        else if (suffix == "bmp")
-            mimeType = "image/bmp";
-        else if (suffix == "webp")
-            mimeType = "image/webp";
+            QFile file(absolutePath);
 
-        QString base64 =
-            QString("data:%1;base64,%2")
-                .arg(mimeType)
-                .arg(QString::fromUtf8(imageData.toBase64()));
+            if (!file.open(QIODevice::ReadOnly))
+            {
+                continue;
+            }
 
-        QJsonObject emblemObj;
-        emblemObj["fileName"] = fileInfo.fileName();
-        emblemObj["filePath"] = fileInfo.absoluteFilePath();
-        emblemObj["data"] = base64;
+            const QByteArray imageData = file.readAll();
+            file.close();
 
-        emblemArray.append(emblemObj);
+            QString suffix = fileInfo.suffix().toLower();
+            QString mimeType = "image/png";
+
+            if (suffix == "jpg" || suffix == "jpeg")
+                mimeType = "image/jpeg";
+            else if (suffix == "bmp")
+                mimeType = "image/bmp";
+            else if (suffix == "webp")
+                mimeType = "image/webp";
+
+            QString base64 =
+                QString("data:%1;base64,%2")
+                    .arg(mimeType)
+                    .arg(QString::fromUtf8(imageData.toBase64()));
+
+            QJsonObject emblemObj;
+            emblemObj["fileName"] = fileInfo.fileName();
+            emblemObj["filePath"] = absolutePath;
+            emblemObj["data"] = base64;
+
+            emblemArray.append(emblemObj);
+            seenPaths.insert(absolutePath);
+        }
     }
 
     QJsonObject response;
@@ -457,7 +518,47 @@ void web_server::sendSavedEmblems()
     if (client && client->isValid())
     {
         client->sendTextMessage(json);
+        return;
     }
+
+    for (QWebSocket *connectedClient : std::as_const(m_clients))
+    {
+        if (connectedClient && connectedClient->isValid())
+        {
+            connectedClient->sendTextMessage(json);
+        }
+    }
+}
+
+void web_server::handleSelectSavedEmblem(const QString &team, const QString &filePath)
+{
+    if (!m_controller)
+        return;
+
+    if (team != "Home" && team != "Away")
+    {
+        qDebug() << "Select emblem rejected: invalid team" << team;
+        return;
+    }
+
+    const QString normalizedPath = QDir::cleanPath(filePath);
+
+    if (!QFileInfo::exists(normalizedPath) || !QFileInfo(normalizedPath).isFile())
+    {
+        qDebug() << "Select emblem rejected: file does not exist" << normalizedPath;
+        return;
+    }
+
+    if (team == "Home")
+    {
+        m_controller->setTeamEmblem(match_controller::TeamSide::Home, normalizedPath);
+    }
+    else
+    {
+        m_controller->setTeamEmblem(match_controller::TeamSide::Away, normalizedPath);
+    }
+
+    qDebug() << "Selected saved emblem:" << team << normalizedPath;
 }
 
 /*
@@ -486,14 +587,25 @@ void web_server::handleSetEmblem(const QString &team,
         return;
     }
 
-    QDir dir("/home/scorerboard/Anzeigetafel/Import");
-
-    if (!dir.exists())
+    if (team != "Home" && team != "Away")
     {
-        dir.mkpath(".");
+        qDebug() << "Emblem upload rejected: invalid team" << team;
+        return;
     }
 
-    QString safeFileName = fileName;
+    QDir dir(resolveEmblemImportDir());
+
+    if (!dir.exists() && !dir.mkpath("."))
+    {
+        qDebug() << "Could not create emblem directory:" << dir.absolutePath();
+        return;
+    }
+
+    QString safeFileName = fileName.trimmed();
+    if (safeFileName.isEmpty())
+    {
+        safeFileName = QStringLiteral("emblem.png");
+    }
     safeFileName.replace(" ", "_");
 
     const QString fullPath = dir.absoluteFilePath(team + "_" + safeFileName);
@@ -501,12 +613,18 @@ void web_server::handleSetEmblem(const QString &team,
     QFile file(fullPath);
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Could not save emblem:" << fullPath;
+        qDebug() << "Could not save emblem:" << fullPath << "error:" << file.errorString();
         return;
     }
 
-    file.write(imageData);
+    const qint64 bytesWritten = file.write(imageData);
     file.close();
+
+    if (bytesWritten <= 0)
+    {
+        qDebug() << "Could not write emblem data to:" << fullPath;
+        return;
+    }
 
     if (team == "Home")
     {
@@ -518,4 +636,7 @@ void web_server::handleSetEmblem(const QString &team,
     }
 
     qDebug() << "Emblem saved:" << fullPath;
+
+    // Refresh emblem list in browser immediately after successful upload.
+    sendSavedEmblems();
 }

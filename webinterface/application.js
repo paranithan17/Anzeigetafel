@@ -807,7 +807,7 @@ class ApplicationClient {
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target.result;
-      this.sendEmblem(team, file.name, file.type, file.type, dataUrl);
+      this.sendEmblem(team, file.name, file.type, dataUrl);
     };
     reader.onerror = () => {
       this.showNotification("Failed to read emblem file", "error");
@@ -818,7 +818,7 @@ class ApplicationClient {
   /**
    * Send emblem data to server
    */
-  sendEmblem(team, fileName, fileType, mimeType, dataUrl) {
+  sendEmblem(team, fileName, mimeType, dataUrl) {
     if (!this.wsClient.isConnected()) {
       this.showNotification("Not connected to server", "error");
       return false;
