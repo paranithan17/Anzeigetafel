@@ -14,6 +14,8 @@
 #include <QDebug>
 #include <QSet>
 #include <QCoreApplication>
+#include <QPixmap>
+#include <QBuffer>
 
 namespace
 {
@@ -491,10 +493,38 @@ void web_server::sendSavedEmblems()
             else if (suffix == "webp")
                 mimeType = "image/webp";
 
+            // Scale down image to preview size (100x100) for faster loading
+            QPixmap pixmap;
+            pixmap.loadFromData(imageData);
+
+            QByteArray previewData;
+            if (!pixmap.isNull())
+            {
+                // Scale to fit 100x100 while maintaining aspect ratio
+                QPixmap scaled = pixmap.scaledToWidth(100, Qt::SmoothTransformation);
+                if (scaled.height() > 100)
+                {
+                    scaled = pixmap.scaledToHeight(100, Qt::SmoothTransformation);
+                }
+
+                // Encode scaled image to base64
+                QBuffer buffer(&previewData);
+                buffer.open(QIODevice::WriteOnly);
+                scaled.save(&buffer, suffix == "jpg" || suffix == "jpeg" ? "JPEG" : suffix == "bmp" ? "BMP"
+                                                                                : suffix == "webp"  ? "WEBP"
+                                                                                                    : "PNG",
+                            85);
+                buffer.close();
+            }
+            else
+            {
+                previewData = imageData;
+            }
+
             QString base64 =
                 QString("data:%1;base64,%2")
                     .arg(mimeType)
-                    .arg(QString::fromUtf8(imageData.toBase64()));
+                    .arg(QString::fromUtf8(previewData.toBase64()));
 
             QJsonObject emblemObj;
             emblemObj["fileName"] = fileInfo.fileName();
