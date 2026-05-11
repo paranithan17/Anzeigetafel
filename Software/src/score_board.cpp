@@ -97,8 +97,8 @@ void Score_board::setupLayout()
     scorerLayout->addSpacing(60);
     scorerLayout->addWidget(scorerListTeam2);
     scorerLayout->addSpacing(10);
-	
-	mainlayout->addSpacing(-5);
+
+    mainlayout->addSpacing(-5);
     mainlayout->addLayout(topLayout);
     mainlayout->addSpacing(3);
     mainlayout->addWidget(timeLabel);
@@ -147,12 +147,16 @@ void Score_board::extracted(QList<Goal> &goals)
 
         QListWidgetItem *item = new QListWidgetItem(text);
 
-        if (g.team == "Home")
+        const QString targetTeam = g.ownGoal
+                                       ? (g.team == "Home" ? QStringLiteral("Away") : QStringLiteral("Home"))
+                                       : g.team;
+
+        if (targetTeam == "Home")
         {
             item->setTextAlignment(Qt::AlignCenter);
             scorerListTeam1->addItem(item);
         }
-        else if (g.team == "Away")
+        else if (targetTeam == "Away")
         {
             item->setTextAlignment(Qt::AlignCenter);
             scorerListTeam2->addItem(item);
