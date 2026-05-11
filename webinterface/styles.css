@@ -140,6 +140,11 @@ body {
     background-color: #3a3a3a;
 }
 
+.team-row{
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
 .goal-btn {
   width: 100%;
   height: 80px;
