@@ -132,6 +132,7 @@
         <!-- Timer control button -->
         <div class="timer-button-container">
             <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+            <button id="logBtn" class="btn btn-primary">Log</button>
         </div>
     </div>
 
@@ -195,9 +196,84 @@
                         <p>No players</p>
                     </div>
                 </div>
+
+                <!-- Goal Details Section -->
+                <div class="goal-details-section">
+                    <div class="goal-input-group">
+                        <label for="goalMinuteInput">Goal Minute:</label>
+                        <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120" class="modal-input"
+                            style="width: 80px;">
+                    </div>
+                    <div class="goal-checkbox-group">
+                        <label for="ownGoalCheckbox" style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="ownGoalCheckbox" class="modal-checkbox">
+                            <span>Own Goal</span>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="goalCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Own Goal Confirmation Modal -->
+    <div id="ownGoalConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Own Goal Confirmation</h3>
+                <button class="modal-close" id="ownGoalConfirmModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="ownGoalConfirmText" style="color: #ddd; margin-bottom: 20px;">
+                    You selected a player from the opponent team. Should this be marked as an own goal?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="ownGoalConfirmYesBtn" class="btn btn-primary">Yes, Own Goal</button>
+                <button id="ownGoalConfirmNoBtn" class="btn btn-primary">No, Regular Goal</button>
+                <button id="ownGoalConfirmCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match State Confirmation Modal -->
+    <div id="matchStateConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Match State Change Confirmation</h3>
+                <button class="modal-close" id="matchStateConfirmModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="matchStateConfirmText" style="color: #ddd; margin-bottom: 20px;">
+                    Are you sure you want to leave the current match state?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="matchStateConfirmYesBtn" class="btn btn-primary">Yes, Continue</button>
+                <button id="matchStateConfirmNoBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Button Menu Modal -->
+    <div id="logMenuModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Match Log</h3>
+                <button class="modal-close" id="logMenuModalClose">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <button id="logRestartTimerBtn" class="btn btn-primary"
+                    style="width: 100%; margin-bottom: 10px;">Restart Timer</button>
+                <button id="logResetScoreTimerBtn" class="btn btn-primary"
+                    style="width: 100%; margin-bottom: 10px;">Reset Score & Timer</button>
+                <button id="logRetakeGoalBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Retake
+                    Last Goal</button>
+            </div>
+            <div class="modal-footer">
+                <button id="logMenuCancelBtn" class="btn btn-primary modal-cancel-btn">Close</button>
             </div>
         </div>
     </div>

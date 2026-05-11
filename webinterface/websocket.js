@@ -126,13 +126,46 @@ class WebSocketClient {
   /**
    * Send goal request to server
    */
-  sendGoal(team, playerNumber = null, playerName = null) {
+  sendGoal(
+    team,
+    playerNumber = null,
+    playerName = null,
+    goalMinute = null,
+    isOwnGoal = false,
+  ) {
     const message = { type: "goal", team };
     if (playerNumber !== null) {
       message.playerNumber = playerNumber;
       message.playerName = playerName;
     }
+    if (goalMinute !== null && goalMinute !== undefined) {
+      message.goalMinute = goalMinute;
+    }
+    if (isOwnGoal) {
+      message.isOwnGoal = isOwnGoal;
+    }
     return this.send(message);
+  }
+
+  /**
+   * Send restart timer request to server
+   */
+  sendRestartTimer() {
+    return this.send({ type: "restartTimer" });
+  }
+
+  /**
+   * Send reset score and timer request to server
+   */
+  sendResetScoreAndTimer() {
+    return this.send({ type: "resetScoreAndTimer" });
+  }
+
+  /**
+   * Send retake last goal request to server
+   */
+  sendRetakeLastGoal() {
+    return this.send({ type: "retakeLastGoal" });
   }
 
   /**

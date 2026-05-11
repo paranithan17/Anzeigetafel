@@ -245,6 +245,30 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
             qDebug() << "Start timer requested from browser, started=" << started;
         }
     }
+    else if (type == "restartTimer")
+    {
+        if (m_controller)
+        {
+            m_controller->requestTimerRestart();
+            qDebug() << "Restart timer requested from browser";
+        }
+    }
+    else if (type == "resetScoreAndTimer")
+    {
+        if (m_controller)
+        {
+            m_controller->resetScoreAndTimer();
+            qDebug() << "Reset score and timer requested from browser";
+        }
+    }
+    else if (type == "retakeLastGoal")
+    {
+        if (m_controller)
+        {
+            m_controller->removeLastGoal();
+            qDebug() << "Retake last goal requested from browser";
+        }
+    }
     else if (type == "goal")
     {
         const QString team = obj.value("team").toString();

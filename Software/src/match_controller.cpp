@@ -225,6 +225,21 @@ void match_controller::requestMatchReset()
     emit startTimerEnabledChanged(isActiveState(m_state));
 }
 
+void match_controller::resetScoreAndTimer()
+{
+    if (m_scoreMemory)
+    {
+        m_scoreMemory->resetGame();
+    }
+
+    if (m_gameTimer)
+    {
+        m_gameTimer->restart();
+    }
+
+    emit startTimerEnabledChanged(isActiveState(m_state));
+}
+
 unsigned match_controller::suggestedGoalMinute() const
 {
     if (!m_gameTimer)

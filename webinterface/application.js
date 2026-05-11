@@ -33,6 +33,12 @@ class ApplicationClient {
     this.currentEmblemTeam = null;
     this.currentCsvTeam = null;
 
+    // Goal tracking
+    this.requestingTeam = null; // Which team triggered the goal selector (Home or Away)
+    this.currentMatchState = 0; // Current match state
+    this.pendingGoalData = null; // Store pending goal data for own goal confirmation
+    this.timerRunning = false; // Track if timer is running
+
     this.init();
   }
 
@@ -127,6 +133,9 @@ class ApplicationClient {
   handleMatchStateUpdate(stateId, stateName) {
     console.log(`[State Update] State changed to ${stateName} (${stateId})`);
 
+    // Store current match state
+    this.currentMatchState = stateId;
+
     // Update radio button selection
     const radioId = this.stateMap[stateId];
     if (radioId) {
@@ -140,10 +149,10 @@ class ApplicationClient {
     // Update UI display
     this.updateStateDisplay(stateId, stateName);
 
-    // Enable Start Timer only in FirstHalf (1) or SecondHalf (3)
+    // Enable Start Timer only in FirstHalf (1) or SecondHalf (3), and if timer is not running
     const startBtn = document.getElementById("startTimerBtn");
     if (startBtn) {
-      const enabled = stateId === 1 || stateId === 3;
+      const enabled = (stateId === 1 || stateId === 3) && !this.timerRunning;
       startBtn.disabled = !enabled;
     }
   }
@@ -247,9 +256,20 @@ class ApplicationClient {
         console.log("[UI] Start Timer clicked");
         if (this.wsClient.isConnected()) {
           this.wsClient.sendStartTimer();
+          this.timerRunning = true;
+          startBtn.disabled = true;
         } else {
           this.showNotification("Not connected to server", "error");
         }
+      });
+    }
+
+    // Log button
+    const logBtn = document.getElementById("logBtn");
+    if (logBtn) {
+      logBtn.addEventListener("click", () => {
+        console.log("[UI] Log button clicked");
+        this.showLogMenu();
       });
     }
 
@@ -624,8 +644,23 @@ class ApplicationClient {
           const t = e.currentTarget.dataset.team;
           const n = parseInt(e.currentTarget.dataset.number);
           const name = e.currentTarget.dataset.name;
-          this.sendGoalWithPlayer(t, { number: n, name });
-          this.hideModal("goalSelectModal");
+
+          // Check if selected player is from opponent team
+          if (t !== this.requestingTeam) {
+            // Show own goal confirmation modal
+            this.pendingGoalData = { team: t, number: n, name };
+            this.showOwnGoalConfirmation(
+              `${name} (#${n}) is from the opponent team. Mark as own goal?`,
+            );
+          } else {
+            // Regular goal
+            this.completeGoalEntry({
+              team: t,
+              number: n,
+              name,
+              isOwnGoal: false,
+            });
+          }
         });
       });
     };
@@ -638,6 +673,15 @@ class ApplicationClient {
    * Show the goal selector modal and populate with players
    */
   showGoalSelector(requestingTeam) {
+    // Store which team triggered this goal selector
+    this.requestingTeam = requestingTeam;
+
+    // Reset goal details fields
+    const timeInput = document.getElementById("goalMinuteInput");
+    const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
+    if (timeInput) timeInput.value = "";
+    if (ownGoalCheckbox) ownGoalCheckbox.checked = false;
+
     // ensure lists are up to date
     this.populateGoalSelectionModal();
     // show modal
@@ -646,12 +690,99 @@ class ApplicationClient {
     // close and cancel handlers
     const closeBtn = document.getElementById("goalModalClose");
     if (closeBtn) {
-      closeBtn.onclick = () => this.hideModal("goalSelectModal");
+      closeBtn.onclick = () => {
+        this.hideModal("goalSelectModal");
+        this.requestingTeam = null;
+      };
     }
     const cancelBtn = document.getElementById("goalCancelBtn");
     if (cancelBtn) {
-      cancelBtn.onclick = () => this.hideModal("goalSelectModal");
+      cancelBtn.onclick = () => {
+        this.hideModal("goalSelectModal");
+        this.requestingTeam = null;
+      };
     }
+  }
+
+  /**
+   * Show own goal confirmation modal
+   */
+  showOwnGoalConfirmation(message) {
+    const textElement = document.getElementById("ownGoalConfirmText");
+    if (textElement) {
+      textElement.textContent = message;
+    }
+    this.showModal("ownGoalConfirmModal");
+
+    const yesBtn = document.getElementById("ownGoalConfirmYesBtn");
+    if (yesBtn) {
+      yesBtn.onclick = () => {
+        this.hideModal("ownGoalConfirmModal");
+        if (this.pendingGoalData) {
+          this.completeGoalEntry({
+            ...this.pendingGoalData,
+            isOwnGoal: true,
+          });
+        }
+      };
+    }
+
+    const noBtn = document.getElementById("ownGoalConfirmNoBtn");
+    if (noBtn) {
+      noBtn.onclick = () => {
+        this.hideModal("ownGoalConfirmModal");
+        if (this.pendingGoalData) {
+          this.completeGoalEntry({
+            ...this.pendingGoalData,
+            isOwnGoal: false,
+          });
+        }
+      };
+    }
+
+    const cancelBtn = document.getElementById("ownGoalConfirmCancelBtn");
+    if (cancelBtn) {
+      cancelBtn.onclick = () => {
+        this.hideModal("ownGoalConfirmModal");
+        this.pendingGoalData = null;
+      };
+    }
+
+    const closeBtn = document.getElementById("ownGoalConfirmModalClose");
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        this.hideModal("ownGoalConfirmModal");
+        this.pendingGoalData = null;
+      };
+    }
+  }
+
+  /**
+   * Complete goal entry with time and own goal info
+   */
+  completeGoalEntry(goalData) {
+    const timeInput = document.getElementById("goalMinuteInput");
+    const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
+
+    let goalMinute = 0;
+    if (timeInput && timeInput.value) {
+      goalMinute = parseInt(timeInput.value);
+    }
+
+    let isOwnGoal = goalData.isOwnGoal;
+    if (ownGoalCheckbox && ownGoalCheckbox.checked) {
+      isOwnGoal = true;
+    }
+
+    this.sendGoalWithPlayer(goalData.team, {
+      number: goalData.number,
+      name: goalData.name,
+      goalMinute,
+      isOwnGoal,
+    });
+
+    this.hideModal("goalSelectModal");
+    this.requestingTeam = null;
   }
 
   /**
@@ -663,12 +794,22 @@ class ApplicationClient {
       return false;
     }
 
-    const success = this.wsClient.sendGoal(team, player.number, player.name);
+    const goalMinute = player.goalMinute !== undefined ? player.goalMinute : 0;
+    const isOwnGoal = player.isOwnGoal !== undefined ? player.isOwnGoal : false;
+
+    const success = this.wsClient.sendGoal(
+      team,
+      player.number,
+      player.name,
+      goalMinute,
+      isOwnGoal,
+    );
     if (success) {
-      this.showNotification(
-        `${player.name} (#${player.number}) recorded for ${team}`,
-        "success",
-      );
+      let message = `${player.name} (#${player.number}) recorded for ${team}`;
+      if (isOwnGoal) {
+        message += " - OWN GOAL";
+      }
+      this.showNotification(message, "success");
     } else {
       this.showNotification("Failed to send goal", "error");
     }
@@ -709,6 +850,87 @@ class ApplicationClient {
   }
 
   /**
+   * Show log menu modal
+   */
+  showLogMenu() {
+    this.showModal("logMenuModal");
+
+    const restartTimerBtn = document.getElementById("logRestartTimerBtn");
+    if (restartTimerBtn) {
+      restartTimerBtn.onclick = () => {
+        this.hideModal("logMenuModal");
+        this.requestRestartTimer();
+      };
+    }
+
+    const resetScoreTimerBtn = document.getElementById("logResetScoreTimerBtn");
+    if (resetScoreTimerBtn) {
+      resetScoreTimerBtn.onclick = () => {
+        this.hideModal("logMenuModal");
+        this.requestResetScoreAndTimer();
+      };
+    }
+
+    const retakeGoalBtn = document.getElementById("logRetakeGoalBtn");
+    if (retakeGoalBtn) {
+      retakeGoalBtn.onclick = () => {
+        this.hideModal("logMenuModal");
+        this.requestRetakeLastGoal();
+      };
+    }
+
+    const cancelBtn = document.getElementById("logMenuCancelBtn");
+    if (cancelBtn) {
+      cancelBtn.onclick = () => {
+        this.hideModal("logMenuModal");
+      };
+    }
+
+    const closeBtn = document.getElementById("logMenuModalClose");
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        this.hideModal("logMenuModal");
+      };
+    }
+  }
+
+  /**
+   * Request timer restart from server
+   */
+  requestRestartTimer() {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return;
+    }
+    this.wsClient.sendRestartTimer();
+    this.showNotification("Timer restarted", "success");
+  }
+
+  /**
+   * Request score and timer reset from server
+   */
+  requestResetScoreAndTimer() {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return;
+    }
+    this.wsClient.sendResetScoreAndTimer();
+    this.showNotification("Score and timer reset", "success");
+  }
+
+  /**
+   * Request to retake last goal from server
+   */
+  requestRetakeLastGoal() {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return;
+    }
+    this.wsClient.sendRetakeLastGoal();
+    this.showNotification("Last goal removed", "success");
+  }
+
+  /**
    * Handle form submission
    */
   handleFormSubmit() {
@@ -737,12 +959,76 @@ class ApplicationClient {
       return;
     }
 
+    // Check if we're leaving a match state (FirstHalf or SecondHalf)
+    const currentStateIsActive =
+      this.currentMatchState === 1 || this.currentMatchState === 3;
+    const newStateIsActive = stateId === 1 || stateId === 3;
+
+    // If leaving a match state, require confirmation
+    if (currentStateIsActive && !newStateIsActive) {
+      this.showMatchStateConfirmation(stateId);
+      return;
+    }
+
     console.log(`[Application] Submitting state change: ${value} (${stateId})`);
     if (!this.wsClient.isConnected()) {
       this.showNotification("Not connected to server", "error");
       return;
     }
     this.wsClient.sendMatchStateChange(stateId);
+  }
+
+  /**
+   * Show match state confirmation modal
+   */
+  showMatchStateConfirmation(stateId) {
+    const textElement = document.getElementById("matchStateConfirmText");
+    if (textElement) {
+      textElement.textContent = `Are you sure you want to change to ${this.stateNameMap[stateId]}? This will stop the current match.`;
+    }
+    this.showModal("matchStateConfirmModal");
+
+    const yesBtn = document.getElementById("matchStateConfirmYesBtn");
+    if (yesBtn) {
+      yesBtn.onclick = () => {
+        this.hideModal("matchStateConfirmModal");
+        if (!this.wsClient.isConnected()) {
+          this.showNotification("Not connected to server", "error");
+          return;
+        }
+        this.wsClient.sendMatchStateChange(stateId);
+      };
+    }
+
+    const noBtn = document.getElementById("matchStateConfirmNoBtn");
+    if (noBtn) {
+      noBtn.onclick = () => {
+        this.hideModal("matchStateConfirmModal");
+        // Revert to current state
+        const radioId = this.stateMap[this.currentMatchState];
+        if (radioId) {
+          const radioElement = document.getElementById(radioId);
+          if (radioElement) {
+            radioElement.checked = true;
+          }
+        }
+      };
+    }
+
+    const closeBtn = document.getElementById("matchStateConfirmModalClose");
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        this.hideModal("matchStateConfirmModal");
+        // Revert to current state
+        const radioId = this.stateMap[this.currentMatchState];
+        if (radioId) {
+          const radioElement = document.getElementById(radioId);
+          if (radioElement) {
+            radioElement.checked = true;
+          }
+        }
+      };
+    }
   }
 
   /**

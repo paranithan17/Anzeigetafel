@@ -217,6 +217,15 @@ public:
      */
     void requestMatchReset();
 
+    /**
+     * @brief Resets score and timer without changing match state.
+     *
+     * Clears all goals and restarts the timer for current phase.
+     *
+     * @return void
+     */
+    void resetScoreAndTimer();
+
     // Match state transitions
     /**
      * @brief Suggests current goal minute based on timer state.
