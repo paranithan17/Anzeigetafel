@@ -19,7 +19,7 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QDir>
-#include <QfileInfo>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 

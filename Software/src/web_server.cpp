@@ -293,7 +293,7 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
         handleSetEmblem(team, fileName, dataUrl);
         return;
         // Handle emblem import (e.g., save to disk, update model, etc.)
-        qDebug() << "Received emblem for team:" << team << "file:" << fileName ;
+        qDebug() << "Received emblem for team:" << team << "file:" << fileName;
     }
 }
 
