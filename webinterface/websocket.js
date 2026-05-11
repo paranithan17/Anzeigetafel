@@ -179,11 +179,11 @@ class WebSocketClient {
    */
   sendEmblem(team, fileName, mimeType, dataUrl) {
     return this.send({
-      type: "setEmblem",
+      type: "importEmblem",
       team: team,
       fileName: fileName,
       mimeType: mimeType,
-      data: dataUrl,
+      dataUrl: dataUrl,
     });
   }
 
