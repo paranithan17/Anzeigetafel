@@ -341,6 +341,28 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
         handleSetEmblem(team, fileName, dataUrl);
         return;
     }
+    else if (type == "getSavedCsvFiles")
+    {
+        sendSavedCsvFiles();
+        return;
+    }
+    else if (type == "selectSavedCsv")
+    {
+        const QString team = obj.value("team").toString();
+        const QString filePath = obj.value("filePath").toString();
+
+        handleSelectSavedCsv(team, filePath);
+        return;
+    }
+    else if (type == "setCsvFile")
+    {
+        const QString team = obj.value("team").toString();
+        const QString fileName = obj.value("fileName").toString();
+        const QString fileData = obj.value("fileData").toString();
+
+        handleSetCsvFile(team, fileName, fileData);
+        return;
+    }
 }
 
 // Send match state to all connected browsers
@@ -669,4 +691,241 @@ void web_server::handleSetEmblem(const QString &team,
 
     // Refresh emblem list in browser immediately after successful upload.
     sendSavedEmblems();
+}
+
+/*
+ * Send list of available CSV files to browser
+ */
+void web_server::sendSavedCsvFiles()
+{
+    QJsonArray csvArray;
+
+    const QString importDirPath = resolveEmblemImportDir();
+    const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
+
+    QSet<QString> seenPaths;
+    const QStringList searchDirs = {importDirPath, legacyDirPath};
+
+    for (const QString &dirPath : searchDirs)
+    {
+        QDir dir(dirPath);
+        if (!dir.exists())
+        {
+            continue;
+        }
+
+        const QFileInfoList files = dir.entryInfoList(
+            {"*.csv"},
+            QDir::Files | QDir::Readable,
+            QDir::Name);
+
+        for (const QFileInfo &fileInfo : files)
+        {
+            const QString absolutePath = fileInfo.absoluteFilePath();
+            if (seenPaths.contains(absolutePath))
+            {
+                continue;
+            }
+
+            QJsonObject csvObj;
+            csvObj["fileName"] = fileInfo.fileName();
+            csvObj["filePath"] = absolutePath;
+            csvObj["size"] = static_cast<int>(fileInfo.size());
+
+            csvArray.append(csvObj);
+            seenPaths.insert(absolutePath);
+        }
+    }
+
+    QJsonObject response;
+    response["type"] = "savedCsvFilesList";
+    response["files"] = csvArray;
+
+    QString json =
+        QString::fromUtf8(QJsonDocument(response).toJson(QJsonDocument::Compact));
+
+    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+
+    if (client && client->isValid())
+    {
+        client->sendTextMessage(json);
+        return;
+    }
+
+    for (QWebSocket *connectedClient : std::as_const(m_clients))
+    {
+        if (connectedClient && connectedClient->isValid())
+        {
+            connectedClient->sendTextMessage(json);
+        }
+    }
+}
+
+/*
+ * Handle selection of a saved CSV file, parse it, and import players
+ */
+void web_server::handleSelectSavedCsv(const QString &team, const QString &filePath)
+{
+    if (!m_controller)
+        return;
+
+    if (team != "Home" && team != "Away")
+    {
+        qDebug() << "Select CSV rejected: invalid team" << team;
+        return;
+    }
+
+    const QString normalizedPath = QDir::cleanPath(filePath);
+
+    if (!QFileInfo::exists(normalizedPath) || !QFileInfo(normalizedPath).isFile())
+    {
+        qDebug() << "Select CSV rejected: file does not exist" << normalizedPath;
+        return;
+    }
+
+    QFile file(normalizedPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "Could not open CSV file:" << normalizedPath << "error:" << file.errorString();
+        return;
+    }
+
+    parseAndImportCsv(team, file);
+    file.close();
+
+    qDebug() << "Imported players from saved CSV:" << team << normalizedPath;
+}
+
+/*
+ * Handle CSV file upload from browser, save to disk, and import players
+ */
+void web_server::handleSetCsvFile(const QString &team,
+                                  const QString &fileName,
+                                  const QString &fileData)
+{
+    if (!m_controller)
+        return;
+
+    if (team != "Home" && team != "Away")
+    {
+        qDebug() << "CSV upload rejected: invalid team" << team;
+        return;
+    }
+
+    QDir dir(resolveEmblemImportDir());
+
+    if (!dir.exists() && !dir.mkpath("."))
+    {
+        qDebug() << "Could not create CSV directory:" << dir.absolutePath();
+        return;
+    }
+
+    QString safeFileName = fileName.trimmed();
+    if (safeFileName.isEmpty())
+    {
+        safeFileName = QStringLiteral("players.csv");
+    }
+
+    // Only keep the filename part (no path)
+    safeFileName = QFileInfo(safeFileName).fileName();
+    safeFileName.replace(" ", "_");
+
+    const QString fullPath = dir.absoluteFilePath(team + "_" + safeFileName);
+
+    QFile file(fullPath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "Could not save CSV file:" << fullPath << "error:" << file.errorString();
+        return;
+    }
+
+    const qint64 bytesWritten = file.write(fileData.toUtf8());
+    file.close();
+
+    if (bytesWritten <= 0)
+    {
+        qDebug() << "Could not write CSV data to:" << fullPath;
+        return;
+    }
+
+    // Parse and import the CSV
+    QFile importFile(fullPath);
+    if (importFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        parseAndImportCsv(team, importFile);
+        importFile.close();
+    }
+
+    qDebug() << "CSV file saved and imported:" << fullPath;
+
+    // Refresh CSV file list in browser
+    sendSavedCsvFiles();
+}
+
+/*
+ * Helper method to parse CSV file and import players
+ */
+void web_server::parseAndImportCsv(const QString &team, QFile &file)
+{
+    if (!m_controller)
+        return;
+
+    QByteArray line;
+    QList<std::pair<int, QString>> players;
+
+    while ((line = file.readLine()).size() > 0)
+    {
+        QString lineStr = QString::fromUtf8(line).trimmed();
+
+        if (lineStr.isEmpty())
+        {
+            continue;
+        }
+
+        // Split by comma or semicolon
+        QStringList parts = lineStr.split(QRegularExpression("[,;]"));
+
+        if (parts.size() >= 2)
+        {
+            bool ok = false;
+            int number = parts[0].trimmed().toInt(&ok);
+            QString name = parts[1].trimmed();
+
+            if (ok && number >= 0 && !name.isEmpty())
+            {
+                players.append({number, name});
+            }
+        }
+    }
+
+    // Clear existing players and add new ones
+    const auto side =
+        (team == "Home") ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+
+    if (team == "Home")
+    {
+        // Clear existing home players
+        auto existingPlayers = m_controller->getHomePlayers();
+        for (const auto &playerPtr : existingPlayers)
+        {
+            m_controller->removePlayer(match_controller::TeamSide::Home, playerPtr->getNumber());
+        }
+    }
+    else
+    {
+        // Clear existing away players
+        auto existingPlayers = m_controller->getAwayPlayers();
+        for (const auto &playerPtr : existingPlayers)
+        {
+            m_controller->removePlayer(match_controller::TeamSide::Away, playerPtr->getNumber());
+        }
+    }
+
+    // Add new players
+    for (const auto &player : players)
+    {
+        m_controller->addPlayer(side, player.first, player.second);
+    }
+
+    qDebug() << "Parsed and imported" << players.size() << "players for team:" << team;
 }

@@ -188,6 +188,36 @@ class WebSocketClient {
   }
 
   /**
+   * Request list of saved CSV files from server
+   */
+  requestSavedCsvFiles() {
+    return this.send({ type: "getSavedCsvFiles" });
+  }
+
+  /**
+   * Send selected CSV file path to server
+   */
+  sendSelectSavedCsv(team, filePath) {
+    return this.send({
+      type: "selectSavedCsv",
+      team: team,
+      filePath: filePath,
+    });
+  }
+
+  /**
+   * Send CSV file data to server
+   */
+  sendCsvFile(team, fileName, fileData) {
+    return this.send({
+      type: "setCsvFile",
+      team: team,
+      fileName: fileName,
+      fileData: fileData,
+    });
+  }
+
+  /**
    * Check if connected to server
    */
   isConnected() {

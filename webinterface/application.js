@@ -31,6 +31,7 @@ class ApplicationClient {
     this.players = { Home: [], Away: [] };
 
     this.currentEmblemTeam = null;
+    this.currentCsvTeam = null;
 
     this.init();
   }
@@ -92,6 +93,8 @@ class ApplicationClient {
         this.handlePlayersListUpdate(data.team, data.players);
       } else if (data.type === "savedEmblemsList") {
         this.displaySavedEmblems(data.emblems);
+      } else if (data.type === "savedCsvFilesList") {
+        this.displaySavedCsvFiles(data.files);
       }
     } catch (error) {
       console.error(
@@ -238,7 +241,7 @@ class ApplicationClient {
     const homeImportFile = document.getElementById("homeImportFile");
     if (homeImportFile) {
       homeImportFile.addEventListener("change", (e) => {
-        this.handlePlayerImportFile(e.target.files[0], "Home");
+        this.handleCsvUpload(e.target.files[0], "Home");
         homeImportFile.value = "";
       });
     }
@@ -246,7 +249,7 @@ class ApplicationClient {
     const homeImportBtn = document.getElementById("homeImportBtn");
     if (homeImportBtn) {
       homeImportBtn.addEventListener("click", () => {
-        document.getElementById("homeImportFile").click();
+        this.openCsvModal("Home");
       });
     }
 
@@ -297,7 +300,7 @@ class ApplicationClient {
     const awayImportFile = document.getElementById("awayImportFile");
     if (awayImportFile) {
       awayImportFile.addEventListener("change", (e) => {
-        this.handlePlayerImportFile(e.target.files[0], "Away");
+        this.handleCsvUpload(e.target.files[0], "Away");
         awayImportFile.value = "";
       });
     }
@@ -305,7 +308,7 @@ class ApplicationClient {
     const awayImportBtn = document.getElementById("awayImportBtn");
     if (awayImportBtn) {
       awayImportBtn.addEventListener("click", () => {
-        document.getElementById("awayImportFile").click();
+        this.openCsvModal("Away");
       });
     }
 
@@ -401,6 +404,32 @@ class ApplicationClient {
           homeEmblemFile.click();
         } else if (this.currentEmblemTeam === "Away") {
           awayEmblemFile.click();
+        }
+      });
+    }
+
+    // CSV Modal handlers
+    const csvModalClose = document.getElementById("csvModalClose");
+    if (csvModalClose) {
+      csvModalClose.addEventListener("click", () => {
+        this.hideModal("csvSelectModal");
+      });
+    }
+
+    const csvCancelBtn = document.getElementById("csvCancelBtn");
+    if (csvCancelBtn) {
+      csvCancelBtn.addEventListener("click", () => {
+        this.hideModal("csvSelectModal");
+      });
+    }
+
+    const uploadNewCsvBtn = document.getElementById("uploadNewCsvBtn");
+    if (uploadNewCsvBtn) {
+      uploadNewCsvBtn.addEventListener("click", () => {
+        if (this.currentCsvTeam === "Home") {
+          homeImportFile.click();
+        } else if (this.currentCsvTeam === "Away") {
+          awayImportFile.click();
         }
       });
     }
@@ -832,6 +861,121 @@ class ApplicationClient {
       );
     } else {
       this.showNotification("Failed to upload emblem", "error");
+    }
+    return success;
+  }
+
+  /**
+   * Open CSV file selection modal for selected team.
+   */
+  openCsvModal(team) {
+    this.currentCsvTeam = team;
+    this.showModal("csvSelectModal");
+    this.requestSavedCsvFiles();
+  }
+
+  /**
+   * Request list of saved CSV files from server.
+   */
+  requestSavedCsvFiles() {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
+    }
+    return this.wsClient.requestSavedCsvFiles();
+  }
+
+  /**
+   * Display saved CSV files in modal.
+   */
+  displaySavedCsvFiles(files) {
+    const listElement = document.getElementById("savedCsvList");
+
+    if (!listElement) {
+      return;
+    }
+
+    if (!files || files.length === 0) {
+      listElement.innerHTML =
+        '<p style="color:#666; font-size:12px;">No saved lists</p>';
+      return;
+    }
+
+    let html = "";
+
+    for (const file of files) {
+      html += `
+      <div class="csv-choice" data-filepath="${file.filePath}">
+        <span>${file.fileName}</span>
+      </div>
+    `;
+    }
+
+    listElement.innerHTML = html;
+
+    const choices = listElement.querySelectorAll(".csv-choice");
+
+    choices.forEach((choice) => {
+      choice.addEventListener("click", () => {
+        const filePath = choice.dataset.filepath;
+        this.sendSelectSavedCsv(this.currentCsvTeam, filePath);
+        this.hideModal("csvSelectModal");
+      });
+    });
+  }
+
+  /**
+   * Send selected saved CSV file path to server.
+   */
+  sendSelectSavedCsv(team, filePath) {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
+    }
+
+    const success = this.wsClient.sendSelectSavedCsv(team, filePath);
+    if (success) {
+      this.showNotification(`${team} player list selected`, "success");
+    }
+    return success;
+  }
+
+  /**
+   * Handle CSV file upload from device.
+   */
+  handleCsvUpload(file, team) {
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileData = e.target.result;
+      this.sendCsvFile(team, file.name, fileData);
+    };
+    reader.onerror = () => {
+      this.showNotification("Failed to read CSV file", "error");
+    };
+    reader.readAsText(file);
+  }
+
+  /**
+   * Send CSV file data to server.
+   */
+  sendCsvFile(team, fileName, fileData) {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
+    }
+
+    const success = this.wsClient.sendCsvFile(team, fileName, fileData);
+    if (success) {
+      this.showNotification(
+        `Player list "${fileName}" uploaded for ${team}`,
+        "success",
+      );
+    } else {
+      this.showNotification("Failed to upload player list", "error");
     }
     return success;
   }

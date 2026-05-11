@@ -140,6 +140,39 @@ private:
      * @param dataUrl Base64-encoded image data
      */
     void handleSetEmblem(const QString &team, const QString &fileName, const QString &dataUrl);
+
+    /**
+     * @brief Sends list of available CSV player files to the requesting browser.
+     *
+     * Reads CSV files from the configured directory and sends them as a JSON list
+     * to the connected WebSocket client.
+     */
+    void sendSavedCsvFiles();
+
+    /**
+     * @brief Selects and imports players from a saved CSV file.
+     *
+     * @param team Team identifier from browser: "Home" or "Away"
+     * @param filePath Absolute path of the CSV file to import
+     */
+    void handleSelectSavedCsv(const QString &team, const QString &filePath);
+
+    /**
+     * @brief Saves CSV file upload from browser and imports players.
+     *
+     * @param team Team identifier ("Home" or "Away")
+     * @param fileName Name of the uploaded CSV file
+     * @param fileData Content of the CSV file
+     */
+    void handleSetCsvFile(const QString &team, const QString &fileName, const QString &fileData);
+
+    /**
+     * @brief Parses a CSV file and imports players for a team.
+     *
+     * @param team Team identifier ("Home" or "Away")
+     * @param file Open QFile containing CSV data (number,name format)
+     */
+    void parseAndImportCsv(const QString &team, QFile &file);
 };
 
 #endif // WEB_SERVER_H

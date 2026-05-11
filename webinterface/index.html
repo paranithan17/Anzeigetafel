@@ -55,7 +55,7 @@
 
     <div class="container">
         <!-- Teams row: Home (left) and Away (right) -->
-        <div class="teams-row" >
+        <div class="teams-row">
             <!-- Home Team -->
             <div class="team-container" id="homeTeam">
                 <h3>Home Team</h3>
@@ -70,7 +70,7 @@
                     <!-- Control buttons -->
                     <div class="player-control-buttons">
                         <button id="homeAddPlayerShowBtn" class="btn btn-primary">+</button>
-                        <button id="homeImportBtn" class="btn btn-primary">Import</button>
+                        <button id="homeImportBtn" class="btn btn-primary">Upload List</button>
                         <input type="file" id="homeImportFile" accept=".csv" class="player-import-input">
                     </div>
 
@@ -100,7 +100,7 @@
                     <!-- Control buttons -->
                     <div class="player-control-buttons">
                         <button id="awayAddPlayerShowBtn" class="btn btn-primary">+</button>
-                        <button id="awayImportBtn" class="btn btn-primary">Import</button>
+                        <button id="awayImportBtn" class="btn btn-primary">Upload List</button>
                         <input type="file" id="awayImportFile" accept=".csv" class="player-import-input">
                     </div>
 
@@ -209,6 +209,31 @@
                     Upload new emblem
                 </button>
                 <button id="emblemCancelBtn" class="btn btn-primary modal-cancel-btn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV File Selection Modal -->
+    <div id="csvSelectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Player List</h3>
+                <button class="modal-close" id="csvModalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="savedCsvList" class="saved-csv-list">
+                    <p>No saved lists</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="uploadNewCsvBtn" class="btn btn-primary">
+                    Upload new list
+                </button>
+                <button id="csvCancelBtn" class="btn btn-primary modal-cancel-btn">
                     Cancel
                 </button>
             </div>
