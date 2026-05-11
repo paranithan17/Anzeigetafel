@@ -13,6 +13,75 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QSet>
+#include <QCoreApplication>
+#include <QUrl>
+
+namespace
+{
+    QString targetImportDirPath()
+    {
+        // Preferred deployment path on the scorerboard system.
+        const QString linuxTarget = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
+        QDir linuxDir(linuxTarget);
+        if (linuxDir.exists() || linuxDir.mkpath("."))
+        {
+            return linuxDir.absolutePath();
+        }
+
+        // Fallback for local Windows development.
+        QDir fallbackDir(QCoreApplication::applicationDirPath() + QStringLiteral("/Import"));
+        fallbackDir.mkpath(".");
+        return fallbackDir.absolutePath();
+    }
+
+    QString legacyEmblemsDirPath()
+    {
+        return QStringLiteral("/home/scorerboard/Anzeigetafel/emblems");
+    }
+
+    QString resolveExistingEmblemPath(const QString &requestedPath)
+    {
+        QString candidate = requestedPath.trimmed();
+        if (candidate.isEmpty())
+        {
+            return QString();
+        }
+
+        if (candidate.startsWith(QStringLiteral("file://")))
+        {
+            candidate = QUrl(candidate).toLocalFile();
+        }
+
+        candidate = QDir::cleanPath(candidate);
+        QFileInfo info(candidate);
+        if (info.exists() && info.isFile())
+        {
+            return info.absoluteFilePath();
+        }
+
+        const QString fileName = QFileInfo(candidate).fileName();
+        if (fileName.isEmpty())
+        {
+            return QString();
+        }
+
+        const QString importCandidate = QDir(targetImportDirPath()).absoluteFilePath(fileName);
+        const QFileInfo importInfo(importCandidate);
+        if (importInfo.exists() && importInfo.isFile())
+        {
+            return importInfo.absoluteFilePath();
+        }
+
+        const QString legacyCandidate = QDir(legacyEmblemsDirPath()).absoluteFilePath(fileName);
+        const QFileInfo legacyInfo(legacyCandidate);
+        if (legacyInfo.exists() && legacyInfo.isFile())
+        {
+            return legacyInfo.absoluteFilePath();
+        }
+
+        return QString();
+    }
+}
 
 web_server::web_server(match_controller *controller, QObject *parent)
     : QObject(parent),
@@ -412,8 +481,8 @@ void web_server::sendSavedEmblems()
 {
     QJsonArray emblemArray;
 
-    const QString importDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
-    const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/emblems");
+    const QString importDirPath = targetImportDirPath();
+    const QString legacyDirPath = legacyEmblemsDirPath();
 
     QDir importDir(importDirPath);
     if (!importDir.exists())
@@ -515,24 +584,24 @@ void web_server::handleSelectSavedEmblem(const QString &team, const QString &fil
         return;
     }
 
-    const QString normalizedPath = QDir::cleanPath(filePath);
+    const QString resolvedPath = resolveExistingEmblemPath(filePath);
 
-    if (!QFileInfo::exists(normalizedPath) || !QFileInfo(normalizedPath).isFile())
+    if (resolvedPath.isEmpty())
     {
-        qDebug() << "Select emblem rejected: file does not exist" << normalizedPath;
+        qDebug() << "Select emblem rejected: file does not exist" << filePath;
         return;
     }
 
     if (team == "Home")
     {
-        m_controller->setTeamEmblem(match_controller::TeamSide::Home, normalizedPath);
+        m_controller->setTeamEmblem(match_controller::TeamSide::Home, resolvedPath);
     }
     else
     {
-        m_controller->setTeamEmblem(match_controller::TeamSide::Away, normalizedPath);
+        m_controller->setTeamEmblem(match_controller::TeamSide::Away, resolvedPath);
     }
 
-    qDebug() << "Selected saved emblem:" << team << normalizedPath;
+    qDebug() << "Selected saved emblem:" << team << resolvedPath;
 }
 
 /*
@@ -561,7 +630,7 @@ void web_server::handleSetEmblem(const QString &team,
         return;
     }
 
-    QDir dir("/home/scorerboard/Anzeigetafel/Import");
+    QDir dir(targetImportDirPath());
 
     if (!dir.exists())
     {
