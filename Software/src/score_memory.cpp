@@ -12,11 +12,9 @@
  */
 #include "score_memory.h"
 
-
 score_memory::score_memory(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 QList<Goal> score_memory::getGoals() const
@@ -30,12 +28,12 @@ int score_memory::getHomeScore() const
      * @brief Memorizes the score of the Team 1
      */
     int count = 0;
-    for(const Goal &g : goals){
-        if (g.team == "Home")
+    for (const Goal &g : goals)
+    {
+        if ((g.team == "Home" && !g.ownGoal) || (g.team == "Away" && g.ownGoal))
             count++;
     }
     return count;
-
 }
 
 int score_memory::getAwayScore() const
@@ -44,12 +42,12 @@ int score_memory::getAwayScore() const
      * @brief Memorizes the score of the Team 2
      */
     int count = 0;
-    for(const Goal &g : goals){
-        if (g.team == "Away")
+    for (const Goal &g : goals)
+    {
+        if ((g.team == "Away" && !g.ownGoal) || (g.team == "Home" && g.ownGoal))
             count++;
     }
     return count;
-
 }
 
 void score_memory::addGoal(int number, QString player, const QString &timeStamp, const QString &team, bool ownGoal)
@@ -66,7 +64,8 @@ void score_memory::removeLastGoal()
     /**
      * @brief Removes the previous goal in the memory.
      */
-    if(!goals.isEmpty()){
+    if (!goals.isEmpty())
+    {
         goals.removeLast();
         emit goalsUpdated();
     }
