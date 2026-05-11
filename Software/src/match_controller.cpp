@@ -234,7 +234,7 @@ void match_controller::resetScoreAndTimer()
 
     if (m_gameTimer)
     {
-        m_gameTimer->restart();
+        m_gameTimer->resetToPhaseStart();
     }
 
     emit startTimerEnabledChanged(isActiveState(m_state));

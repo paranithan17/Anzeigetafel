@@ -679,7 +679,7 @@ class ApplicationClient {
     // Reset goal details fields
     const timeInput = document.getElementById("goalMinuteInput");
     const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
-    if (timeInput) timeInput.value = "";
+    if (timeInput) timeInput.value = String(this.getSuggestedGoalMinute());
     if (ownGoalCheckbox) ownGoalCheckbox.checked = false;
 
     // ensure lists are up to date
@@ -764,7 +764,7 @@ class ApplicationClient {
     const timeInput = document.getElementById("goalMinuteInput");
     const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
 
-    let goalMinute = 0;
+    let goalMinute = this.getSuggestedGoalMinute();
     if (timeInput && timeInput.value) {
       goalMinute = parseInt(timeInput.value);
     }
@@ -914,8 +914,19 @@ class ApplicationClient {
       this.showNotification("Not connected to server", "error");
       return;
     }
-    this.wsClient.sendResetScoreAndTimer();
-    this.showNotification("Score and timer reset", "success");
+    const sent = this.wsClient.sendResetScoreAndTimer();
+    if (sent) {
+      this.timerRunning = false;
+      const startBtn = document.getElementById("startTimerBtn");
+      if (startBtn) {
+        startBtn.disabled = !(
+          this.currentMatchState === 1 || this.currentMatchState === 3
+        );
+      }
+      this.showNotification("Score and timer reset", "success");
+    } else {
+      this.showNotification("Failed to reset score and timer", "error");
+    }
   }
 
   /**
@@ -1044,6 +1055,23 @@ class ApplicationClient {
   disconnect() {
     this.wsClient.disconnect();
   }
+
+  /**
+   * Derive the next goal minute from the visible match time.
+   */
+  getSuggestedGoalMinute() {
+    const timeEl = document.getElementById("matchTime");
+    const timeText = timeEl ? String(timeEl.textContent || "").trim() : "";
+    const minutesText = timeText.split(":")[0];
+    const minutes = parseInt(minutesText, 10);
+
+    if (Number.isFinite(minutes) && minutes >= 0) {
+      return minutes + 1;
+    }
+
+    return 1;
+  }
+
   /**
    * Open emblem selection modal for selected team.
    */
