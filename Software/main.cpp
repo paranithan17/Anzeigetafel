@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   web_server *websocket_server = new web_server(controller);
 
   // Start WebSocket server on port 8080
-  websocket_server->start(8080); 
+  websocket_server->start(8080);
 
   Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
   scoreboard->show();
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
   window->setScoreboard(scoreboard);
 
   // Add emblem changed signal connection
-  QObject::connect(window, &controll_window::emblemChanged, scoreboard, &Score_board::updateEmblem);
+  QObject::connect(controller, &match_controller::emblemChanged, scoreboard, &Score_board::updateEmblem);
 
   // Match controller is the source for interaction state changes
   QObject::connect(controller, &match_controller::matchStateChanged,

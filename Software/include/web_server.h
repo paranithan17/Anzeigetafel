@@ -17,6 +17,11 @@
 #include <QtWebSockets/QWebSocket>
 #include <QList>
 #include <QJsonObject>
+#include <QFile>
+#include <QDir>
+#include <QfileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
 
 #include "match_controller.h"
 
@@ -84,9 +89,9 @@ private slots:
     void broadcastAwayPlayersList();
 
 private:
-    QWebSocketServer m_server;          ///< WebSocket server instance
-    QList<QWebSocket *> m_clients;      ///< Connected browser clients
-    match_controller *m_controller;     ///< Central match logic controller
+    QWebSocketServer m_server;      ///< WebSocket server instance
+    QList<QWebSocket *> m_clients;  ///< Connected browser clients
+    match_controller *m_controller; ///< Central match logic controller
 
     /**
      * @brief Handles a parsed JSON command from browser.
@@ -110,6 +115,31 @@ private:
      * @param players Vector of player objects
      */
     void broadcastPlayersList(const QString &team, const std::vector<std::shared_ptr<player>> &players);
+
+    /**
+     * @brief Sends all saved emblem images from the emblem folder to the requesting browser.
+     *
+     * Reads image files from the configured emblem directory, converts them to Base64
+     * data URLs and sends them as a JSON list to the connected WebSocket client.
+     */
+    void sendSavedEmblems();
+
+    /**
+     * @brief Selects an already saved emblem image for a team.
+     *
+     * @param team Team identifier from browser: "Home" or "Away"
+     * @param filePath Absolute path of the selected emblem image
+     */
+    void handleSelectSavedEmblem(const QString &team, const QString &filePath);
+
+    /**
+     * @brief Saves emblem upload from browser into directory /home/scorerboard/Anzeigetafel/Import, and forwards update to controller.
+     *
+     * @param team Team identifier ("Home" or "Away")
+     * @param fileName Name of the uploaded emblem file
+     * @param dataUrl Base64-encoded image data
+     */
+    void handleSetEmblem(const QString &team, const QString &fileName, const QString &dataUrl);
 };
 
 #endif // WEB_SERVER_H

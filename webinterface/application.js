@@ -1,20 +1,14 @@
 /**
- * @file app.js
- * @brief WebSocket client for Anzeigetafel match state control
+ * @file application.js
+ * @brief Application logic for Anzeigetafel match state control
  *
- * Communicates with the C++ WebSocket server to:
- * - Send match state change requests
- * - Receive and display match state updates
- * - Handle connection events
+ * Handles UI interactions, form submissions, and application state management.
+ * Uses WebSocketClient for server communication.
  */
 
-class AnzeigetafelClient {
+class ApplicationClient {
   constructor(serverUrl = "ws://localhost:8080") {
-    this.serverUrl = serverUrl;
-    this.socket = null;
-    this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 5;
-    this.reconnectDelay = 3000;
+    this.wsClient = new WebSocketClient(serverUrl);
 
     // State mapping
     this.stateMap = {
@@ -36,6 +30,8 @@ class AnzeigetafelClient {
     // Keep the latest players lists in memory for quick access
     this.players = { Home: [], Away: [] };
 
+    this.currentEmblemTeam = null;
+
     this.init();
   }
 
@@ -43,121 +39,66 @@ class AnzeigetafelClient {
    * Initialize the client and connect to WebSocket server
    */
   init() {
-    this.connect();
+    // Setup WebSocket callbacks
+    this.wsClient.onConnected = () => this.onWsConnected();
+    this.wsClient.onDisconnected = () => this.onWsDisconnected();
+    this.wsClient.onError = (error) => this.onWsError(error);
+    this.wsClient.onMessage = (event) => this.onWsMessage(event);
+
+    this.wsClient.connect();
     this.setupEventListeners();
+    this.setupFullscreenButton();
     this.updateConnectionStatus("connecting");
   }
 
   /**
-   * Connect to the WebSocket server
+   * Handle WebSocket connected callback
    */
-  connect() {
-    try {
-      this.socket = new WebSocket(this.serverUrl);
-
-      this.socket.addEventListener("open", (event) => this.onOpen(event));
-      this.socket.addEventListener("message", (event) => this.onMessage(event));
-      this.socket.addEventListener("error", (event) => this.onError(event));
-      this.socket.addEventListener("close", (event) => this.onClose(event));
-
-      console.log(`[WebSocket] Connecting to ${this.serverUrl}`);
-    } catch (error) {
-      console.error("[WebSocket] Connection error:", error);
-      this.updateConnectionStatus("error");
-      this.scheduleReconnect();
-    }
-  }
-
-  /**
-   * Handle WebSocket connection opened
-   */
-  onOpen(event) {
-    console.log("[WebSocket] Connected to server");
-    this.reconnectAttempts = 0;
+  onWsConnected() {
+    console.log("[Application] WebSocket connected");
     this.updateConnectionStatus("connected");
     this.showNotification("Connected to server", "success");
   }
 
   /**
-   * Handle incoming messages from server
+   * Handle WebSocket disconnected callback
    */
-  onMessage(event) {
-    try {
-      const data = JSON.parse(event.data);
-      console.log("[WebSocket] Received:", data);
-
-      if (data.type === "matchState") {
-        this.handleMatchStateUpdate(data.state, data.stateName);
-      } else if (data.type === "playersList") {
-        this.handlePlayersListUpdate(data.team, data.players);
-      }
-    } catch (error) {
-      console.error("[WebSocket] Failed to parse message:", error, event.data);
-    }
+  onWsDisconnected() {
+    console.log("[Application] WebSocket disconnected");
+    this.updateConnectionStatus("disconnected");
+    this.showNotification("Disconnected from server", "warning");
   }
 
   /**
-   * Handle WebSocket errors
+   * Handle WebSocket error callback
    */
-  onError(event) {
-    console.error("[WebSocket] Error:", event);
+  onWsError(error) {
+    console.error("[Application] WebSocket error:", error);
     this.updateConnectionStatus("error");
     this.showNotification("WebSocket error occurred", "error");
   }
 
   /**
-   * Handle WebSocket connection closed
+   * Handle incoming messages from WebSocket server
    */
-  onClose(event) {
-    console.log("[WebSocket] Connection closed", event.code, event.reason);
-    this.updateConnectionStatus("disconnected");
-    this.showNotification("Disconnected from server", "warning");
-    this.scheduleReconnect();
-  }
-
-  /**
-   * Schedule reconnection attempt
-   */
-  scheduleReconnect() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      const delay = this.reconnectDelay * this.reconnectAttempts;
-      console.log(
-        `[WebSocket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
-      );
-
-      setTimeout(() => {
-        this.connect();
-      }, delay);
-    } else {
-      console.error("[WebSocket] Max reconnection attempts reached");
-      this.updateConnectionStatus("offline");
-    }
-  }
-
-  /**
-   * Send match state change request to server
-   */
-  sendMatchStateChange(stateId) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      console.error("[WebSocket] Socket not ready");
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const message = {
-      type: "setMatchState",
-      state: stateId,
-    };
-
+  onWsMessage(event) {
     try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent:", message);
-      return true;
+      const data = JSON.parse(event.data);
+      console.log("[Application] Received:", data);
+
+      if (data.type === "matchState") {
+        this.handleMatchStateUpdate(data.state, data.stateName);
+      } else if (data.type === "playersList") {
+        this.handlePlayersListUpdate(data.team, data.players);
+      } else if (data.type === "savedEmblemsList") {
+        this.displaySavedEmblems(data.emblems);
+      }
     } catch (error) {
-      console.error("[WebSocket] Failed to send message:", error);
-      this.showNotification("Failed to send state change", "error");
-      return false;
+      console.error(
+        "[Application] Failed to parse message:",
+        error,
+        event.data,
+      );
     }
   }
 
@@ -285,7 +226,11 @@ class AnzeigetafelClient {
     if (startBtn) {
       startBtn.addEventListener("click", () => {
         console.log("[UI] Start Timer clicked");
-        this.sendStartTimer();
+        if (this.wsClient.isConnected()) {
+          this.wsClient.sendStartTimer();
+        } else {
+          this.showNotification("Not connected to server", "error");
+        }
       });
     }
 
@@ -406,40 +351,97 @@ class AnzeigetafelClient {
         }
       });
     }
-  }
 
-  /**
-   * Send start timer request to server
-   */
-  sendStartTimer() {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+    const homeEmblemBtn = document.getElementById("homeEmblemBtn");
+    const homeEmblemFile = document.getElementById("homeEmblemFile");
 
-    const message = { type: "startTimer" };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent startTimer");
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send startTimer", err);
-      return false;
+    if (homeEmblemBtn && homeEmblemFile) {
+      homeEmblemBtn.addEventListener("click", () => {
+        this.openEmblemModal("Home");
+      });
+
+      homeEmblemFile.addEventListener("change", (e) => {
+        this.handleEmblemUpload(e.target.files[0], "Home");
+        homeEmblemFile.value = "";
+      });
+    }
+
+    const awayEmblemBtn = document.getElementById("awayEmblemBtn");
+    const awayEmblemFile = document.getElementById("awayEmblemFile");
+
+    if (awayEmblemBtn && awayEmblemFile) {
+      awayEmblemBtn.addEventListener("click", () => {
+        this.openEmblemModal("Away");
+      });
+
+      awayEmblemFile.addEventListener("change", (e) => {
+        this.handleEmblemUpload(e.target.files[0], "Away");
+        awayEmblemFile.value = "";
+      });
+    }
+
+    const emblemModalClose = document.getElementById("emblemModalClose");
+    if (emblemModalClose) {
+      emblemModalClose.addEventListener("click", () => {
+        this.hideModal("emblemSelectModal");
+      });
+    }
+
+    const emblemCancelBtn = document.getElementById("emblemCancelBtn");
+    if (emblemCancelBtn) {
+      emblemCancelBtn.addEventListener("click", () => {
+        this.hideModal("emblemSelectModal");
+      });
+    }
+
+    const uploadNewEmblemBtn = document.getElementById("uploadNewEmblemBtn");
+    if (uploadNewEmblemBtn) {
+      uploadNewEmblemBtn.addEventListener("click", () => {
+        if (this.currentEmblemTeam === "Home") {
+          homeEmblemFile.click();
+        } else if (this.currentEmblemTeam === "Away") {
+          awayEmblemFile.click();
+        }
+      });
     }
   }
-
   /**
-   * Send minimal goal request to server
+   * Setup fullscreen button
    */
-  sendGoal(team) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
+  setupFullscreenButton() {
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
 
-    const message = { type: "goal", team };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent goal for", team);
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send goal", err);
-      return false;
+    if (!fullscreenBtn) {
+      return;
     }
+
+    fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+          fullscreenBtn.textContent = "⛶";
+          fullscreenBtn.title = "Fullscreen verlassen";
+        } else {
+          await document.exitFullscreen();
+          fullscreenBtn.textContent = "⛶";
+          fullscreenBtn.title = "Fullscreen öffnen";
+        }
+      } catch (error) {
+        console.error("[Fullscreen] Failed:", error);
+        this.showNotification(
+          "Fullscreen konnte nicht gestartet werden",
+          "error",
+        );
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (document.fullscreenElement) {
+        fullscreenBtn.title = "Fullscreen verlassen";
+      } else {
+        fullscreenBtn.title = "Fullscreen öffnen";
+      }
+    });
   }
 
   /**
@@ -481,39 +483,22 @@ class AnzeigetafelClient {
    * Send add player request to server
    */
   sendAddPlayer(team, number, name) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
-
-    const message = { type: "addPlayer", team, number, name };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent addPlayer:", team, number, name);
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send addPlayer", err);
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
       return false;
     }
+    return this.wsClient.sendAddPlayer(team, number, name);
   }
 
   /**
    * Send import players request to server
    */
   sendImportPlayers(team, players) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
-
-    const message = { type: "importPlayers", team, players };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log(
-        "[WebSocket] Sent importPlayers:",
-        team,
-        players.length,
-        "players",
-      );
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send importPlayers", err);
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
       return false;
     }
+    return this.wsClient.sendImportPlayers(team, players);
   }
 
   /**
@@ -628,47 +613,32 @@ class AnzeigetafelClient {
    * Send goal event including player info
    */
   sendGoalWithPlayer(team, player) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+    if (!this.wsClient.isConnected()) {
       this.showNotification("Not connected to server", "error");
       return false;
     }
 
-    const message = {
-      type: "goal",
-      team,
-      playerNumber: player.number,
-      playerName: player.name,
-    };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent goal for", team, player);
+    const success = this.wsClient.sendGoal(team, player.number, player.name);
+    if (success) {
       this.showNotification(
         `${player.name} (#${player.number}) recorded for ${team}`,
         "success",
       );
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send goal", err);
+    } else {
       this.showNotification("Failed to send goal", "error");
-      return false;
     }
+    return success;
   }
 
   /**
    * Send remove player request to server
    */
   sendRemovePlayer(team, number) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) return false;
-
-    const message = { type: "removePlayer", team, number };
-    try {
-      this.socket.send(JSON.stringify(message));
-      console.log("[WebSocket] Sent removePlayer:", team, number);
-      return true;
-    } catch (err) {
-      console.error("[WebSocket] Failed to send removePlayer", err);
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
       return false;
     }
+    return this.wsClient.sendRemovePlayer(team, number);
   }
 
   /**
@@ -722,34 +692,157 @@ class AnzeigetafelClient {
       return;
     }
 
-    console.log(`[Form] Submitting state change: ${value} (${stateId})`);
-    this.sendMatchStateChange(stateId);
+    console.log(`[Application] Submitting state change: ${value} (${stateId})`);
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return;
+    }
+    this.wsClient.sendMatchStateChange(stateId);
   }
 
   /**
    * Get current connection state
    */
   isConnected() {
-    return this.socket && this.socket.readyState === WebSocket.OPEN;
+    return this.wsClient.isConnected();
   }
 
   /**
    * Disconnect and cleanup
    */
   disconnect() {
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
+    this.wsClient.disconnect();
+  }
+  /**
+   * Open emblem selection modal for selected team.
+   */
+  openEmblemModal(team) {
+    this.currentEmblemTeam = team;
+
+    this.showModal("emblemSelectModal");
+    this.requestSavedEmblems();
+  }
+
+  /**
+   * Request list of saved emblems from C++ server.
+   */
+  requestSavedEmblems() {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
     }
+
+    return this.wsClient.requestSavedEmblems();
+  }
+
+  /**
+   * Display saved emblems in modal.
+   */
+  displaySavedEmblems(emblems) {
+    const listElement = document.getElementById("savedEmblemsList");
+
+    if (!listElement) {
+      return;
+    }
+
+    if (!emblems || emblems.length === 0) {
+      listElement.innerHTML =
+        '<p style="color:#666; font-size:12px;">No saved emblems</p>';
+      return;
+    }
+
+    let html = "";
+
+    for (const emblem of emblems) {
+      html += `
+      <div class="emblem-choice" data-filepath="${emblem.filePath}">
+        <img src="${emblem.data}" alt="${emblem.fileName}">
+        <span>${emblem.fileName}</span>
+      </div>
+    `;
+    }
+
+    listElement.innerHTML = html;
+
+    const choices = listElement.querySelectorAll(".emblem-choice");
+
+    choices.forEach((choice) => {
+      choice.addEventListener("click", () => {
+        const filePath = choice.dataset.filepath;
+        this.sendSelectSavedEmblem(this.currentEmblemTeam, filePath);
+        this.hideModal("emblemSelectModal");
+      });
+    });
+  }
+
+  /**
+   * Send selected saved emblem path to C++ server.
+   */
+  sendSelectSavedEmblem(team, filePath) {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
+    }
+
+    const success = this.wsClient.sendSelectSavedEmblem(team, filePath);
+    if (success) {
+      this.showNotification(`${team} emblem selected`, "success");
+    }
+    return success;
+  }
+
+  /**
+   * Read selected emblem file and sent it to server.
+   */
+  handleEmblemUpload(file, team) {
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      this.showNotification("Please select a valid image file", "warning");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      this.sendEmblem(team, file.name, file.type, file.type, dataUrl);
+    };
+    reader.onerror = () => {
+      this.showNotification("Failed to read emblem file", "error");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /**
+   * Send emblem data to server
+   */
+  sendEmblem(team, fileName, fileType, mimeType, dataUrl) {
+    if (!this.wsClient.isConnected()) {
+      this.showNotification("Not connected to server", "error");
+      return false;
+    }
+
+    const success = this.wsClient.sendEmblem(team, fileName, mimeType, dataUrl);
+    if (success) {
+      this.showNotification(
+        `Emblem "${fileName}" uploaded for ${team}`,
+        "success",
+      );
+    } else {
+      this.showNotification("Failed to upload emblem", "error");
+    }
+    return success;
   }
 }
 
 // Initialize client when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[App] Initializing Anzeigetafel client");
+  console.log("[Application] Initializing Anzeigetafel Application");
 
   // Create global client instance
-  window.anzeigetafelClient = new AnzeigetafelClient("ws://192.168.1.36:8080");
+  window.anzeigetafelClient = new ApplicationClient("ws://192.168.1.36:8080");
 
-  console.log("[App] Client initialized");
+  console.log("[Application] Client initialized");
 });

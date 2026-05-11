@@ -279,6 +279,22 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
             qDebug() << "Removed player:" << team << "#" << number;
         }
     }
+    else if (type == "getSavedEmblems")
+    {
+        sendSavedEmblems();
+        return;
+    }
+    else if (type == "importEmblem")
+    {
+        const QString team = obj.value("team").toString();
+        const QString fileName = obj.value("fileName").toString();
+        const QString dataUrl = obj.value("dataUrl").toString();
+
+        handleSetEmblem(team, fileName, dataUrl);
+        return;
+        // Handle emblem import (e.g., save to disk, update model, etc.)
+        qDebug() << "Received emblem for team:" << team << "file:" << fileName ;
+    }
 }
 
 // Send match state to all connected browsers
@@ -378,4 +394,128 @@ void web_server::broadcastPlayersList(const QString &team, const std::vector<std
             client->sendTextMessage(json);
         }
     }
+}
+
+void web_server::sendSavedEmblems()
+{
+    QJsonArray emblemArray;
+
+    QDir dir("/home/scorerboard/Anzeigetafel/emblems");
+
+    if (!dir.exists())
+    {
+        dir.mkpath(".");
+    }
+
+    QFileInfoList files = dir.entryInfoList(
+        {"*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp"},
+        QDir::Files | QDir::Readable,
+        QDir::Name);
+
+    for (const QFileInfo &fileInfo : files)
+    {
+        QFile file(fileInfo.absoluteFilePath());
+
+        if (!file.open(QIODevice::ReadOnly))
+            continue;
+
+        QByteArray imageData = file.readAll();
+        file.close();
+
+        QString suffix = fileInfo.suffix().toLower();
+        QString mimeType = "image/png";
+
+        if (suffix == "jpg" || suffix == "jpeg")
+            mimeType = "image/jpeg";
+        else if (suffix == "bmp")
+            mimeType = "image/bmp";
+        else if (suffix == "webp")
+            mimeType = "image/webp";
+
+        QString base64 =
+            QString("data:%1;base64,%2")
+                .arg(mimeType)
+                .arg(QString::fromUtf8(imageData.toBase64()));
+
+        QJsonObject emblemObj;
+        emblemObj["fileName"] = fileInfo.fileName();
+        emblemObj["filePath"] = fileInfo.absoluteFilePath();
+        emblemObj["data"] = base64;
+
+        emblemArray.append(emblemObj);
+    }
+
+    QJsonObject response;
+    response["type"] = "savedEmblemsList";
+    response["emblems"] = emblemArray;
+
+    QString json =
+        QString::fromUtf8(QJsonDocument(response).toJson(QJsonDocument::Compact));
+
+    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+
+    if (client && client->isValid())
+    {
+        client->sendTextMessage(json);
+    }
+}
+
+/*
+ * Handle emblem upload from browser, save to disk, and update controller
+ */
+void web_server::handleSetEmblem(const QString &team,
+                                 const QString &fileName,
+                                 const QString &dataUrl)
+{
+    if (!m_controller)
+        return;
+
+    QString base64Data = dataUrl;
+
+    const int commaIndex = base64Data.indexOf(',');
+    if (commaIndex >= 0)
+    {
+        base64Data = base64Data.mid(commaIndex + 1);
+    }
+
+    QByteArray imageData = QByteArray::fromBase64(base64Data.toUtf8());
+
+    if (imageData.isEmpty())
+    {
+        qDebug() << "Emblem upload failed: empty image data";
+        return;
+    }
+
+    QDir dir("/home/scorerboard/Anzeigetafel/Import");
+
+    if (!dir.exists())
+    {
+        dir.mkpath(".");
+    }
+
+    QString safeFileName = fileName;
+    safeFileName.replace(" ", "_");
+
+    const QString fullPath = dir.absoluteFilePath(team + "_" + safeFileName);
+
+    QFile file(fullPath);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Could not save emblem:" << fullPath;
+        return;
+    }
+
+    file.write(imageData);
+    file.close();
+
+    if (team == "Home")
+    {
+        m_controller->setTeamEmblem(match_controller::TeamSide::Home, fullPath);
+    }
+    else if (team == "Away")
+    {
+        m_controller->setTeamEmblem(match_controller::TeamSide::Away, fullPath);
+    }
+
+    qDebug() << "Emblem saved:" << fullPath;
 }
