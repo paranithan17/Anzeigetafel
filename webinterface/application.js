@@ -89,6 +89,9 @@ class ApplicationClient {
 
       if (data.type === "matchState") {
         this.handleMatchStateUpdate(data.state, data.stateName);
+      } else if (data.type === "scoreTime") {
+        // { type: 'scoreTime', home: <int>, away: <int>, time: 'MM:SS' }
+        this.updateScoreTimeDisplay(data.home, data.away, data.time);
       } else if (data.type === "playersList") {
         this.handlePlayersListUpdate(data.team, data.players);
       } else if (data.type === "savedEmblemsList") {
@@ -103,6 +106,19 @@ class ApplicationClient {
         event.data,
       );
     }
+  }
+
+  /**
+   * Update the Score and Time display container in UI
+   */
+  updateScoreTimeDisplay(home, away, time) {
+    const homeEl = document.getElementById("homeScore");
+    const awayEl = document.getElementById("awayScore");
+    const timeEl = document.getElementById("matchTime");
+
+    if (homeEl) homeEl.textContent = String(home ?? 0);
+    if (awayEl) awayEl.textContent = String(away ?? 0);
+    if (timeEl) timeEl.textContent = time || "00:00";
   }
 
   /**

@@ -118,6 +118,13 @@ public:
     int getAwayScore() const;
 
     /**
+     * @brief Returns current formatted elapsed time string (MM:SS) for UI.
+     *
+     * @return Formatted time string or empty if unavailable
+     */
+    QString getCurrentTime() const;
+
+    /**
      * @brief Adds a player to the selected team roster.
      *
      * @param side Team side (Home/Away)

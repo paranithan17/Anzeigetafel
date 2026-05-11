@@ -78,6 +78,17 @@ web_server::web_server(match_controller *controller, QObject *parent)
                 &match_controller::awayPlayersChanged,
                 this,
                 &web_server::broadcastAwayPlayersList);
+
+        // Score and time updates
+        connect(m_controller,
+                &match_controller::scoreChanged,
+                this,
+                &web_server::broadcastScoreTime);
+
+        connect(m_controller,
+                &match_controller::timeChanged,
+                this,
+                &web_server::broadcastTimeUpdate);
     }
 }
 
@@ -157,6 +168,15 @@ void web_server::onNewConnection()
         }
         awayObj["players"] = awayArray;
         client->sendTextMessage(QString::fromUtf8(QJsonDocument(awayObj).toJson(QJsonDocument::Compact)));
+
+        // Send initial score/time snapshot
+        QJsonObject scoreObj;
+        scoreObj["type"] = "scoreTime";
+        scoreObj["home"] = m_controller->getHomeScore();
+        scoreObj["away"] = m_controller->getAwayScore();
+        const QString currentTime = m_controller->getCurrentTime();
+        scoreObj["time"] = currentTime.isEmpty() ? QStringLiteral("00:00") : currentTime;
+        client->sendTextMessage(QString::fromUtf8(QJsonDocument(scoreObj).toJson(QJsonDocument::Compact)));
     }
 }
 
@@ -928,4 +948,51 @@ void web_server::parseAndImportCsv(const QString &team, QFile &file)
     }
 
     qDebug() << "Parsed and imported" << players.size() << "players for team:" << team;
+}
+
+void web_server::broadcastScoreTime()
+{
+    if (!m_controller)
+        return;
+
+    QJsonObject obj;
+    obj["type"] = "scoreTime";
+    obj["home"] = m_controller->getHomeScore();
+    obj["away"] = m_controller->getAwayScore();
+
+    // Try to obtain a current time string from controller
+    const QString currentTime = m_controller->getCurrentTime();
+    obj["time"] = currentTime.isEmpty() ? QStringLiteral("00:00") : currentTime;
+
+    const QString json = QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+
+    for (QWebSocket *client : std::as_const(m_clients))
+    {
+        if (client && client->isValid())
+        {
+            client->sendTextMessage(json);
+        }
+    }
+}
+
+void web_server::broadcastTimeUpdate(const QString &elapsedTime)
+{
+    if (!m_controller)
+        return;
+
+    QJsonObject obj;
+    obj["type"] = "scoreTime";
+    obj["home"] = m_controller->getHomeScore();
+    obj["away"] = m_controller->getAwayScore();
+    obj["time"] = elapsedTime;
+
+    const QString json = QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+
+    for (QWebSocket *client : std::as_const(m_clients))
+    {
+        if (client && client->isValid())
+        {
+            client->sendTextMessage(json);
+        }
+    }
 }

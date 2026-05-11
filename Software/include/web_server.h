@@ -88,6 +88,16 @@ private slots:
      */
     void broadcastAwayPlayersList();
 
+    /**
+     * @brief Broadcasts combined score and time to all browsers.
+     */
+    void broadcastScoreTime();
+
+    /**
+     * @brief Broadcasts time update (slot signature matching controller).
+     */
+    void broadcastTimeUpdate(const QString &elapsedTime);
+
 private:
     QWebSocketServer m_server;      ///< WebSocket server instance
     QList<QWebSocket *> m_clients;  ///< Connected browser clients

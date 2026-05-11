@@ -152,7 +152,7 @@ bool match_controller::addGoalWithValidation(const GoalData &goalData)
     const QString timeStamp = QString::number(goalData.goalMinute);
 
     const QString team = goalData.scoringTeam == TeamSide::Home ? QStringLiteral("Home") : QStringLiteral("Away");
-    
+
     if (!m_scoreMemory)
     {
         return false;
@@ -248,6 +248,23 @@ unsigned match_controller::suggestedGoalMinute() const
     }
 
     return static_cast<unsigned>(elapsed.section(':', 0, 0).toInt() + 1);
+}
+
+QString match_controller::getCurrentTime() const
+{
+    if (!m_gameTimer)
+        return QString();
+
+    if (m_gameTimer->phase() == timer::GamePhase::FirstHalf)
+    {
+        return m_gameTimer->firsthalf();
+    }
+    else if (m_gameTimer->phase() == timer::GamePhase::SecondHalf)
+    {
+        return m_gameTimer->secondhalf();
+    }
+
+    return QString();
 }
 
 bool match_controller::requestStateChange(MatchState newState, bool confirmedRunningTimerStop)
