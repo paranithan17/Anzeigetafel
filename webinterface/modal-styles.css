@@ -62,6 +62,33 @@
     font-size: 12px;
 }
 
+/* Mobile responsiveness for 1080px viewport */
+@media (max-width: 1080px) {
+    #goalSelectModal .modal-content {
+        width: 95%;
+        max-width: 100%;
+    }
+
+    .goal-list {
+        max-height: 250px;
+        padding: 4px;
+    }
+
+    .goal-list>div {
+        padding: 3px 2px !important;
+        font-size: 13px;
+    }
+
+    .goal-list strong {
+        font-size: 12px;
+    }
+
+    .scorer-btn {
+        padding: 3px 6px !important;
+        font-size: 12px !important;
+    }
+}
+
 /* Emblem Select Modal */
 #emblemSelectModal {
     display: none;
@@ -332,4 +359,3 @@
     width: 350px;
     max-width: 95%;
 }
-

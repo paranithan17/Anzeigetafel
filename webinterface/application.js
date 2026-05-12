@@ -630,9 +630,9 @@ class ApplicationClient {
 
       let html = "";
       for (const player of players) {
-        html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-            <span style="color:#ddd;"><strong>#${player.number}</strong> ${player.name}</span>
-            <button class="scorer-btn" data-team="${team}" data-number="${player.number}" data-name="${player.name}" style="padding:6px 10px; background:#007acc; border:none; color:#fff; cursor:pointer; border-radius:3px;">Select</button>
+        html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; gap:6px;">
+            <span style="color:#ddd; word-break:break-word;"><strong>${player.number}</strong> ${player.name}</span>
+            <button class="scorer-btn" data-team="${team}" data-number="${player.number}" data-name="${player.name}" style="padding:4px 8px; background:#007acc; border:none; color:#fff; cursor:pointer; border-radius:3px; flex-shrink:0;">Select</button>
           </div>`;
       }
       element.innerHTML = html;

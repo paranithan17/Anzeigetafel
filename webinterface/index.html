@@ -132,6 +132,9 @@
         <!-- Timer control button -->
         <div class="timer-button-container">
             <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+        </div>
+        <!-- Log button -->
+        <div class="log-button-container">
             <button id="logBtn" class="btn btn-primary">Log</button>
         </div>
     </div>
@@ -196,20 +199,20 @@
                         <p>No players</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Goal Details Section -->
-                <div class="goal-details-section">
-                    <div class="goal-input-group">
-                        <label for="goalMinuteInput">Goal Minute:</label>
-                        <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120" class="modal-input"
-                            style="width: 80px;">
-                    </div>
-                    <div class="goal-checkbox-group">
-                        <label for="ownGoalCheckbox" style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="ownGoalCheckbox" class="modal-checkbox">
-                            <span>Own Goal</span>
-                        </label>
-                    </div>
+            <!-- Goal Details Section -->
+            <div class="goal-details-section">
+                <div class="goal-input-group">
+                    <label for="goalMinuteInput">Goal Minute:</label>
+                    <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120" class="modal-input"
+                        style="width: 80px;">
+                </div>
+                <div class="goal-checkbox-group">
+                    <label for="ownGoalCheckbox" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="ownGoalCheckbox" class="modal-checkbox">
+                        <span>Own Goal</span>
+                    </label>
                 </div>
             </div>
             <div class="modal-footer">

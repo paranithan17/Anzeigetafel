@@ -55,13 +55,6 @@ body {
     border: 1px solid #555;
 }
 
-.btn-primary-fullscreen:hover {
-    background-color: #555;
-}
-
-.btn-primary:active {
-    background-color: #3a3a3a;
-}
 
 
 .match-state-section h2 {
@@ -572,6 +565,33 @@ button:disabled,
     to {
         opacity: 1;
     }
+}
+
+.timer-button-container {
+    height: 60px;
+    min-width: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+.log-button-container {
+
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.timer-button-container .btn,
+.log-button-container .btn {
+    width: min(100%, 260px);
+}
+
+#logBtn {
+    height: 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 /* Score/Time container */
