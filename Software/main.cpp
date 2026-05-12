@@ -42,11 +42,13 @@ int main(int argc, char *argv[])
   // Start WebSocket server on port 8080
   websocket_server->start(8080);
 
-  Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
-  scoreboard->show();
-
+  // Show the control window
   controll_window *window = new controll_window(controller);
   window->show();
+
+  // Show the scoreboard
+  Score_board *scoreboard = new Score_board(ScoreMem, gameTime);
+  scoreboard->show();
 
   // Set bidirectional window references for toggling
   scoreboard->setControlWindow(window);

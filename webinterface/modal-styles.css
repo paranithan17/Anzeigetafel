@@ -307,28 +307,7 @@
     min-width: 120px;
 }
 
-.goal-checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.goal-checkbox-group label {
-    color: #ddd;
-    font-size: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-}
-
-.modal-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #007acc;
-}
+/* Manual own-goal checkbox removed; checkbox styles cleaned up */
 
 /* Own Goal Confirmation Modal */
 #ownGoalConfirmModal {

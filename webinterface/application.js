@@ -678,9 +678,7 @@ class ApplicationClient {
 
     // Reset goal details fields
     const timeInput = document.getElementById("goalMinuteInput");
-    const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
     if (timeInput) timeInput.value = String(this.getSuggestedGoalMinute());
-    if (ownGoalCheckbox) ownGoalCheckbox.checked = false;
 
     // ensure lists are up to date
     this.populateGoalSelectionModal();
@@ -762,17 +760,12 @@ class ApplicationClient {
    */
   completeGoalEntry(goalData) {
     const timeInput = document.getElementById("goalMinuteInput");
-    const ownGoalCheckbox = document.getElementById("ownGoalCheckbox");
-
     let goalMinute = this.getSuggestedGoalMinute();
     if (timeInput && timeInput.value) {
       goalMinute = parseInt(timeInput.value);
     }
 
     let isOwnGoal = goalData.isOwnGoal;
-    if (ownGoalCheckbox && ownGoalCheckbox.checked) {
-      isOwnGoal = true;
-    }
 
     this.sendGoalWithPlayer(goalData.team, {
       number: goalData.number,
