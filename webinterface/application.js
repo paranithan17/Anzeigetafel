@@ -1329,7 +1329,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("[Application] Initializing Anzeigetafel Application");
 
   // Create global client instance
-  window.anzeigetafelClient = new ApplicationClient("ws://192.168.1.36:8080");
+  window.anzeigetafelClient = new ApplicationClient("ws://192.168.200.8:8080");
 
   console.log("[Application] Client initialized");
 });
