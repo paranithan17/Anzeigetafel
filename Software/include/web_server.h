@@ -51,7 +51,7 @@ public:
      * @param port TCP port for WebSocket connection
      * @return true if server started successfully
      */
-    bool start(quint16 port = 80);
+    bool start(quint16 port = 8080);
 
 private slots:
     /**

@@ -587,16 +587,15 @@ class ApplicationClient {
     if (!listElement) return;
 
     if (!players || players.length === 0) {
-      listElement.innerHTML =
-        '<p style="color:#666; font-size:12px;">No players</p>';
+      listElement.innerHTML = '<p class="empty-list-message">No players</p>';
       return;
     }
 
     let html = "";
     for (const player of players) {
-      html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; color:#ddd; font-size:12px;">
+      html += `<div class="player-list-item">
         <span><strong>#${player.number}</strong> ${player.name}</span>
-        <button class="player-remove-btn" data-team="${team}" data-number="${player.number}" style="padding:2px 8px; background:#555; border:none; color:#fff; cursor:pointer; border-radius:3px; font-size:10px;">Remove</button>
+        <button class="player-remove-btn player-remove-button" data-team="${team}" data-number="${player.number}">Remove</button>
       </div>`;
     }
     listElement.innerHTML = html;
@@ -623,16 +622,15 @@ class ApplicationClient {
     const renderList = (element, team) => {
       const players = this.players[team] || [];
       if (!players || players.length === 0) {
-        element.innerHTML =
-          '<p style="color:#666; font-size:12px;">No players</p>';
+        element.innerHTML = '<p class="empty-list-message">No players</p>';
         return;
       }
 
       let html = "";
       for (const player of players) {
-        html += `<div style="padding:6px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; gap:6px;">
-            <span style="color:#ddd; word-break:break-word;"><strong>${player.number}</strong> ${player.name}</span>
-            <button class="scorer-btn" data-team="${team}" data-number="${player.number}" data-name="${player.name}" style="padding:4px 8px; background:#007acc; border:none; color:#fff; cursor:pointer; border-radius:3px; flex-shrink:0;">Select</button>
+        html += `<div class="goal-list-item">
+            <span class="goal-list-item-name"><strong>${player.number}</strong> ${player.name}</span>
+            <button class="scorer-btn scorer-button" data-team="${team}" data-number="${player.number}" data-name="${player.name}">Select</button>
           </div>`;
       }
       element.innerHTML = html;
@@ -897,6 +895,13 @@ class ApplicationClient {
     }
     this.wsClient.sendRestartTimer();
     this.showNotification("Timer restarted", "success");
+    // The restart action implies the timer is running again; update UI state
+    this.timerRunning = true;
+    const startBtn = document.getElementById("startTimerBtn");
+    if (startBtn) {
+      // Disable Start while timer runs
+      startBtn.disabled = true;
+    }
   }
 
   /**
@@ -963,6 +968,13 @@ class ApplicationClient {
       return;
     }
 
+    // If the timer is currently running and the user attempts any state change,
+    // require confirmation first (covers changing between halves as well).
+    if (this.timerRunning && stateId !== this.currentMatchState) {
+      this.showMatchStateConfirmation(stateId);
+      return;
+    }
+
     // Check if we're leaving a match state (FirstHalf or SecondHalf)
     const currentStateIsActive =
       this.currentMatchState === 1 || this.currentMatchState === 3;
@@ -999,6 +1011,14 @@ class ApplicationClient {
         if (!this.wsClient.isConnected()) {
           this.showNotification("Not connected to server", "error");
           return;
+        }
+        // Confirming a state change should stop any running timer locally
+        this.timerRunning = false;
+        const startBtn = document.getElementById("startTimerBtn");
+        if (startBtn) {
+          startBtn.disabled = !(
+            this.currentMatchState === 1 || this.currentMatchState === 3
+          );
         }
         this.wsClient.sendMatchStateChange(stateId);
       };
@@ -1099,7 +1119,7 @@ class ApplicationClient {
 
     if (!emblems || emblems.length === 0) {
       listElement.innerHTML =
-        '<p style="color:#666; font-size:12px;">No saved emblems</p>';
+        '<p class="empty-list-message">No saved emblems</p>';
       return;
     }
 
@@ -1220,7 +1240,7 @@ class ApplicationClient {
 
     if (!files || files.length === 0) {
       listElement.innerHTML =
-        '<p style="color:#666; font-size:12px;">No saved lists</p>';
+        '<p class="empty-list-message">No saved lists</p>';
       return;
     }
 

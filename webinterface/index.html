@@ -205,8 +205,8 @@
             <div class="goal-details-section">
                 <div class="goal-input-group">
                     <label for="goalMinuteInput">Goal Minute:</label>
-                    <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120" class="modal-input"
-                        style="width: 80px;">
+                    <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120"
+                        class="modal-input goal-minute-input">
                 </div>
                 <!-- Manual Own Goal checkbox removed: own goals are detected/confirmed automatically -->
             </div>
@@ -224,7 +224,7 @@
                 <button class="modal-close" id="ownGoalConfirmModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <p id="ownGoalConfirmText" style="color: #ddd; margin-bottom: 20px;">
+                <p id="ownGoalConfirmText" class="modal-body-confirmation-text">
                     You selected a player from the opponent team. Should this be marked as an own goal?
                 </p>
             </div>
@@ -244,7 +244,7 @@
                 <button class="modal-close" id="matchStateConfirmModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <p id="matchStateConfirmText" style="color: #ddd; margin-bottom: 20px;">
+                <p id="matchStateConfirmText" class="modal-body-confirmation-text">
                     Are you sure you want to leave the current match state?
                 </p>
             </div>
@@ -262,13 +262,10 @@
                 <h3>Match Log</h3>
                 <button class="modal-close" id="logMenuModalClose">&times;</button>
             </div>
-            <div class="modal-body" style="text-align: center;">
-                <button id="logRestartTimerBtn" class="btn btn-primary"
-                    style="width: 100%; margin-bottom: 10px;">Restart Timer</button>
-                <button id="logResetScoreTimerBtn" class="btn btn-primary"
-                    style="width: 100%; margin-bottom: 10px;">Reset Score & Timer</button>
-                <button id="logRetakeGoalBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Retake
-                    Last Goal</button>
+            <div class="modal-body log-menu-modal-body">
+                <button id="logRestartTimerBtn" class="btn btn-primary log-menu-button">Restart Timer</button>
+                <button id="logResetScoreTimerBtn" class="btn btn-primary log-menu-button">Reset Score & Timer</button>
+                <button id="logRetakeGoalBtn" class="btn btn-primary log-menu-button">Retake Last Goal</button>
             </div>
             <div class="modal-footer">
                 <button id="logMenuCancelBtn" class="btn btn-primary modal-cancel-btn">Close</button>

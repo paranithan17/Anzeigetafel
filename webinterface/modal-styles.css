@@ -338,3 +338,80 @@
     width: 350px;
     max-width: 95%;
 }
+
+/* Confirmation Modal Paragraphs */
+.modal-body-confirmation-text {
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+/* Log Menu Modal Body */
+.log-menu-modal-body {
+    text-align: center;
+}
+
+/* Log Menu Buttons */
+.log-menu-button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Goal Minute Input */
+.goal-minute-input {
+    width: 80px;
+}
+
+/* Empty List Message (No players/emblems/lists) */
+.empty-list-message {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Player List Item (in regular player lists) */
+.player-list-item {
+    padding: 6px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ddd;
+    font-size: 12px;
+}
+
+/* Player Remove Button */
+.player-remove-button {
+    padding: 2px 8px;
+    background: #555;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+/* Goal List Item (in goal selector modal) */
+.goal-list-item {
+    padding: 6px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Goal List Item Name */
+.goal-list-item-name {
+    color: #ddd;
+    word-break: break-word;
+}
+
+/* Scorer Button (Select button in goal list) */
+.scorer-button {
+    padding: 4px 8px;
+    background: #007acc;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
