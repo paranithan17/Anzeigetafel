@@ -7,7 +7,7 @@
  */
 
 class ApplicationClient {
-  constructor(serverUrl = "ws://localhost:8080") {
+  constructor(serverUrl = "ws://192.168.200.8:8080") {
     this.wsClient = new WebSocketClient(serverUrl);
 
     // State mapping
