@@ -262,23 +262,23 @@ void Score_board::adjustFontSize()
     else
     {
         QFont scoreFont;
-        scoreFont.setPixelSize(40);
+        scoreFont.setPixelSize(40*3);
         scoreFont.setBold(true);
         scoreLabel->setFont(scoreFont);
 
         QFont timeFont;
-        timeFont.setPixelSize(18);
+        timeFont.setPixelSize(18*2);
         timeFont.setBold(true);
         timeLabel->setFont(timeFont);
 
         QFont goalFont;
-        goalFont.setPixelSize(8);
+        goalFont.setPixelSize(8*3);
         goalFont.setBold(false);
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        emblemTeam1->setFixedSize(42, 42);
-        emblemTeam2->setFixedSize(42, 42);
+        emblemTeam1->setFixedSize(42*2, 42*2);
+        emblemTeam2->setFixedSize(42*2, 42*2);
     }
 }
 
