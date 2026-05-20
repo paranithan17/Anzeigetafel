@@ -513,7 +513,8 @@ void web_server::sendSavedEmblems()
     QJsonArray emblemArray;
 
     const QString importDirPath = resolveEmblemImportDir();
-    const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
+    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/Import");
+    // const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
 
     QSet<QString> seenPaths;
     const QStringList searchDirs = {importDirPath, legacyDirPath};
@@ -745,7 +746,8 @@ void web_server::sendSavedCsvFiles()
     QJsonArray csvArray;
 
     const QString importDirPath = resolveEmblemImportDir();
-    const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
+    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/Import");
+    // const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
 
     QSet<QString> seenPaths;
     const QStringList searchDirs = {importDirPath, legacyDirPath};
