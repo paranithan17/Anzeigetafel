@@ -100,7 +100,7 @@ void Score_board::setupLayout()
 
     mainlayout->addSpacing(-5);
     mainlayout->addLayout(topLayout);
-    mainlayout->addSpacing(3);
+    mainlayout->addSpacing(-20);
     mainlayout->addWidget(timeLabel);
     mainlayout->addLayout(scorerLayout);
     setLayout(mainlayout);
@@ -258,27 +258,27 @@ void Score_board::adjustFontSize()
 
         adjustEmblemSize();
     }
-    // Font sizes for fixed 256x128 LED wall
+    // Font sizes for fixed 512x320 LED wall
     else
     {
         QFont scoreFont;
-        scoreFont.setPixelSize(40*3);
+        scoreFont.setPixelSize(110);
         scoreFont.setBold(true);
         scoreLabel->setFont(scoreFont);
 
         QFont timeFont;
-        timeFont.setPixelSize(18*2);
+        timeFont.setPixelSize(60);
         timeFont.setBold(true);
         timeLabel->setFont(timeFont);
 
         QFont goalFont;
-        goalFont.setPixelSize(8*3);
+        goalFont.setPixelSize(14);
         goalFont.setBold(false);
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        emblemTeam1->setFixedSize(42*2, 42*2);
-        emblemTeam2->setFixedSize(42*2, 42*2);
+        emblemTeam1->setFixedSize(44*2, 44*2);
+        emblemTeam2->setFixedSize(44*2, 44*2);
     }
 }
 
