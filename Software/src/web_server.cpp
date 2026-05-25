@@ -72,12 +72,24 @@ web_server::web_server(match_controller *controller, QObject *parent)
         connect(m_controller,
                 &match_controller::homePlayersChanged,
                 this,
-                &web_server::broadcastHomePlayersList);
+                [this]()
+                {
+                    if (!m_controller)
+                        return;
+                    const auto players = m_controller->getHomePlayers();
+                    this->broadcastPlayerList("Home", players);
+                });
 
         connect(m_controller,
                 &match_controller::awayPlayersChanged,
                 this,
-                &web_server::broadcastAwayPlayersList);
+                [this]()
+                {
+                    if (!m_controller)
+                        return;
+                    const auto players = m_controller->getAwayPlayers();
+                    this->broadcastPlayerList("Away", players);
+                });
 
         // Score and time updates
         connect(m_controller,
@@ -93,7 +105,7 @@ web_server::web_server(match_controller *controller, QObject *parent)
 }
 
 // Start WebSocket server
-bool web_server::start(quint16 port)
+bool web_server::start_server(quint16 port)
 {
     const QHostAddress serverAddress(QStringLiteral("192.168.200.8"));
     const bool ok = m_server.listen(serverAddress, port);
@@ -132,42 +144,12 @@ void web_server::onNewConnection()
         client->sendTextMessage(
             createMatchStateJson(static_cast<int>(m_controller->currentState())));
 
-        // Send current player lists
+        // Send current player lists (use helper to create JSON for single-client sends)
         const auto homePlayers = m_controller->getHomePlayers();
-        QJsonObject homeObj;
-        homeObj["type"] = "playersList";
-        homeObj["team"] = "Home";
-        QJsonArray homeArray;
-        for (const auto &p : homePlayers)
-        {
-            if (p)
-            {
-                QJsonObject playerObj;
-                playerObj["number"] = static_cast<int>(p->getNumber());
-                playerObj["name"] = p->getName();
-                homeArray.append(playerObj);
-            }
-        }
-        homeObj["players"] = homeArray;
-        client->sendTextMessage(QString::fromUtf8(QJsonDocument(homeObj).toJson(QJsonDocument::Compact)));
+        client->sendTextMessage(createPlayersListJson("Home", homePlayers));
 
         const auto awayPlayers = m_controller->getAwayPlayers();
-        QJsonObject awayObj;
-        awayObj["type"] = "playersList";
-        awayObj["team"] = "Away";
-        QJsonArray awayArray;
-        for (const auto &p : awayPlayers)
-        {
-            if (p)
-            {
-                QJsonObject playerObj;
-                playerObj["number"] = static_cast<int>(p->getNumber());
-                playerObj["name"] = p->getName();
-                awayArray.append(playerObj);
-            }
-        }
-        awayObj["players"] = awayArray;
-        client->sendTextMessage(QString::fromUtf8(QJsonDocument(awayObj).toJson(QJsonDocument::Compact)));
+        client->sendTextMessage(createPlayersListJson("Away", awayPlayers));
 
         // Send initial score/time snapshot
         QJsonObject scoreObj;
@@ -423,25 +405,8 @@ void web_server::broadcastMatchState(int state)
     }
 }
 
-// Broadcast home team players list to all browsers
-void web_server::broadcastHomePlayersList()
-{
-    if (!m_controller)
-        return;
-
-    const auto players = m_controller->getHomePlayers();
-    broadcastPlayersList("Home", players);
-}
-
-// Broadcast away team players list to all browsers
-void web_server::broadcastAwayPlayersList()
-{
-    if (!m_controller)
-        return;
-
-    const auto players = m_controller->getAwayPlayers();
-    broadcastPlayersList("Away", players);
-}
+// Note: individual home/away broadcaster slots removed. Use
+// `broadcastPlayerList()` when sending updated lists to clients.
 
 // Create JSON message for browser
 QString web_server::createMatchStateJson(int state) const
@@ -477,7 +442,7 @@ QString web_server::createMatchStateJson(int state) const
 }
 
 // Broadcast player list to all browsers
-void web_server::broadcastPlayersList(const QString &team, const std::vector<std::shared_ptr<player>> &players)
+void web_server::broadcastPlayerList(const QString &team, const std::vector<std::shared_ptr<player>> &players)
 {
     QJsonObject obj;
     obj["type"] = "playersList";
@@ -1021,4 +986,28 @@ void web_server::broadcastTimeUpdate(const QString &elapsedTime)
             client->sendTextMessage(json);
         }
     }
+}
+
+// Create JSON text for a team's players (used for single-client sends)
+QString web_server::createPlayersListJson(const QString &team, const std::vector<std::shared_ptr<player>> &players) const
+{
+    QJsonObject obj;
+    obj["type"] = "playersList";
+    obj["team"] = team;
+
+    QJsonArray playersArray;
+    for (const auto &p : players)
+    {
+        if (p)
+        {
+            QJsonObject playerObj;
+            playerObj["number"] = static_cast<int>(p->getNumber());
+            playerObj["name"] = p->getName();
+            playersArray.append(playerObj);
+        }
+    }
+
+    obj["players"] = playersArray;
+
+    return QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
 }

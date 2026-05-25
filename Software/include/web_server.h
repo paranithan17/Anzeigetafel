@@ -22,6 +22,8 @@
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <vector>
+#include <memory>
 
 #include "match_controller.h"
 
@@ -51,7 +53,11 @@ public:
      * @param port TCP port for WebSocket connection
      * @return true if server started successfully
      */
-    bool start(quint16 port = 8080);
+    bool start_server(quint16 port = 8080);
+    /**
+     * @brief Compatibility wrapper for legacy `start()` calls.
+     */
+    bool start(quint16 port = 8080) { return start_server(port); }
 
 private slots:
     /**
@@ -78,15 +84,11 @@ private slots:
      */
     void broadcastMatchState(int state);
 
-    /**
-     * @brief Broadcasts home team players list to all browsers.
+    /*
+     * Note: individual home/away slot methods were removed in favor of
+     * a single reusable broadcaster `broadcastPlayerList` which accepts
+     * the team identifier and the player vector.
      */
-    void broadcastHomePlayersList();
-
-    /**
-     * @brief Broadcasts away team players list to all browsers.
-     */
-    void broadcastAwayPlayersList();
 
     /**
      * @brief Broadcasts combined score and time to all browsers.
@@ -119,12 +121,21 @@ private:
     QString createMatchStateJson(int state) const;
 
     /**
+     * @brief Create JSON for a team's player list (used for single-client sends).
+     *
+     * @param team Team identifier ("Home" or "Away")
+     * @param players Vector of player objects
+     * @return JSON text message
+     */
+    QString createPlayersListJson(const QString &team, const std::vector<std::shared_ptr<player>> &players) const;
+
+    /**
      * @brief Broadcasts a team's player list to all connected browsers.
      *
      * @param team Team identifier ("Home" or "Away")
      * @param players Vector of player objects
      */
-    void broadcastPlayersList(const QString &team, const std::vector<std::shared_ptr<player>> &players);
+    void broadcastPlayerList(const QString &team, const std::vector<std::shared_ptr<player>> &players);
 
     /**
      * @brief Sends all saved emblem images from the emblem folder to the requesting browser.
