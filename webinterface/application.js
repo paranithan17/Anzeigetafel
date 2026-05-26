@@ -108,7 +108,11 @@ class ApplicationClient {
         this.displaySavedCsvFiles(data.files);
       }
     } catch (error) {
-      console.error("[Application] Failed to parse message:", error, event.data);
+      console.error(
+        "[Application] Failed to parse message:",
+        error,
+        event.data,
+      );
     }
   }
 

@@ -20,7 +20,11 @@ ApplicationClient.prototype.setupTimerHandlers = function () {
   this.updateStartTimerButtonState();
 };
 
-ApplicationClient.prototype.updateScoreTimeDisplay = function (home, away, time) {
+ApplicationClient.prototype.updateScoreTimeDisplay = function (
+  home,
+  away,
+  time,
+) {
   const homeEl = document.getElementById("homeScore");
   const awayEl = document.getElementById("awayScore");
   const timeEl = document.getElementById("matchTime");

@@ -16,9 +16,7 @@ ApplicationClient.prototype.setupPlayerManagementHandlers = function () {
     });
   }
 
-  const homeAddPlayerShowBtn = document.getElementById(
-    "homeAddPlayerShowBtn",
-  );
+  const homeAddPlayerShowBtn = document.getElementById("homeAddPlayerShowBtn");
   if (homeAddPlayerShowBtn) {
     homeAddPlayerShowBtn.addEventListener("click", () => {
       this.showModal("homeAddPlayerModal");
@@ -74,9 +72,7 @@ ApplicationClient.prototype.setupPlayerManagementHandlers = function () {
     });
   }
 
-  const awayAddPlayerShowBtn = document.getElementById(
-    "awayAddPlayerShowBtn",
-  );
+  const awayAddPlayerShowBtn = document.getElementById("awayAddPlayerShowBtn");
   if (awayAddPlayerShowBtn) {
     awayAddPlayerShowBtn.addEventListener("click", () => {
       this.showModal("awayAddPlayerModal");
