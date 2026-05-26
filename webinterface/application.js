@@ -1,16 +1,15 @@
-/**
+/*
  * @file application.js
- * @brief Application logic for Anzeigetafel match state control
+ * @brief Core application bootstrap for Anzeigetafel match state control
  *
- * Handles UI interactions, form submissions, and application state management.
- * Uses WebSocketClient for server communication.
+ * Handles websocket lifecycle, shared UI utilities, and feature-module setup.
+ * Feature-specific behavior lives in the dedicated module files loaded after this one.
  */
 
 class ApplicationClient {
   constructor(serverUrl = "ws://192.168.200.8:8080") {
     this.wsClient = new WebSocketClient(serverUrl);
 
-    // State mapping
     this.stateMap = {
       0: "pregame",
       1: "firsthalf",
@@ -27,39 +26,43 @@ class ApplicationClient {
       4: "Post game",
     };
 
-    // Keep the latest players lists in memory for quick access
     this.players = { Home: [], Away: [] };
 
     this.currentEmblemTeam = null;
     this.currentCsvTeam = null;
 
-    // Goal tracking
-    this.requestingTeam = null; // Which team triggered the goal selector (Home or Away)
-    this.currentMatchState = 0; // Current match state
-    this.pendingGoalData = null; // Store pending goal data for own goal confirmation
-    this.timerRunning = false; // Track if timer is running
+    this.requestingTeam = null;
+    this.currentMatchState = 0;
+    this.pendingGoalData = null;
+    this.timerRunning = false;
 
     this.init();
   }
 
   /**
-   * Initialize the client and connect to WebSocket server
+   * Initialize the client and connect to WebSocket server.
    */
   init() {
-    // Setup WebSocket callbacks
     this.wsClient.onConnected = () => this.onWsConnected();
     this.wsClient.onDisconnected = () => this.onWsDisconnected();
     this.wsClient.onError = (error) => this.onWsError(error);
     this.wsClient.onMessage = (event) => this.onWsMessage(event);
 
     this.wsClient.connect();
-    this.setupEventListeners();
+
+    this.setupMatchStateHandlers();
+    this.setupGoalHandlers();
+    this.setupPlayerManagementHandlers();
+    this.setupEmblemManagementHandlers();
+    this.setupLogModalHandlers();
+    this.setupTimerHandlers();
     this.setupFullscreenButton();
+
     this.updateConnectionStatus("connecting");
   }
 
   /**
-   * Handle WebSocket connected callback
+   * Handle WebSocket connected callback.
    */
   onWsConnected() {
     console.log("[Application] WebSocket connected");
@@ -68,7 +71,7 @@ class ApplicationClient {
   }
 
   /**
-   * Handle WebSocket disconnected callback
+   * Handle WebSocket disconnected callback.
    */
   onWsDisconnected() {
     console.log("[Application] WebSocket disconnected");
@@ -77,7 +80,7 @@ class ApplicationClient {
   }
 
   /**
-   * Handle WebSocket error callback
+   * Handle WebSocket error callback.
    */
   onWsError(error) {
     console.error("[Application] WebSocket error:", error);
@@ -86,7 +89,7 @@ class ApplicationClient {
   }
 
   /**
-   * Handle incoming messages from WebSocket server
+   * Handle incoming messages from WebSocket server.
    */
   onWsMessage(event) {
     try {
@@ -96,7 +99,6 @@ class ApplicationClient {
       if (data.type === "matchState") {
         this.handleMatchStateUpdate(data.state, data.stateName);
       } else if (data.type === "scoreTime") {
-        // { type: 'scoreTime', home: <int>, away: <int>, time: 'MM:SS' }
         this.updateScoreTimeDisplay(data.home, data.away, data.time);
       } else if (data.type === "playersList") {
         this.handlePlayersListUpdate(data.team, data.players);
@@ -106,71 +108,12 @@ class ApplicationClient {
         this.displaySavedCsvFiles(data.files);
       }
     } catch (error) {
-      console.error(
-        "[Application] Failed to parse message:",
-        error,
-        event.data,
-      );
+      console.error("[Application] Failed to parse message:", error, event.data);
     }
   }
 
   /**
-   * Update the Score and Time display container in UI
-   */
-  updateScoreTimeDisplay(home, away, time) {
-    const homeEl = document.getElementById("homeScore");
-    const awayEl = document.getElementById("awayScore");
-    const timeEl = document.getElementById("matchTime");
-
-    if (homeEl) homeEl.textContent = String(home ?? 0);
-    if (awayEl) awayEl.textContent = String(away ?? 0);
-    if (timeEl) timeEl.textContent = time || "00:00";
-  }
-
-  /**
-   * Handle match state update from server
-   */
-  handleMatchStateUpdate(stateId, stateName) {
-    console.log(`[State Update] State changed to ${stateName} (${stateId})`);
-
-    // Store current match state
-    this.currentMatchState = stateId;
-
-    // Update radio button selection
-    const radioId = this.stateMap[stateId];
-    if (radioId) {
-      const radioElement = document.getElementById(radioId);
-      if (radioElement) {
-        radioElement.checked = true;
-        console.log(`[UI] Updated radio button to: ${radioId}`);
-      }
-    }
-
-    // Update UI display
-    this.updateStateDisplay(stateId, stateName);
-
-    // Enable Start Timer only in FirstHalf (1) or SecondHalf (3), and if timer is not running
-    const startBtn = document.getElementById("startTimerBtn");
-    if (startBtn) {
-      const enabled = (stateId === 1 || stateId === 3) && !this.timerRunning;
-      startBtn.disabled = !enabled;
-    }
-  }
-
-  /**
-   * Update state display on UI
-   */
-  updateStateDisplay(stateId, stateName) {
-    const stateDisplay = document.getElementById("currentStateDisplay");
-    if (stateDisplay) {
-      stateDisplay.textContent =
-        stateName || this.stateNameMap[stateId] || "Unknown";
-      stateDisplay.className = `state-display state-${stateId}`;
-    }
-  }
-
-  /**
-   * Update connection status indicator
+   * Update connection status indicator.
    */
   updateConnectionStatus(status) {
     const statusElement = document.getElementById("connectionStatus");
@@ -190,7 +133,7 @@ class ApplicationClient {
   }
 
   /**
-   * Show notification message
+   * Show notification message.
    */
   showNotification(message, type = "info") {
     console.log(`[Notification] ${type.toUpperCase()}: ${message}`);
@@ -202,276 +145,40 @@ class ApplicationClient {
     const container = document.body;
     container.appendChild(notification);
 
-    // Auto-remove after 5 seconds
     setTimeout(() => {
       notification.classList.add("fade-out");
       setTimeout(() => {
-        container.removeChild(notification);
+        if (notification.parentNode === container) {
+          container.removeChild(notification);
+        }
       }, 500);
     }, 5000);
   }
 
   /**
-   * Setup event listeners for form and controls
+   * Show modal dialog.
    */
-  setupEventListeners() {
-    // Form submission
-    const form = document.getElementById("matchStateForm");
-    if (form) {
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        this.handleFormSubmit();
-      });
-    }
-
-    // Individual radio button changes (optional: update on click)
-    const radioButtons = document.querySelectorAll('input[name="matchState"]');
-    radioButtons.forEach((radio) => {
-      radio.addEventListener("change", (e) => {
-        console.log(`[UI] Radio selected: ${e.target.value}`);
-      });
-    });
-
-    // Goal buttons
-    const homeGoal = document.getElementById("homeGoalBtn");
-    if (homeGoal) {
-      homeGoal.addEventListener("click", () => {
-        console.log("[UI] Home Goal button clicked");
-        this.showGoalSelector("Home");
-      });
-    }
-
-    const awayGoal = document.getElementById("awayGoalBtn");
-    if (awayGoal) {
-      awayGoal.addEventListener("click", () => {
-        console.log("[UI] Away Goal button clicked");
-        this.showGoalSelector("Away");
-      });
-    }
-
-    // Start timer button
-    const startBtn = document.getElementById("startTimerBtn");
-    if (startBtn) {
-      startBtn.addEventListener("click", () => {
-        console.log("[UI] Start Timer clicked");
-        if (this.wsClient.isConnected()) {
-          this.wsClient.sendStartTimer();
-          this.timerRunning = true;
-          startBtn.disabled = true;
-        } else {
-          this.showNotification("Not connected to server", "error");
-        }
-      });
-    }
-
-    // Log button
-    const logBtn = document.getElementById("logBtn");
-    if (logBtn) {
-      logBtn.addEventListener("click", () => {
-        console.log("[UI] Log button clicked");
-        this.showLogMenu();
-      });
-    }
-
-    // Home team player handlers
-    const homeImportFile = document.getElementById("homeImportFile");
-    if (homeImportFile) {
-      homeImportFile.addEventListener("change", (e) => {
-        this.handleCsvUpload(e.target.files[0], "Home");
-        homeImportFile.value = "";
-      });
-    }
-
-    const homeImportBtn = document.getElementById("homeImportBtn");
-    if (homeImportBtn) {
-      homeImportBtn.addEventListener("click", () => {
-        this.openCsvModal("Home");
-      });
-    }
-
-    const homeAddPlayerShowBtn = document.getElementById(
-      "homeAddPlayerShowBtn",
-    );
-    if (homeAddPlayerShowBtn) {
-      homeAddPlayerShowBtn.addEventListener("click", () => {
-        this.showModal("homeAddPlayerModal");
-      });
-    }
-
-    const homeModalClose = document.getElementById("homeModalClose");
-    if (homeModalClose) {
-      homeModalClose.addEventListener("click", () => {
-        this.hideModal("homeAddPlayerModal");
-      });
-    }
-
-    const homeAddPlayerCancelBtn = document.getElementById(
-      "homeAddPlayerCancelBtn",
-    );
-    if (homeAddPlayerCancelBtn) {
-      homeAddPlayerCancelBtn.addEventListener("click", () => {
-        this.hideModal("homeAddPlayerModal");
-      });
-    }
-
-    const homeAddPlayerConfirmBtn = document.getElementById(
-      "homeAddPlayerConfirmBtn",
-    );
-    if (homeAddPlayerConfirmBtn) {
-      homeAddPlayerConfirmBtn.addEventListener("click", () => {
-        const num = document.getElementById("homePlayerNum").value;
-        const name = document.getElementById("homePlayerName").value;
-        if (num && name) {
-          this.sendAddPlayer("Home", parseInt(num), name);
-          document.getElementById("homePlayerNum").value = "";
-          document.getElementById("homePlayerName").value = "";
-          this.hideModal("homeAddPlayerModal");
-        } else {
-          this.showNotification("Please enter number and name", "warning");
-        }
-      });
-    }
-
-    // Away team player handlers
-    const awayImportFile = document.getElementById("awayImportFile");
-    if (awayImportFile) {
-      awayImportFile.addEventListener("change", (e) => {
-        this.handleCsvUpload(e.target.files[0], "Away");
-        awayImportFile.value = "";
-      });
-    }
-
-    const awayImportBtn = document.getElementById("awayImportBtn");
-    if (awayImportBtn) {
-      awayImportBtn.addEventListener("click", () => {
-        this.openCsvModal("Away");
-      });
-    }
-
-    const awayAddPlayerShowBtn = document.getElementById(
-      "awayAddPlayerShowBtn",
-    );
-    if (awayAddPlayerShowBtn) {
-      awayAddPlayerShowBtn.addEventListener("click", () => {
-        this.showModal("awayAddPlayerModal");
-      });
-    }
-
-    const awayModalClose = document.getElementById("awayModalClose");
-    if (awayModalClose) {
-      awayModalClose.addEventListener("click", () => {
-        this.hideModal("awayAddPlayerModal");
-      });
-    }
-
-    const awayAddPlayerCancelBtn = document.getElementById(
-      "awayAddPlayerCancelBtn",
-    );
-    if (awayAddPlayerCancelBtn) {
-      awayAddPlayerCancelBtn.addEventListener("click", () => {
-        this.hideModal("awayAddPlayerModal");
-      });
-    }
-
-    const awayAddPlayerConfirmBtn = document.getElementById(
-      "awayAddPlayerConfirmBtn",
-    );
-    if (awayAddPlayerConfirmBtn) {
-      awayAddPlayerConfirmBtn.addEventListener("click", () => {
-        const num = document.getElementById("awayPlayerNum").value;
-        const name = document.getElementById("awayPlayerName").value;
-        if (num && name) {
-          this.sendAddPlayer("Away", parseInt(num), name);
-          document.getElementById("awayPlayerNum").value = "";
-          document.getElementById("awayPlayerName").value = "";
-          this.hideModal("awayAddPlayerModal");
-        } else {
-          this.showNotification("Please enter number and name", "warning");
-        }
-      });
-    }
-
-    const homeEmblemBtn = document.getElementById("homeEmblemBtn");
-    const homeEmblemFile = document.getElementById("homeEmblemFile");
-
-    if (homeEmblemBtn && homeEmblemFile) {
-      homeEmblemBtn.addEventListener("click", () => {
-        this.openEmblemModal("Home");
-      });
-
-      homeEmblemFile.addEventListener("change", (e) => {
-        this.handleEmblemUpload(e.target.files[0], "Home");
-        homeEmblemFile.value = "";
-      });
-    }
-
-    const awayEmblemBtn = document.getElementById("awayEmblemBtn");
-    const awayEmblemFile = document.getElementById("awayEmblemFile");
-
-    if (awayEmblemBtn && awayEmblemFile) {
-      awayEmblemBtn.addEventListener("click", () => {
-        this.openEmblemModal("Away");
-      });
-
-      awayEmblemFile.addEventListener("change", (e) => {
-        this.handleEmblemUpload(e.target.files[0], "Away");
-        awayEmblemFile.value = "";
-      });
-    }
-
-    const emblemModalClose = document.getElementById("emblemModalClose");
-    if (emblemModalClose) {
-      emblemModalClose.addEventListener("click", () => {
-        this.hideModal("emblemSelectModal");
-      });
-    }
-
-    const emblemCancelBtn = document.getElementById("emblemCancelBtn");
-    if (emblemCancelBtn) {
-      emblemCancelBtn.addEventListener("click", () => {
-        this.hideModal("emblemSelectModal");
-      });
-    }
-
-    const uploadNewEmblemBtn = document.getElementById("uploadNewEmblemBtn");
-    if (uploadNewEmblemBtn) {
-      uploadNewEmblemBtn.addEventListener("click", () => {
-        if (this.currentEmblemTeam === "Home") {
-          homeEmblemFile.click();
-        } else if (this.currentEmblemTeam === "Away") {
-          awayEmblemFile.click();
-        }
-      });
-    }
-
-    // CSV Modal handlers
-    const csvModalClose = document.getElementById("csvModalClose");
-    if (csvModalClose) {
-      csvModalClose.addEventListener("click", () => {
-        this.hideModal("csvSelectModal");
-      });
-    }
-
-    const csvCancelBtn = document.getElementById("csvCancelBtn");
-    if (csvCancelBtn) {
-      csvCancelBtn.addEventListener("click", () => {
-        this.hideModal("csvSelectModal");
-      });
-    }
-
-    const uploadNewCsvBtn = document.getElementById("uploadNewCsvBtn");
-    if (uploadNewCsvBtn) {
-      uploadNewCsvBtn.addEventListener("click", () => {
-        if (this.currentCsvTeam === "Home") {
-          homeImportFile.click();
-        } else if (this.currentCsvTeam === "Away") {
-          awayImportFile.click();
-        }
-      });
+  showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "flex";
+      modal.classList.add("show");
     }
   }
+
   /**
-   * Setup fullscreen button
+   * Hide modal dialog.
+   */
+  hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = "none";
+      modal.classList.remove("show");
+    }
+  }
+
+  /**
+   * Setup fullscreen button.
    */
   setupFullscreenButton() {
     const fullscreenBtn = document.getElementById("fullscreenBtn");
@@ -510,825 +217,24 @@ class ApplicationClient {
   }
 
   /**
-   * Handle CSV file import (read and send to server)
-   */
-  handlePlayerImportFile(file, team) {
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const csv = e.target.result;
-        const lines = csv.split("\n").filter((line) => line.trim());
-        const players = [];
-
-        for (const line of lines) {
-          const [numStr, name] = line.split(/[,;]/).map((s) => s.trim());
-          const num = parseInt(numStr);
-          if (!isNaN(num) && name) {
-            players.push({ number: num, name });
-          }
-        }
-
-        if (players.length > 0) {
-          this.sendImportPlayers(team, players);
-          console.log(
-            `[Players] Imported ${players.length} players for ${team} team`,
-          );
-        }
-      } catch (err) {
-        console.error("[Players] Failed to parse CSV:", err);
-        this.showNotification(`Failed to parse CSV for ${team}`, "error");
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  /**
-   * Send add player request to server
-   */
-  sendAddPlayer(team, number, name) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-    return this.wsClient.sendAddPlayer(team, number, name);
-  }
-
-  /**
-   * Send import players request to server
-   */
-  sendImportPlayers(team, players) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-    return this.wsClient.sendImportPlayers(team, players);
-  }
-
-  /**
-   * Handle players list update from server
-   */
-  handlePlayersListUpdate(team, players) {
-    console.log(
-      `[Players] Received ${players.length} players for ${team} team`,
-    );
-    // store latest players in memory
-    this.players[team] = Array.isArray(players) ? players : [];
-    this.displayPlayersList(team, this.players[team]);
-  }
-
-  /**
-   * Display player list in UI
-   */
-  displayPlayersList(team, players) {
-    const listId = team === "Home" ? "homePlayersList" : "awayPlayersList";
-    const listElement = document.getElementById(listId);
-    if (!listElement) return;
-
-    if (!players || players.length === 0) {
-      listElement.innerHTML = '<p class="empty-list-message">No players</p>';
-      return;
-    }
-
-    let html = "";
-    for (const player of players) {
-      html += `<div class="player-list-item">
-        <span><strong>#${player.number}</strong> ${player.name}</span>
-        <button class="player-remove-btn player-remove-button" data-team="${team}" data-number="${player.number}">Remove</button>
-      </div>`;
-    }
-    listElement.innerHTML = html;
-
-    // Attach remove handlers
-    const removeBtns = listElement.querySelectorAll(".player-remove-btn");
-    removeBtns.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const t = e.target.dataset.team;
-        const n = parseInt(e.target.dataset.number);
-        this.sendRemovePlayer(t, n);
-      });
-    });
-  }
-
-  /**
-   * Populate the goal selection modal lists with current players
-   */
-  populateGoalSelectionModal() {
-    const homeList = document.getElementById("goalHomeList");
-    const awayList = document.getElementById("goalAwayList");
-    if (!homeList || !awayList) return;
-
-    const renderList = (element, team) => {
-      const players = this.players[team] || [];
-      if (!players || players.length === 0) {
-        element.innerHTML = '<p class="empty-list-message">No players</p>';
-        return;
-      }
-
-      let html = "";
-      for (const player of players) {
-        html += `<div class="goal-list-item">
-            <span class="goal-list-item-name"><strong>${player.number}</strong> ${player.name}</span>
-            <button class="scorer-btn scorer-button" data-team="${team}" data-number="${player.number}" data-name="${player.name}">Select</button>
-          </div>`;
-      }
-      element.innerHTML = html;
-
-      // attach handlers
-      const btns = element.querySelectorAll(".scorer-btn");
-      btns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const t = e.currentTarget.dataset.team;
-          const n = parseInt(e.currentTarget.dataset.number);
-          const name = e.currentTarget.dataset.name;
-
-          // Check if selected player is from opponent team
-          if (t !== this.requestingTeam) {
-            // Show own goal confirmation modal
-            this.pendingGoalData = { team: t, number: n, name };
-            this.showOwnGoalConfirmation(
-              `${name} (#${n}) is from the opponent team. Mark as own goal?`,
-            );
-          } else {
-            // Regular goal
-            this.completeGoalEntry({
-              team: t,
-              number: n,
-              name,
-              isOwnGoal: false,
-            });
-          }
-        });
-      });
-    };
-
-    renderList(homeList, "Home");
-    renderList(awayList, "Away");
-  }
-
-  /**
-   * Show the goal selector modal and populate with players
-   */
-  showGoalSelector(requestingTeam) {
-    // Store which team triggered this goal selector
-    this.requestingTeam = requestingTeam;
-
-    // Reset goal details fields
-    const timeInput = document.getElementById("goalMinuteInput");
-    if (timeInput) timeInput.value = String(this.getSuggestedGoalMinute());
-
-    // ensure lists are up to date
-    this.populateGoalSelectionModal();
-    // show modal
-    this.showModal("goalSelectModal");
-
-    // close and cancel handlers
-    const closeBtn = document.getElementById("goalModalClose");
-    if (closeBtn) {
-      closeBtn.onclick = () => {
-        this.hideModal("goalSelectModal");
-        this.requestingTeam = null;
-      };
-    }
-    const cancelBtn = document.getElementById("goalCancelBtn");
-    if (cancelBtn) {
-      cancelBtn.onclick = () => {
-        this.hideModal("goalSelectModal");
-        this.requestingTeam = null;
-      };
-    }
-  }
-
-  /**
-   * Show own goal confirmation modal
-   */
-  showOwnGoalConfirmation(message) {
-    const textElement = document.getElementById("ownGoalConfirmText");
-    if (textElement) {
-      textElement.textContent = message;
-    }
-    this.showModal("ownGoalConfirmModal");
-
-    const yesBtn = document.getElementById("ownGoalConfirmYesBtn");
-    if (yesBtn) {
-      yesBtn.onclick = () => {
-        this.hideModal("ownGoalConfirmModal");
-        if (this.pendingGoalData) {
-          this.completeGoalEntry({
-            ...this.pendingGoalData,
-            isOwnGoal: true,
-          });
-        }
-      };
-    }
-
-    const noBtn = document.getElementById("ownGoalConfirmNoBtn");
-    if (noBtn) {
-      noBtn.onclick = () => {
-        this.hideModal("ownGoalConfirmModal");
-        if (this.pendingGoalData) {
-          this.completeGoalEntry({
-            ...this.pendingGoalData,
-            isOwnGoal: false,
-          });
-        }
-      };
-    }
-
-    const cancelBtn = document.getElementById("ownGoalConfirmCancelBtn");
-    if (cancelBtn) {
-      cancelBtn.onclick = () => {
-        this.hideModal("ownGoalConfirmModal");
-        this.pendingGoalData = null;
-      };
-    }
-
-    const closeBtn = document.getElementById("ownGoalConfirmModalClose");
-    if (closeBtn) {
-      closeBtn.onclick = () => {
-        this.hideModal("ownGoalConfirmModal");
-        this.pendingGoalData = null;
-      };
-    }
-  }
-
-  /**
-   * Complete goal entry with time and own goal info
-   */
-  completeGoalEntry(goalData) {
-    const timeInput = document.getElementById("goalMinuteInput");
-    let goalMinute = this.getSuggestedGoalMinute();
-    if (timeInput && timeInput.value) {
-      goalMinute = parseInt(timeInput.value);
-    }
-
-    let isOwnGoal = goalData.isOwnGoal;
-
-    this.sendGoalWithPlayer(goalData.team, {
-      number: goalData.number,
-      name: goalData.name,
-      goalMinute,
-      isOwnGoal,
-    });
-
-    this.hideModal("goalSelectModal");
-    this.requestingTeam = null;
-  }
-
-  /**
-   * Send goal event including player info
-   */
-  sendGoalWithPlayer(team, player) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const goalMinute = player.goalMinute !== undefined ? player.goalMinute : 0;
-    const isOwnGoal = player.isOwnGoal !== undefined ? player.isOwnGoal : false;
-
-    const success = this.wsClient.sendGoal(
-      team,
-      player.number,
-      player.name,
-      goalMinute,
-      isOwnGoal,
-    );
-    if (success) {
-      let message = `${player.name} (#${player.number}) recorded for ${team}`;
-      if (isOwnGoal) {
-        message += " - OWN GOAL";
-      }
-      this.showNotification(message, "success");
-    } else {
-      this.showNotification("Failed to send goal", "error");
-    }
-    return success;
-  }
-
-  /**
-   * Send remove player request to server
-   */
-  sendRemovePlayer(team, number) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-    return this.wsClient.sendRemovePlayer(team, number);
-  }
-
-  /**
-   * Show modal dialog
-   */
-  showModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = "flex";
-      modal.classList.add("show");
-    }
-  }
-
-  /**
-   * Hide modal dialog
-   */
-  hideModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = "none";
-      modal.classList.remove("show");
-    }
-  }
-
-  /**
-   * Show log menu modal
-   */
-  showLogMenu() {
-    this.showModal("logMenuModal");
-
-    const restartTimerBtn = document.getElementById("logRestartTimerBtn");
-    if (restartTimerBtn) {
-      restartTimerBtn.onclick = () => {
-        this.hideModal("logMenuModal");
-        this.requestRestartTimer();
-      };
-    }
-
-    const resetScoreTimerBtn = document.getElementById("logResetScoreTimerBtn");
-    if (resetScoreTimerBtn) {
-      resetScoreTimerBtn.onclick = () => {
-        this.hideModal("logMenuModal");
-        this.requestResetScoreAndTimer();
-      };
-    }
-
-    const retakeGoalBtn = document.getElementById("logRetakeGoalBtn");
-    if (retakeGoalBtn) {
-      retakeGoalBtn.onclick = () => {
-        this.hideModal("logMenuModal");
-        this.requestRetakeLastGoal();
-      };
-    }
-
-    const cancelBtn = document.getElementById("logMenuCancelBtn");
-    if (cancelBtn) {
-      cancelBtn.onclick = () => {
-        this.hideModal("logMenuModal");
-      };
-    }
-
-    const closeBtn = document.getElementById("logMenuModalClose");
-    if (closeBtn) {
-      closeBtn.onclick = () => {
-        this.hideModal("logMenuModal");
-      };
-    }
-  }
-
-  /**
-   * Request timer restart from server
-   */
-  requestRestartTimer() {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return;
-    }
-    this.wsClient.sendRestartTimer();
-    this.showNotification("Timer restarted", "success");
-    // The restart action implies the timer is running again; update UI state
-    this.timerRunning = true;
-    const startBtn = document.getElementById("startTimerBtn");
-    if (startBtn) {
-      // Disable Start while timer runs
-      startBtn.disabled = true;
-    }
-  }
-
-  /**
-   * Request score and timer reset from server
-   */
-  requestResetScoreAndTimer() {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return;
-    }
-    const sent = this.wsClient.sendResetScoreAndTimer();
-    if (sent) {
-      this.timerRunning = false;
-      const startBtn = document.getElementById("startTimerBtn");
-      if (startBtn) {
-        startBtn.disabled = !(
-          this.currentMatchState === 1 || this.currentMatchState === 3
-        );
-      }
-      this.showNotification("Score and timer reset", "success");
-    } else {
-      this.showNotification("Failed to reset score and timer", "error");
-    }
-  }
-
-  /**
-   * Request to retake last goal from server
-   */
-  requestRetakeLastGoal() {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return;
-    }
-    this.wsClient.sendRetakeLastGoal();
-    this.showNotification("Last goal removed", "success");
-  }
-
-  /**
-   * Handle form submission
-   */
-  handleFormSubmit() {
-    const selectedRadio = document.querySelector(
-      'input[name="matchState"]:checked',
-    );
-
-    if (!selectedRadio) {
-      this.showNotification("Please select a match state", "warning");
-      return;
-    }
-
-    const value = selectedRadio.value;
-
-    // Find state ID for the value
-    let stateId = null;
-    for (const [id, name] of Object.entries(this.stateMap)) {
-      if (name === value) {
-        stateId = parseInt(id);
-        break;
-      }
-    }
-
-    if (stateId === null) {
-      this.showNotification("Invalid state selected", "error");
-      return;
-    }
-
-    // If the timer is currently running and the user attempts any state change,
-    // require confirmation first (covers changing between halves as well).
-    if (this.timerRunning && stateId !== this.currentMatchState) {
-      this.showMatchStateConfirmation(stateId);
-      return;
-    }
-
-    // Check if we're leaving a match state (FirstHalf or SecondHalf)
-    const currentStateIsActive =
-      this.currentMatchState === 1 || this.currentMatchState === 3;
-    const newStateIsActive = stateId === 1 || stateId === 3;
-
-    // If leaving a match state, require confirmation
-    if (currentStateIsActive && !newStateIsActive) {
-      this.showMatchStateConfirmation(stateId);
-      return;
-    }
-
-    console.log(`[Application] Submitting state change: ${value} (${stateId})`);
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return;
-    }
-    this.wsClient.sendMatchStateChange(stateId);
-  }
-
-  /**
-   * Show match state confirmation modal
-   */
-  showMatchStateConfirmation(stateId) {
-    const textElement = document.getElementById("matchStateConfirmText");
-    if (textElement) {
-      textElement.textContent = `Are you sure you want to change to ${this.stateNameMap[stateId]}? This will stop the current match.`;
-    }
-    this.showModal("matchStateConfirmModal");
-
-    const yesBtn = document.getElementById("matchStateConfirmYesBtn");
-    if (yesBtn) {
-      yesBtn.onclick = () => {
-        this.hideModal("matchStateConfirmModal");
-        if (!this.wsClient.isConnected()) {
-          this.showNotification("Not connected to server", "error");
-          return;
-        }
-        // Confirming a state change should stop any running timer locally
-        this.timerRunning = false;
-        const startBtn = document.getElementById("startTimerBtn");
-        if (startBtn) {
-          startBtn.disabled = !(
-            this.currentMatchState === 1 || this.currentMatchState === 3
-          );
-        }
-        this.wsClient.sendMatchStateChange(stateId);
-      };
-    }
-
-    const noBtn = document.getElementById("matchStateConfirmNoBtn");
-    if (noBtn) {
-      noBtn.onclick = () => {
-        this.hideModal("matchStateConfirmModal");
-        // Revert to current state
-        const radioId = this.stateMap[this.currentMatchState];
-        if (radioId) {
-          const radioElement = document.getElementById(radioId);
-          if (radioElement) {
-            radioElement.checked = true;
-          }
-        }
-      };
-    }
-
-    const closeBtn = document.getElementById("matchStateConfirmModalClose");
-    if (closeBtn) {
-      closeBtn.onclick = () => {
-        this.hideModal("matchStateConfirmModal");
-        // Revert to current state
-        const radioId = this.stateMap[this.currentMatchState];
-        if (radioId) {
-          const radioElement = document.getElementById(radioId);
-          if (radioElement) {
-            radioElement.checked = true;
-          }
-        }
-      };
-    }
-  }
-
-  /**
-   * Get current connection state
+   * Get current connection state.
    */
   isConnected() {
     return this.wsClient.isConnected();
   }
 
   /**
-   * Disconnect and cleanup
+   * Disconnect and cleanup.
    */
   disconnect() {
     this.wsClient.disconnect();
   }
-
-  /**
-   * Derive the next goal minute from the visible match time.
-   */
-  getSuggestedGoalMinute() {
-    const timeEl = document.getElementById("matchTime");
-    const timeText = timeEl ? String(timeEl.textContent || "").trim() : "";
-    const minutesText = timeText.split(":")[0];
-    const minutes = parseInt(minutesText, 10);
-
-    if (Number.isFinite(minutes) && minutes >= 0) {
-      return minutes + 1;
-    }
-
-    return 1;
-  }
-
-  /**
-   * Open emblem selection modal for selected team.
-   */
-  openEmblemModal(team) {
-    this.currentEmblemTeam = team;
-
-    this.showModal("emblemSelectModal");
-    this.requestSavedEmblems();
-  }
-
-  /**
-   * Request list of saved emblems from C++ server.
-   */
-  requestSavedEmblems() {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    return this.wsClient.requestSavedEmblems();
-  }
-
-  /**
-   * Display saved emblems in modal.
-   */
-  displaySavedEmblems(emblems) {
-    const listElement = document.getElementById("savedEmblemsList");
-
-    if (!listElement) {
-      return;
-    }
-
-    if (!emblems || emblems.length === 0) {
-      listElement.innerHTML =
-        '<p class="empty-list-message">No saved emblems</p>';
-      return;
-    }
-
-    let html = "";
-
-    for (const emblem of emblems) {
-      html += `
-      <div class="emblem-choice" data-filepath="${emblem.filePath}">
-        <img src="${emblem.data}" alt="${emblem.fileName}">
-        <span>${emblem.fileName}</span>
-      </div>
-    `;
-    }
-
-    listElement.innerHTML = html;
-
-    const choices = listElement.querySelectorAll(".emblem-choice");
-
-    choices.forEach((choice) => {
-      choice.addEventListener("click", () => {
-        const filePath = choice.dataset.filepath;
-        this.sendSelectSavedEmblem(this.currentEmblemTeam, filePath);
-        this.hideModal("emblemSelectModal");
-      });
-    });
-  }
-
-  /**
-   * Send selected saved emblem path to C++ server.
-   */
-  sendSelectSavedEmblem(team, filePath) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const success = this.wsClient.sendSelectSavedEmblem(team, filePath);
-    if (success) {
-      this.showNotification(`${team} emblem selected`, "success");
-    }
-    return success;
-  }
-
-  /**
-   * Read selected emblem file and sent it to server.
-   */
-  handleEmblemUpload(file, team) {
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      this.showNotification("Please select a valid image file", "warning");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target.result;
-      this.sendEmblem(team, file.name, file.type, dataUrl);
-    };
-    reader.onerror = () => {
-      this.showNotification("Failed to read emblem file", "error");
-    };
-    reader.readAsDataURL(file);
-  }
-
-  /**
-   * Send emblem data to server
-   */
-  sendEmblem(team, fileName, mimeType, dataUrl) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const success = this.wsClient.sendEmblem(team, fileName, mimeType, dataUrl);
-    if (success) {
-      this.showNotification(
-        `Emblem "${fileName}" uploaded for ${team}`,
-        "success",
-      );
-    } else {
-      this.showNotification("Failed to upload emblem", "error");
-    }
-    return success;
-  }
-
-  /**
-   * Open CSV file selection modal for selected team.
-   */
-  openCsvModal(team) {
-    this.currentCsvTeam = team;
-    this.showModal("csvSelectModal");
-    this.requestSavedCsvFiles();
-  }
-
-  /**
-   * Request list of saved CSV files from server.
-   */
-  requestSavedCsvFiles() {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-    return this.wsClient.requestSavedCsvFiles();
-  }
-
-  /**
-   * Display saved CSV files in modal.
-   */
-  displaySavedCsvFiles(files) {
-    const listElement = document.getElementById("savedCsvList");
-
-    if (!listElement) {
-      return;
-    }
-
-    if (!files || files.length === 0) {
-      listElement.innerHTML =
-        '<p class="empty-list-message">No saved lists</p>';
-      return;
-    }
-
-    let html = "";
-
-    for (const file of files) {
-      html += `
-      <div class="csv-choice" data-filepath="${file.filePath}">
-        <span>${file.fileName}</span>
-      </div>
-    `;
-    }
-
-    listElement.innerHTML = html;
-
-    const choices = listElement.querySelectorAll(".csv-choice");
-
-    choices.forEach((choice) => {
-      choice.addEventListener("click", () => {
-        const filePath = choice.dataset.filepath;
-        this.sendSelectSavedCsv(this.currentCsvTeam, filePath);
-        this.hideModal("csvSelectModal");
-      });
-    });
-  }
-
-  /**
-   * Send selected saved CSV file path to server.
-   */
-  sendSelectSavedCsv(team, filePath) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const success = this.wsClient.sendSelectSavedCsv(team, filePath);
-    if (success) {
-      this.showNotification(`${team} player list selected`, "success");
-    }
-    return success;
-  }
-
-  /**
-   * Handle CSV file upload from device.
-   */
-  handleCsvUpload(file, team) {
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const fileData = e.target.result;
-      this.sendCsvFile(team, file.name, fileData);
-    };
-    reader.onerror = () => {
-      this.showNotification("Failed to read CSV file", "error");
-    };
-    reader.readAsText(file);
-  }
-
-  /**
-   * Send CSV file data to server.
-   */
-  sendCsvFile(team, fileName, fileData) {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return false;
-    }
-
-    const success = this.wsClient.sendCsvFile(team, fileName, fileData);
-    if (success) {
-      this.showNotification(
-        `Player list "${fileName}" uploaded for ${team}`,
-        "success",
-      );
-    } else {
-      this.showNotification("Failed to upload player list", "error");
-    }
-    return success;
-  }
 }
 
-// Initialize client when DOM is ready
+// Initialize client when DOM is ready.
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[Application] Initializing Anzeigetafel Application");
 
-  // Create global client instance
   window.anzeigetafelClient = new ApplicationClient("ws://192.168.200.8:8080");
 
   console.log("[Application] Client initialized");
