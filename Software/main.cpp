@@ -26,7 +26,7 @@
 #include "timer.h"
 #include "score_memory.h"
 #include "match_controller.h"
-#include "web_server.h"
+#include "websocket.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   match_controller *controller = new match_controller(ScoreMem, gameTime);
 
   // Set up web server for browser control
-  web_server *websocket_server = new web_server(controller);
+  websocket *websocket_server = new websocket(controller);
 
   // Start WebSocket server on port 8080
   websocket_server->start(8080);

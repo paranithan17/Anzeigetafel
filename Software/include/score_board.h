@@ -29,8 +29,9 @@
 #include <QTimer>
 #include <QDir>
 #include <QPixmap>
-#include <QMouseEvent>
 #include <QFileInfo>
+#include <QCoreApplication>
+#include <QDebug>
 
 #include "score_memory.h"
 #include "timer.h"
@@ -115,20 +116,14 @@ private:
     /** @brief Current zero-based slideshow index. */
     int slideshowIndex = 0;
 
-    // Windows path
-    // QString preGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PreGame";
-    // QString halfTimePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/HalfTime";
-    // QString postGamePath = "C:/Users/paran/Desktop/Anzeigetafel/slides/PostGame";
 
-    // Linux path for the RPI 
-    QString preGamePath  = "/home/rpi/Anzeigetafel/slides/PreGame";
-    QString halfTimePath = "/home/rpi/Anzeigetafel/slides/HalfTime";
-    QString postGamePath = "/home/rpi/Anzeigetafel/slides/PostGame";
+    QString baseSlidePath;
+    QString preGamePath;
+    QString halfTimePath;
+    QString postGamePath;
 
-       // Linux path for the RPI at home
-    // QString preGamePath  = "/home/scorerboard/Anzeigetafel/slides/PreGame";
-    // QString halfTimePath = "/home/scorerboard/Anzeigetafel/slides/HalfTime";
-    // QString postGamePath = "/home/scorerboard/Anzeigetafel/slides/PostGame";
+    QString findSlideBasePath();
+    void setupSlidePaths();
 
     /**
      * @brief Initializes UI layout with score, time, and goal lists.

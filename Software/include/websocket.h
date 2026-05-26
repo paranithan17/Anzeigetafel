@@ -1,5 +1,5 @@
 /**
- * @file web_server.h
+ * @file websocket.h
  * @brief WebSocket server for web-based match control.
  *
  * Provides a WebSocket server that allows web clients to control match state.
@@ -9,8 +9,8 @@
  * @version 3.0, 2026-05-07
  */
 
-#ifndef WEB_SERVER_H
-#define WEB_SERVER_H
+#ifndef WEBSOCKET_H
+#define WEBSOCKET_H
 
 #include <QObject>
 #include <QtWebSockets/QWebSocketServer>
@@ -28,13 +28,13 @@
 #include "match_controller.h"
 
 /**
- * @class web_server
+ * @class websocket
  * @brief WebSocket server for remote browser control.
  *
  * This class replaces the simple HTTP server approach with a persistent
  * WebSocket connection. The browser stays connected and can send JSON commands.
  */
-class web_server : public QObject
+class websocket : public QObject
 {
     Q_OBJECT
 
@@ -45,7 +45,7 @@ public:
      * @param controller Pointer to the central match controller
      * @param parent Optional Qt parent
      */
-    explicit web_server(match_controller *controller, QObject *parent = nullptr);
+    explicit websocket(match_controller *controller, QObject *parent = nullptr);
 
     /**
      * @brief Starts the WebSocket server.
@@ -196,4 +196,4 @@ private:
     void parseAndImportCsv(const QString &team, QFile &file);
 };
 
-#endif // WEB_SERVER_H
+#endif // WEBSOCKET_H

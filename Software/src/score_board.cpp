@@ -15,6 +15,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     : QWidget(parent), Score(score), gameTime(gameTime)
 
 {
+    setupSlidePaths();
     setupLayout();
     applyStyle();
 
@@ -277,8 +278,8 @@ void Score_board::adjustFontSize()
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        emblemTeam1->setFixedSize(44*2, 44*2);
-        emblemTeam2->setFixedSize(44*2, 44*2);
+        emblemTeam1->setFixedSize(44 * 2, 44 * 2);
+        emblemTeam2->setFixedSize(44 * 2, 44 * 2);
     }
 }
 
@@ -465,4 +466,42 @@ void Score_board::mouseDoubleClickEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
     toggleControlWindow();
+}
+
+QString Score_board::findSlideBasePath()
+{
+    QStringList possiblePaths = {
+        QDir::homePath() + "/Anzeigetafel/slides",
+        QDir::homePath() + "/Desktop/Anzeigetafel/slides",
+        QCoreApplication::applicationDirPath() + "/slides",
+        QCoreApplication::applicationDirPath() + "/../slides",
+        QCoreApplication::applicationDirPath() + "/../../slides"};
+
+    for (const QString &path : possiblePaths)
+    {
+        QDir dir(path);
+
+        if (dir.exists("PreGame") &&
+            dir.exists("HalfTime") &&
+            dir.exists("PostGame"))
+        {
+            return dir.absolutePath();
+        }
+    }
+
+    qWarning() << "No valid slide folder found!";
+    return QString();
+}
+
+void Score_board::setupSlidePaths()
+{
+    baseSlidePath = findSlideBasePath();
+
+    preGamePath = baseSlidePath + "/PreGame";
+    halfTimePath = baseSlidePath + "/HalfTime";
+    postGamePath = baseSlidePath + "/PostGame";
+
+    qDebug() << "PreGame path:" << preGamePath;
+    qDebug() << "HalfTime path:" << halfTimePath;
+    qDebug() << "PostGame path:" << postGamePath;
 }

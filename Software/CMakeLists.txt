@@ -23,7 +23,7 @@ add_executable(anzeigetafel
     src/team.cpp
     src/timer.cpp
     src/match_controller.cpp
-    src/web_server.cpp
+    src/websocket.cpp
     include/controll_window.h
     include/score_board.h
     include/score_memory.h
@@ -31,7 +31,7 @@ add_executable(anzeigetafel
     include/team.h
     include/timer.h
     include/match_controller.h
-    include/web_server.h
+    include/websocket.h
     resources.qrc
 )
 

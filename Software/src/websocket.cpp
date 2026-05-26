@@ -6,7 +6,7 @@
  * @version 3.0, 2026-05-07
  */
 
-#include "web_server.h"
+#include "websocket.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -48,7 +48,7 @@ namespace
     }
 }
 
-web_server::web_server(match_controller *controller, QObject *parent)
+websocket::websocket(match_controller *controller, QObject *parent)
     : QObject(parent),
       m_server(QStringLiteral("Anzeigetafel WebSocket Server"),
                QWebSocketServer::NonSecureMode,
@@ -59,7 +59,7 @@ web_server::web_server(match_controller *controller, QObject *parent)
     connect(&m_server,
             &QWebSocketServer::newConnection,
             this,
-            &web_server::onNewConnection);
+            &websocket::onNewConnection);
 
     // Match controller -> browser update
     if (m_controller)
@@ -67,7 +67,7 @@ web_server::web_server(match_controller *controller, QObject *parent)
         connect(m_controller,
                 &match_controller::matchStateChanged,
                 this,
-                &web_server::broadcastMatchState);
+                &websocket::broadcastMatchState);
 
         connect(m_controller,
                 &match_controller::homePlayersChanged,
@@ -95,17 +95,17 @@ web_server::web_server(match_controller *controller, QObject *parent)
         connect(m_controller,
                 &match_controller::scoreChanged,
                 this,
-                &web_server::broadcastScoreTime);
+                &websocket::broadcastScoreTime);
 
         connect(m_controller,
                 &match_controller::timeChanged,
                 this,
-                &web_server::broadcastTimeUpdate);
+                &websocket::broadcastTimeUpdate);
     }
 }
 
 // Start WebSocket server
-bool web_server::start_server(quint16 port)
+bool websocket::start_server(quint16 port)
 {
     const QHostAddress serverAddress(QStringLiteral("192.168.200.8"));
     const bool ok = m_server.listen(serverAddress, port);
@@ -119,7 +119,7 @@ bool web_server::start_server(quint16 port)
 }
 
 // Accept new browser connection
-void web_server::onNewConnection()
+void websocket::onNewConnection()
 {
     QWebSocket *client = m_server.nextPendingConnection();
 
@@ -130,11 +130,11 @@ void web_server::onNewConnection()
     m_clients.append(client);
 
     // Receive text messages from browser
-    connect(client, &QWebSocket::textMessageReceived, this, &web_server::onTextMessageReceived);
+    connect(client, &QWebSocket::textMessageReceived, this, &websocket::onTextMessageReceived);
 
     // Remove browser when disconnected
     connect(client,
-            &QWebSocket::disconnected, this, &web_server::onClientDisconnected);
+            &QWebSocket::disconnected, this, &websocket::onClientDisconnected);
 
     qDebug() << "WebSocket client connected:" << client->peerAddress().toString();
 
@@ -163,7 +163,7 @@ void web_server::onNewConnection()
 }
 
 // Receive JSON message from browser
-void web_server::onTextMessageReceived(const QString &message)
+void websocket::onTextMessageReceived(const QString &message)
 {
     QJsonParseError parseError;
 
@@ -181,7 +181,7 @@ void web_server::onTextMessageReceived(const QString &message)
 }
 
 // Remove disconnected browser
-void web_server::onClientDisconnected()
+void websocket::onClientDisconnected()
 {
     QWebSocket *client = qobject_cast<QWebSocket *>(sender());
 
@@ -195,7 +195,7 @@ void web_server::onClientDisconnected()
 }
 
 // Handle browser command
-void web_server::handleJsonCommand(const QJsonObject &obj)
+void websocket::handleJsonCommand(const QJsonObject &obj)
 {
     if (!m_controller)
         return;
@@ -392,7 +392,7 @@ void web_server::handleJsonCommand(const QJsonObject &obj)
 }
 
 // Send match state to all connected browsers
-void web_server::broadcastMatchState(int state)
+void websocket::broadcastMatchState(int state)
 {
     const QString json = createMatchStateJson(state);
 
@@ -409,7 +409,7 @@ void web_server::broadcastMatchState(int state)
 // `broadcastPlayerList()` when sending updated lists to clients.
 
 // Create JSON message for browser
-QString web_server::createMatchStateJson(int state) const
+QString websocket::createMatchStateJson(int state) const
 {
     QJsonObject obj;
 
@@ -442,7 +442,7 @@ QString web_server::createMatchStateJson(int state) const
 }
 
 // Broadcast player list to all browsers
-void web_server::broadcastPlayerList(const QString &team, const std::vector<std::shared_ptr<player>> &players)
+void websocket::broadcastPlayerList(const QString &team, const std::vector<std::shared_ptr<player>> &players)
 {
     QJsonObject obj;
     obj["type"] = "playersList";
@@ -473,7 +473,7 @@ void web_server::broadcastPlayerList(const QString &team, const std::vector<std:
     }
 }
 
-void web_server::sendSavedEmblems()
+void websocket::sendSavedEmblems()
 {
     QJsonArray emblemArray;
 
@@ -592,7 +592,7 @@ void web_server::sendSavedEmblems()
     }
 }
 
-void web_server::handleSelectSavedEmblem(const QString &team, const QString &filePath)
+void websocket::handleSelectSavedEmblem(const QString &team, const QString &filePath)
 {
     if (!m_controller)
         return;
@@ -626,9 +626,9 @@ void web_server::handleSelectSavedEmblem(const QString &team, const QString &fil
 /*
  * Handle emblem upload from browser, save to disk, and update controller
  */
-void web_server::handleSetEmblem(const QString &team,
-                                 const QString &fileName,
-                                 const QString &dataUrl)
+void websocket::handleSetEmblem(const QString &team,
+                                const QString &fileName,
+                                const QString &dataUrl)
 {
     if (!m_controller)
         return;
@@ -706,7 +706,7 @@ void web_server::handleSetEmblem(const QString &team,
 /*
  * Send list of available CSV files to browser
  */
-void web_server::sendSavedCsvFiles()
+void websocket::sendSavedCsvFiles()
 {
     QJsonArray csvArray;
 
@@ -775,7 +775,7 @@ void web_server::sendSavedCsvFiles()
 /*
  * Handle selection of a saved CSV file, parse it, and import players
  */
-void web_server::handleSelectSavedCsv(const QString &team, const QString &filePath)
+void websocket::handleSelectSavedCsv(const QString &team, const QString &filePath)
 {
     if (!m_controller)
         return;
@@ -810,9 +810,9 @@ void web_server::handleSelectSavedCsv(const QString &team, const QString &filePa
 /*
  * Handle CSV file upload from browser, save to disk, and import players
  */
-void web_server::handleSetCsvFile(const QString &team,
-                                  const QString &fileName,
-                                  const QString &fileData)
+void websocket::handleSetCsvFile(const QString &team,
+                                 const QString &fileName,
+                                 const QString &fileData)
 {
     if (!m_controller)
         return;
@@ -876,7 +876,7 @@ void web_server::handleSetCsvFile(const QString &team,
 /*
  * Helper method to parse CSV file and import players
  */
-void web_server::parseAndImportCsv(const QString &team, QFile &file)
+void websocket::parseAndImportCsv(const QString &team, QFile &file)
 {
     if (!m_controller)
         return;
@@ -941,7 +941,7 @@ void web_server::parseAndImportCsv(const QString &team, QFile &file)
     qDebug() << "Parsed and imported" << players.size() << "players for team:" << team;
 }
 
-void web_server::broadcastScoreTime()
+void websocket::broadcastScoreTime()
 {
     if (!m_controller)
         return;
@@ -966,7 +966,7 @@ void web_server::broadcastScoreTime()
     }
 }
 
-void web_server::broadcastTimeUpdate(const QString &elapsedTime)
+void websocket::broadcastTimeUpdate(const QString &elapsedTime)
 {
     if (!m_controller)
         return;
@@ -989,7 +989,7 @@ void web_server::broadcastTimeUpdate(const QString &elapsedTime)
 }
 
 // Create JSON text for a team's players (used for single-client sends)
-QString web_server::createPlayersListJson(const QString &team, const std::vector<std::shared_ptr<player>> &players) const
+QString websocket::createPlayersListJson(const QString &team, const std::vector<std::shared_ptr<player>> &players) const
 {
     QJsonObject obj;
     obj["type"] = "playersList";
