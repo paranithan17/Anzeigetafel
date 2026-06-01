@@ -478,7 +478,7 @@ void websocket::sendSavedEmblems()
     QJsonArray emblemArray;
 
     const QString importDirPath = resolveEmblemImportDir();
-    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/Import");
+    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/import");
     // const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
 
     QSet<QString> seenPaths;
@@ -711,7 +711,7 @@ void websocket::sendSavedCsvFiles()
     QJsonArray csvArray;
 
     const QString importDirPath = resolveEmblemImportDir();
-    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/Import");
+    const QString legacyDirPath = QStringLiteral("/home/rpi/Anzeigetafel/import");
     // const QString legacyDirPath = QStringLiteral("/home/scorerboard/Anzeigetafel/Import");
 
     QSet<QString> seenPaths;
