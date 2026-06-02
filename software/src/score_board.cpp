@@ -19,7 +19,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     setupLayout();
     applyStyle();
 
-    setFixedSize(640, 320);
+    setFixedSize(641, 320);
     move(0, 0);
     adjustFontSize();
     setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
