@@ -22,7 +22,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     setFixedSize(640, 320);
     move(0, 0);
     adjustFontSize();
-    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
     // showFullScreen();
 
@@ -32,7 +32,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     slideshowLabel->setVisible(false);
     slideshowLabel->raise();
     slideshowLabel->setGeometry(this->rect());
-    
+
     slideshowTimer = new QTimer(this);
     connect(slideshowTimer, &QTimer::timeout, this, &Score_board::showNextSlide);
     connect(Score, &score_memory::goalsUpdated, this, &Score_board::updateGoals);
@@ -43,15 +43,15 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     updateGoals();
 
     QShortcut *shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
-    connect(shortcut, &QShortcut::activated, [=]()
+    connect(shortcut, &QShortcut::activated, this, [this]()
             {
-        if (!isFullScreen()) {
-            setWindowFlags(Qt::FramelessWindowHint);
-            showFullScreen();
-        } else {
-            setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+        if (isFullScreen()) {
             showNormal();
-        } });
+            setFixedSize(640, 320);
+        } else {
+            showFullScreen();
+        }
+        adjustFontSize(); });
 
     m_state = MatchState::PreGame;
     updateViewForState();
@@ -291,8 +291,14 @@ void Score_board::keyPressEvent(QKeyEvent *event)
         if (isFullScreen())
         {
             showNormal();
+            setFixedSize(640, 320);
+            adjustFontSize();
+            event->accept();
+            return;
         }
     }
+
+    QWidget::keyPressEvent(event);
 }
 
 void Score_board::updateEmblem(const QString &team, const QString &filePath)
