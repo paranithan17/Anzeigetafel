@@ -47,7 +47,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
             {
         if (isFullScreen()) {
             showNormal();
-            setFixedSize(640, 320);
+            setFixedSize(642, 320);
         } else {
             showFullScreen();
         }
@@ -65,6 +65,8 @@ void Score_board::setupLayout()
     // Score label
     scoreLabel = new QLabel("0 : 0", this);
     scoreLabel->setAlignment(Qt::AlignCenter);
+    timeLabel = new QLabel("00:00", this);
+    timeLabel->setAlignment(Qt::AlignCenter);
 
     emblemTeam1 = new QLabel(this);
     emblemTeam2 = new QLabel(this);
@@ -76,17 +78,17 @@ void Score_board::setupLayout()
     emblemTeam1->setAlignment(Qt::AlignCenter);
     emblemTeam2->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addSpacing(10);
-    topLayout->addWidget(emblemTeam1);
-    topLayout->addStretch(10);
-    topLayout->addWidget(scoreLabel);
-    topLayout->addStretch(10);
-    topLayout->addWidget(emblemTeam2);
-    topLayout->addSpacing(10);
+    QVBoxLayout *scoreTimeLayout = new QVBoxLayout;
+    scoreTimeLayout->addWidget(scoreLabel);
+    scoreTimeLayout->addWidget(timeLabel);
 
-    timeLabel = new QLabel("00:00", this);
-    timeLabel->setAlignment(Qt::AlignCenter);
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    topLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setSpacing(0);
+
+    topLayout->addWidget(emblemTeam1, 1, Qt::AlignCenter);
+    topLayout->addLayout(scoreTimeLayout, 2);
+    topLayout->addWidget(emblemTeam2, 1, Qt::AlignCenter);
 
     QHBoxLayout *scorerLayout = new QHBoxLayout;
     scorerListTeam1 = new QListWidget(this);
@@ -103,7 +105,6 @@ void Score_board::setupLayout()
     mainlayout->addSpacing(-5);
     mainlayout->addLayout(topLayout);
     mainlayout->addSpacing(-20);
-    mainlayout->addWidget(timeLabel);
     mainlayout->addLayout(scorerLayout);
     setLayout(mainlayout);
 }
@@ -260,7 +261,7 @@ void Score_board::adjustFontSize()
 
         adjustEmblemSize();
     }
-    // Font sizes for fixed 512x320 LED wall
+    // Font sizes for fixed 640x320 LED wall
     else
     {
         QFont scoreFont;
@@ -279,8 +280,8 @@ void Score_board::adjustFontSize()
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
 
-        emblemTeam1->setFixedSize(44 * 2, 44 * 2);
-        emblemTeam2->setFixedSize(44 * 2, 44 * 2);
+        emblemTeam1->setFixedSize(60 * 2, 60 * 2);
+        emblemTeam2->setFixedSize(60 * 2, 60 * 2);
     }
 }
 
@@ -291,7 +292,7 @@ void Score_board::keyPressEvent(QKeyEvent *event)
         if (isFullScreen())
         {
             showNormal();
-            setFixedSize(640, 320);
+            setFixedSize(642, 320);
             adjustFontSize();
             event->accept();
             return;
@@ -381,7 +382,7 @@ void Score_board::startSlideshow(const QString &folderPath)
     slideshowLabel->setVisible(true);
 
     showNextSlide();
-    slideshowTimer->start(4000);
+    slideshowTimer->start(5000);
 }
 
 void Score_board::stopSlideshow()
