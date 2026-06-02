@@ -19,7 +19,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     setupLayout();
     applyStyle();
 
-    setFixedSize(512, 320);
+    setFixedSize(640, 320);
     move(0, 0);
     adjustFontSize();
     setWindowFlags(Qt::FramelessWindowHint);
@@ -32,7 +32,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     slideshowLabel->setVisible(false);
     slideshowLabel->raise();
     slideshowLabel->setGeometry(this->rect());
-
+    
     slideshowTimer = new QTimer(this);
     connect(slideshowTimer, &QTimer::timeout, this, &Score_board::showNextSlide);
     connect(Score, &score_memory::goalsUpdated, this, &Score_board::updateGoals);
