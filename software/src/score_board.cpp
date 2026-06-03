@@ -288,12 +288,12 @@ void Score_board::adjustFontSize()
         scoreLabel->setFont(scoreFont);
 
         QFont timeFont;
-        timeFont.setPixelSize(70);
+        timeFont.setPixelSize(65);
         timeFont.setBold(true);
         timeLabel->setFont(timeFont);
 
         QFont goalFont;
-        goalFont.setPixelSize(16);
+        goalFont.setPixelSize(18);
         goalFont.setBold(false);
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
