@@ -279,7 +279,7 @@ void Score_board::adjustFontSize()
 
         adjustEmblemSize();
     }
-    // Font sizes for fixed 640x320 LED wall
+    // Font sizes adjusted for LED wall mode, in this case 640x320
     else
     {
         QFont scoreFont;
@@ -288,7 +288,7 @@ void Score_board::adjustFontSize()
         scoreLabel->setFont(scoreFont);
 
         QFont timeFont;
-        timeFont.setPixelSize(60);
+        timeFont.setPixelSize(70);
         timeFont.setBold(true);
         timeLabel->setFont(timeFont);
 
