@@ -95,6 +95,33 @@ ApplicationClient.prototype.showGoalSelector = function (requestingTeam) {
       this.requestingTeam = null;
     };
   }
+
+  const anonBtn = document.getElementById("goalAnonymousBtn");
+  if (anonBtn) {
+    anonBtn.onclick = () => {
+      // send anonymous goal (no player selected) for requestingTeam
+      const timeInput = document.getElementById("goalMinuteInput");
+      let goalMinute = this.getSuggestedGoalMinute();
+      if (timeInput && timeInput.value) {
+        goalMinute = parseInt(timeInput.value, 10);
+      }
+
+      if (!this.wsClient.isConnected()) {
+        this.showNotification("Not connected to server", "error");
+        return;
+      }
+
+      const success = this.wsClient.sendGoal(this.requestingTeam, null, null, goalMinute, false);
+      if (success) {
+        this.showNotification(`Anonymous goal recorded for ${this.requestingTeam}`, "success");
+      } else {
+        this.showNotification("Failed to send anonymous goal", "error");
+      }
+
+      this.hideModal("goalSelectModal");
+      this.requestingTeam = null;
+    };
+  }
 };
 
 ApplicationClient.prototype.showOwnGoalConfirmation = function (message) {
