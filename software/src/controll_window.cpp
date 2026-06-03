@@ -1,7 +1,7 @@
 /**
  * @file controll_window.cpp
  * @brief GUI Implementation of the Control Window for match operator.
- * 
+ *
  * Pure presentation layer. All business logic is delegated to match_controller.
  */
 #include "controll_window.h"
@@ -166,7 +166,6 @@ controll_window::controll_window(match_controller *controller, QWidget *parent)
         connect(m_controller, &match_controller::timeChanged, this, &controll_window::updateTimeDisplay);
         connect(m_controller, &match_controller::matchStateChanged, this, &controll_window::controllerStateChanged);
         connect(m_controller, &match_controller::startTimerEnabledChanged, btnStartTimer, &QPushButton::setEnabled);
-        connect(m_controller, &match_controller::secondHalfDecisionNeeded, this, &controll_window::secondHalfDecision);
     }
 
     // Initial display update
@@ -390,13 +389,11 @@ void controll_window::addGoalTeam1()
     connect(homePlayers, &QListWidget::itemClicked, [&](QListWidgetItem *item)
             {
                 playerEdit->setText(item->text());
-                selectedTeam = "Home";
-            });
+                selectedTeam = "Home"; });
     connect(awayPlayers, &QListWidget::itemClicked, [&](QListWidgetItem *item)
             {
                 playerEdit->setText(item->text());
-                selectedTeam = "Away";
-            });
+                selectedTeam = "Away"; });
 
     QPushButton *saveButton = new QPushButton("Save");
     QPushButton *cancelButton = new QPushButton("Cancel");
@@ -408,12 +405,6 @@ void controll_window::addGoalTeam1()
     connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
     connect(saveButton, &QPushButton::clicked, [&]()
             {
-                if (playerEdit->text().isEmpty())
-                {
-                    QMessageBox::warning(&dialog, "Error", "Please select a player");
-                    return;
-                }
-
                 bool ok;
                 int minute = timeEdit->text().toInt(&ok);
                 if (!ok)
@@ -422,24 +413,37 @@ void controll_window::addGoalTeam1()
                     return;
                 }
 
-                // Extract player number and name
-                QString text = playerEdit->text();
-                int number = text.split(" ")[0].toInt(&ok);
-                QString name = text.mid(text.indexOf('-') + 2);
+                const bool hasPlayer = !playerEdit->text().trimmed().isEmpty();
+                int number = -1;
+                QString name;
+                match_controller::TeamSide scorerTeam = match_controller::TeamSide::Home;
+                bool isOwnGoal = false;
 
-                bool isOwnGoal = selectedTeam == "Away";
-                
+                if (hasPlayer)
+                {
+                    QString text = playerEdit->text();
+                    number = text.split(" ")[0].toInt(&ok);
+                    name = text.mid(text.indexOf('-') + 2);
+                    if (!ok || name.isEmpty())
+                    {
+                        QMessageBox::warning(&dialog, "Error", "Invalid player selection");
+                        return;
+                    }
+
+                    scorerTeam = selectedTeam == "Home" ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+                    isOwnGoal = selectedTeam == "Away";
+                }
+
                 match_controller::GoalData goalData{
-                    match_controller::TeamSide::Home,
+                    scorerTeam,
                     number,
                     name,
                     static_cast<unsigned>(minute),
                     isOwnGoal
                 };
-                
+
                 m_controller->addGoalWithValidation(goalData);
-                dialog.accept();
-            });
+                dialog.accept(); });
 
     dialog.exec();
 }
@@ -483,13 +487,11 @@ void controll_window::addGoalTeam2()
     connect(homePlayers, &QListWidget::itemClicked, [&](QListWidgetItem *item)
             {
                 playerEdit->setText(item->text());
-                selectedTeam = "Home";
-            });
+                selectedTeam = "Home"; });
     connect(awayPlayers, &QListWidget::itemClicked, [&](QListWidgetItem *item)
             {
                 playerEdit->setText(item->text());
-                selectedTeam = "Away";
-            });
+                selectedTeam = "Away"; });
 
     QPushButton *saveButton = new QPushButton("Save");
     QPushButton *cancelButton = new QPushButton("Cancel");
@@ -501,12 +503,6 @@ void controll_window::addGoalTeam2()
     connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
     connect(saveButton, &QPushButton::clicked, [&]()
             {
-                if (playerEdit->text().isEmpty())
-                {
-                    QMessageBox::warning(&dialog, "Error", "Please select a player");
-                    return;
-                }
-
                 bool ok;
                 int minute = timeEdit->text().toInt(&ok);
                 if (!ok)
@@ -515,24 +511,37 @@ void controll_window::addGoalTeam2()
                     return;
                 }
 
-                // Extract player number and name
-                QString text = playerEdit->text();
-                int number = text.split(" ")[0].toInt(&ok);
-                QString name = text.mid(text.indexOf('-') + 2);
+                const bool hasPlayer = !playerEdit->text().trimmed().isEmpty();
+                int number = -1;
+                QString name;
+                match_controller::TeamSide scorerTeam = match_controller::TeamSide::Away;
+                bool isOwnGoal = false;
 
-                bool isOwnGoal = selectedTeam == "Home";
-                
+                if (hasPlayer)
+                {
+                    QString text = playerEdit->text();
+                    number = text.split(" ")[0].toInt(&ok);
+                    name = text.mid(text.indexOf('-') + 2);
+                    if (!ok || name.isEmpty())
+                    {
+                        QMessageBox::warning(&dialog, "Error", "Invalid player selection");
+                        return;
+                    }
+
+                    scorerTeam = selectedTeam == "Home" ? match_controller::TeamSide::Home : match_controller::TeamSide::Away;
+                    isOwnGoal = selectedTeam == "Home";
+                }
+
                 match_controller::GoalData goalData{
-                    match_controller::TeamSide::Away,
+                    scorerTeam,
                     number,
                     name,
                     static_cast<unsigned>(minute),
                     isOwnGoal
                 };
-                
+
                 m_controller->addGoalWithValidation(goalData);
-                dialog.accept();
-            });
+                dialog.accept(); });
 
     dialog.exec();
 }
@@ -572,20 +581,17 @@ void controll_window::log()
     connect(restartButton, &QPushButton::clicked, [&]()
             {
                 m_controller->requestTimerRestart();
-                dialog.accept();
-            });
+                dialog.accept(); });
 
     connect(resetButton, &QPushButton::clicked, [&]()
             {
                 m_controller->requestMatchReset();
-                dialog.accept();
-            });
+                dialog.accept(); });
 
     connect(undoGoalButton, &QPushButton::clicked, [&]()
             {
                 m_controller->removeLastGoal();
-                dialog.accept();
-            });
+                dialog.accept(); });
 
     connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
     dialog.exec();
@@ -661,8 +667,8 @@ void controll_window::applyStateSelection()
     {
         // Timer is running - confirm state change
         int ret = QMessageBox::question(this, "Confirm State Change",
-                                       "Timer is running. Stop timer and change state?",
-                                       QMessageBox::Yes | QMessageBox::No);
+                                        "Timer is running. Stop timer and change state?",
+                                        QMessageBox::Yes | QMessageBox::No);
         if (ret == QMessageBox::Yes)
         {
             m_controller->requestStateChange(targetState, true);
@@ -673,14 +679,6 @@ void controll_window::applyStateSelection()
             setStateSelection(static_cast<match_controller::MatchState>(m_controller->currentState()));
         }
     }
-}
-
-void controll_window::secondHalfDecision()
-{
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Second Half",
-                                                             "Start second half?",
-                                                             QMessageBox::Yes | QMessageBox::No);
-    m_controller->onSecondHalfDecision(reply == QMessageBox::Yes);
 }
 
 // ============ DISPLAY UPDATE SLOTS ============

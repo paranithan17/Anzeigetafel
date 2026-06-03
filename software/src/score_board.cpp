@@ -93,18 +93,29 @@ void Score_board::setupLayout()
     QHBoxLayout *scorerLayout = new QHBoxLayout;
     scorerListTeam1 = new QListWidget(this);
     scorerListTeam1->setFocusPolicy(Qt::NoFocus);
+    scorerListTeam1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scorerListTeam1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     scorerListTeam2 = new QListWidget(this);
     scorerListTeam2->setFocusPolicy(Qt::NoFocus);
-    scorerLayout->addSpacing(10);
-    scorerLayout->addWidget(scorerListTeam1);
-    scorerLayout->addStretch();
-    scorerLayout->addSpacing(60);
-    scorerLayout->addWidget(scorerListTeam2);
-    scorerLayout->addSpacing(10);
+    scorerListTeam2->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scorerListTeam2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    scorerListTeam1->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    scorerListTeam2->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+
+    scorerListTeam1->setTextElideMode(Qt::ElideNone);
+    scorerListTeam2->setTextElideMode(Qt::ElideNone);
+
+    scorerLayout->setContentsMargins(10, 0, 10, 0);
+    scorerLayout->setSpacing(20);
+
+    scorerLayout->addWidget(scorerListTeam1, 1);
+    scorerLayout->addWidget(scorerListTeam2, 1);
 
     mainlayout->addSpacing(-5);
     mainlayout->addLayout(topLayout);
-    mainlayout->addSpacing(-20);
+    //    mainlayout->addSpacing(0);
     mainlayout->addLayout(scorerLayout);
     setLayout(mainlayout);
 }
@@ -174,6 +185,13 @@ void Score_board::updateGoals()
 
     QList<Goal> goals = Score->getGoals();
     extracted(goals);
+
+    // Adjust list widths based on longest name to prevent truncation
+    adjustScorerListWidths();
+
+    // Auto-scroll to the latest goal, when the list exceeds the visible area
+    scorerListTeam1->scrollToBottom();
+    scorerListTeam2->scrollToBottom();
 }
 
 void Score_board::updateTime(const QString &time)
@@ -275,7 +293,7 @@ void Score_board::adjustFontSize()
         timeLabel->setFont(timeFont);
 
         QFont goalFont;
-        goalFont.setPixelSize(14);
+        goalFont.setPixelSize(16);
         goalFont.setBold(false);
         scorerListTeam1->setFont(goalFont);
         scorerListTeam2->setFont(goalFont);
@@ -512,4 +530,19 @@ void Score_board::setupSlidePaths()
     qDebug() << "PreGame path:" << preGamePath;
     qDebug() << "HalfTime path:" << halfTimePath;
     qDebug() << "PostGame path:" << postGamePath;
+}
+void Score_board::adjustScorerListWidths()
+{
+    const int minWidth = 80;
+
+    int widthTeam1 = scorerListTeam1->sizeHintForColumn(0);
+    int widthTeam2 = scorerListTeam2->sizeHintForColumn(0);
+
+    int requiredWidth = std::max(widthTeam1, widthTeam2);
+    requiredWidth += 20; // etwas Reserve für Innenabstand
+
+    requiredWidth = std::max(requiredWidth, minWidth);
+
+    scorerListTeam1->setMinimumWidth(requiredWidth);
+    scorerListTeam2->setMinimumWidth(requiredWidth);
 }

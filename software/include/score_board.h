@@ -116,7 +116,6 @@ private:
     /** @brief Current zero-based slideshow index. */
     int slideshowIndex = 0;
 
-
     QString baseSlidePath;
     QString preGamePath;
     QString halfTimePath;
@@ -180,6 +179,12 @@ private:
      * @return void
      */
     void showNextSlide();
+
+    /**
+     * @brief Adujusts scorer list widgets dependon on longest name
+     * @return void
+     */
+    void adjustScorerListWidths();
 
     /**
      * @brief Collects all slide files from folder.

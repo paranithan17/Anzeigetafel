@@ -141,10 +141,13 @@ bool match_controller::importPlayersFromCsv(TeamSide side, const QString &filePa
 
 bool match_controller::addGoalWithValidation(const GoalData &goalData)
 {
+    const bool hasPlayer = goalData.playerNumber >= 0 && !goalData.playerName.trimmed().isEmpty();
+    const bool anonymousGoal = goalData.playerNumber < 0 && goalData.playerName.trimmed().isEmpty();
+
     // Validate goal data
-    if (goalData.playerNumber < 0 || goalData.playerName.isEmpty())
+    if (!hasPlayer && !anonymousGoal)
     {
-        qDebug() << "Invalid goal data: player number or name is empty";
+        qDebug() << "Invalid goal data: player data is incomplete";
         return false;
     }
 

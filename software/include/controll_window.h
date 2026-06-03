@@ -215,15 +215,6 @@ private slots:
     void applyStateSelection();
 
     /**
-     * @brief Handles second-half transition decision workflow.
-     *
-     * Executes any confirmation logic required before entering second half.
-     *
-     * @return void
-     */
-    void secondHalfDecision();
-
-    /**
      * @brief Refreshes score label from current controller/model state.
      * @return void
      */
