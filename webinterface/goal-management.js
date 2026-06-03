@@ -111,9 +111,18 @@ ApplicationClient.prototype.showGoalSelector = function (requestingTeam) {
         return;
       }
 
-      const success = this.wsClient.sendGoal(this.requestingTeam, null, null, goalMinute, false);
+      const success = this.wsClient.sendGoal(
+        this.requestingTeam,
+        null,
+        null,
+        goalMinute,
+        false,
+      );
       if (success) {
-        this.showNotification(`Anonymous goal recorded for ${this.requestingTeam}`, "success");
+        this.showNotification(
+          `Anonymous goal recorded for ${this.requestingTeam}`,
+          "success",
+        );
       } else {
         this.showNotification("Failed to send anonymous goal", "error");
       }
