@@ -43,3 +43,4 @@ target_link_libraries(anzeigetafel PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT
 
 # Optional: install target (nice for 'make install')
 install(TARGETS anzeigetafel RUNTIME DESTINATION bin)
+

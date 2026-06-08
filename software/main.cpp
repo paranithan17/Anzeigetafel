@@ -1,23 +1,16 @@
 /**
  * @file main.cpp
- * @brief Application entry point for the Football Scoreboard.
+ * @brief Football Scoreboard — application entry point.
  *
- * Initializes and launches a modular graphical scoreboard system for managing
- * football match events. Creates two synchronized main windows: Control (operator)
- * and Scoreboard (audience display), linked via Qt signals/slots.
+ * Initializes and starts the Control (operator) and Scoreboard (audience)
+ * windows, the match timer, score memory and WebSocket control interface.
  *
- * Features:
- * - Real-time goal tracking with timestamps and player attribution.
- * - Two-half timer management (00:00–45:00, 45:00–90:00).
- * - Own goal and undo support.
- * - CSV import for player lists (UTF-8, supports umlauts).
- * - Team emblems and fullscreen toggle.
- * - Match state machine with window toggling.
+ * Features: real-time goal tracking, two-half timer, own-goal/undo,
+ * CSV player import (UTF-8), team emblems, fullscreen toggle, and match state.
  *
- * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.1, 2025-12-25
- *
- * @note Currently designed for 2×45 minute football matches only.
+ * Author: Paranithan Paramalingam (BFH-Ti)
+ * Version: 3.0
+ * Date: 2026-06-07
  */
 
 #include <QApplication>

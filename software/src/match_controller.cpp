@@ -1,3 +1,17 @@
+#/**
+ * @file match_controller.cpp
+ * @brief Match controller implementation.
+ *
+ * Coordinates match state, timer and scoring logic. This component mediates
+ * between the `score_memory`, `timer`, team/player models and emits signals
+ * consumed by the UI and WebSocket control interface. It also provides CSV
+ * import for player lists and validates/records goal events.
+ *
+ * Author: Paranithan Paramalingam (BFH-Ti)
+ * Version: 3.0
+ * Date: 2026-06-07
+ */
+
 #include "match_controller.h"
 
 #include <QDebug>
