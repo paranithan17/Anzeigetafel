@@ -14,22 +14,61 @@
 #include <QImage>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QStandardPaths>
 #include <QTemporaryDir>
 
 namespace
 {
-    QString pdfToolPath(const QString &toolName)
+    QString findPdfTool(const QStringList &toolNames)
     {
+        for (const QString &toolName : toolNames)
+        {
+            const QString path = QStandardPaths::findExecutable(toolName);
+            if (!path.isEmpty())
+            {
+                return path;
+            }
+        }
+
+#ifdef Q_OS_WIN
         const QString miktexDir = QStringLiteral("C:/Program Files/MiKTeX/miktex/bin/x64");
-        return QDir(miktexDir).filePath(toolName);
+        for (const QString &toolName : toolNames)
+        {
+            const QString path = QDir(miktexDir).filePath(toolName);
+            if (QFileInfo::exists(path))
+            {
+                return path;
+            }
+        }
+#endif
+
+        return {};
+    }
+
+    QString pdfInfoExecutable()
+    {
+#ifdef Q_OS_WIN
+        return findPdfTool({QStringLiteral("pdfinfo.exe"), QStringLiteral("pdfinfo"), QStringLiteral("miktex-pdfinfo.exe")});
+#else
+        return findPdfTool({QStringLiteral("pdfinfo"), QStringLiteral("pdfinfo.exe")});
+#endif
+    }
+
+    QString pdftoppmExecutable()
+    {
+#ifdef Q_OS_WIN
+        return findPdfTool({QStringLiteral("pdftoppm.exe"), QStringLiteral("pdftoppm"), QStringLiteral("miktex-pdftoppm.exe")});
+#else
+        return findPdfTool({QStringLiteral("pdftoppm"), QStringLiteral("pdftoppm.exe")});
+#endif
     }
 
     int pdfPageCount(const QString &pdfPath)
     {
-        const QString pdfInfoExe = pdfToolPath(QStringLiteral("pdfinfo.exe"));
-        if (!QFileInfo::exists(pdfInfoExe))
+        const QString pdfInfoExe = pdfInfoExecutable();
+        if (pdfInfoExe.isEmpty())
         {
-            qWarning() << "pdfinfo.exe not found:" << pdfInfoExe;
+            qWarning() << "pdfinfo not found in PATH or fallback locations";
             return 0;
         }
 
@@ -55,10 +94,10 @@ namespace
 
     QImage renderPdfPage(const QString &pdfPath, int pageNumber)
     {
-        const QString pdftoppmExe = pdfToolPath(QStringLiteral("pdftoppm.exe"));
-        if (!QFileInfo::exists(pdftoppmExe))
+        const QString pdftoppmExe = pdftoppmExecutable();
+        if (pdftoppmExe.isEmpty())
         {
-            qWarning() << "pdftoppm.exe not found:" << pdftoppmExe;
+            qWarning() << "pdftoppm not found in PATH or fallback locations";
             return {};
         }
 
