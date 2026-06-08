@@ -14,62 +14,70 @@
 #include <QImage>
 #include <QProcess>
 #include <QRegularExpression>
-#include <QStandardPaths>
 #include <QTemporaryDir>
+#include <QStandardPaths>
+#ifdef HAVE_QTPDF
+#include <QPdfDocument>
+#endif
 
 namespace
 {
-    QString findPdfTool(const QStringList &toolNames)
+#ifdef HAVE_QTPDF
+    int pdfPageCount(const QString &pdfPath)
     {
-        for (const QString &toolName : toolNames)
+        QPdfDocument doc;
+        const QPdfDocument::Error err = doc.load(pdfPath);
+        if (err != QPdfDocument::Error::None)
         {
-            const QString path = QStandardPaths::findExecutable(toolName);
-            if (!path.isEmpty())
-            {
-                return path;
-            }
+            qWarning() << "QPdfDocument failed to load:" << pdfPath << "error:" << (int)err;
+            return 0;
         }
-
-#ifdef Q_OS_WIN
-        const QString miktexDir = QStringLiteral("C:/Program Files/MiKTeX/miktex/bin/x64");
-        for (const QString &toolName : toolNames)
-        {
-            const QString path = QDir(miktexDir).filePath(toolName);
-            if (QFileInfo::exists(path))
-            {
-                return path;
-            }
-        }
-#endif
-
-        return {};
+        return doc.pageCount();
     }
 
-    QString pdfInfoExecutable()
+    QImage renderPdfPage(const QString &pdfPath, int pageNumber)
     {
-#ifdef Q_OS_WIN
-        return findPdfTool({QStringLiteral("pdfinfo.exe"), QStringLiteral("pdfinfo"), QStringLiteral("miktex-pdfinfo.exe")});
-#else
-        return findPdfTool({QStringLiteral("pdfinfo"), QStringLiteral("pdfinfo.exe")});
-#endif
-    }
+        QPdfDocument doc;
+        const QPdfDocument::Error err = doc.load(pdfPath);
+        if (err != QPdfDocument::Error::None)
+        {
+            qWarning() << "QPdfDocument failed to load:" << pdfPath << "error:" << (int)err;
+            return {};
+        }
 
-    QString pdftoppmExecutable()
-    {
-#ifdef Q_OS_WIN
-        return findPdfTool({QStringLiteral("pdftoppm.exe"), QStringLiteral("pdftoppm"), QStringLiteral("miktex-pdftoppm.exe")});
+        // QPdfDocument::render expects 0-based page index
+        const int pageIndex = pageNumber - 1;
+        if (pageIndex < 0 || pageIndex >= doc.pageCount())
+        {
+            qWarning() << "Invalid page index for PDF:" << pdfPath << pageNumber;
+            return {};
+        }
+
+        // Render to the label size if available; we'll use a reasonable default here - actual scaling
+        // is applied later by QLabel::setPixmap with KeepAspectRatio.
+        QSize renderSize = QSize(1024, 768);
+        QImage rendered = doc.render(pageIndex, renderSize);
+        if (rendered.isNull())
+            qWarning() << "QPdfDocument render returned empty image for:" << pdfPath << pageNumber;
+        return rendered;
+    }
 #else
-        return findPdfTool({QStringLiteral("pdftoppm"), QStringLiteral("pdftoppm.exe")});
-#endif
+    QString pdfToolPath(const QString &toolName)
+    {
+        const QString miktexDir = QStringLiteral("/usr/bin");
+        // On Windows we used MiKTeX; on other platforms rely on PATH first
+        const QString candidate1 = QDir(miktexDir).filePath(toolName);
+        if (QFileInfo::exists(candidate1))
+            return candidate1;
+        return toolName; // rely on PATH
     }
 
     int pdfPageCount(const QString &pdfPath)
     {
-        const QString pdfInfoExe = pdfInfoExecutable();
-        if (pdfInfoExe.isEmpty())
+        const QString pdfInfoExe = pdfToolPath(QStringLiteral("pdfinfo"));
+        if (!QFileInfo::exists(pdfInfoExe) && !QStandardPaths::findExecutable(pdfInfoExe).isEmpty())
         {
-            qWarning() << "pdfinfo not found in PATH or fallback locations";
-            return 0;
+            // fall through to using PATH
         }
 
         QProcess process;
@@ -94,12 +102,7 @@ namespace
 
     QImage renderPdfPage(const QString &pdfPath, int pageNumber)
     {
-        const QString pdftoppmExe = pdftoppmExecutable();
-        if (pdftoppmExe.isEmpty())
-        {
-            qWarning() << "pdftoppm not found in PATH or fallback locations";
-            return {};
-        }
+        const QString pdftoppmExe = pdfToolPath(QStringLiteral("pdftoppm"));
 
         QTemporaryDir tempDir;
         if (!tempDir.isValid())
@@ -134,6 +137,7 @@ namespace
 
         return image;
     }
+#endif
 } // namespace
 
 Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
