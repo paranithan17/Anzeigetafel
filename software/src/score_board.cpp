@@ -11,6 +11,92 @@
  */
 #include "score_board.h"
 
+#include <QImage>
+#include <QProcess>
+#include <QRegularExpression>
+#include <QTemporaryDir>
+
+namespace
+{
+    QString pdfToolPath(const QString &toolName)
+    {
+        const QString miktexDir = QStringLiteral("C:/Program Files/MiKTeX/miktex/bin/x64");
+        return QDir(miktexDir).filePath(toolName);
+    }
+
+    int pdfPageCount(const QString &pdfPath)
+    {
+        const QString pdfInfoExe = pdfToolPath(QStringLiteral("pdfinfo.exe"));
+        if (!QFileInfo::exists(pdfInfoExe))
+        {
+            qWarning() << "pdfinfo.exe not found:" << pdfInfoExe;
+            return 0;
+        }
+
+        QProcess process;
+        process.start(pdfInfoExe, {pdfPath});
+        if (!process.waitForFinished(10000))
+        {
+            qWarning() << "pdfinfo timed out for:" << pdfPath;
+            return 0;
+        }
+
+        const QString output = QString::fromLocal8Bit(process.readAllStandardOutput());
+        QRegularExpression pagePattern(QStringLiteral(R"(Pages:\s+(\d+))"));
+        const QRegularExpressionMatch match = pagePattern.match(output);
+        if (!match.hasMatch())
+        {
+            qWarning() << "Could not read page count for:" << pdfPath;
+            return 0;
+        }
+
+        return match.captured(1).toInt();
+    }
+
+    QImage renderPdfPage(const QString &pdfPath, int pageNumber)
+    {
+        const QString pdftoppmExe = pdfToolPath(QStringLiteral("pdftoppm.exe"));
+        if (!QFileInfo::exists(pdftoppmExe))
+        {
+            qWarning() << "pdftoppm.exe not found:" << pdftoppmExe;
+            return {};
+        }
+
+        QTemporaryDir tempDir;
+        if (!tempDir.isValid())
+        {
+            qWarning() << "Failed to create temporary directory for PDF rendering";
+            return {};
+        }
+
+        const QString outputBase = tempDir.filePath(QStringLiteral("slide"));
+        QStringList arguments;
+        arguments << QStringLiteral("-f") << QString::number(pageNumber)
+                  << QStringLiteral("-l") << QString::number(pageNumber)
+                  << QStringLiteral("-singlefile")
+                  << QStringLiteral("-png")
+                  << pdfPath
+                  << outputBase;
+
+        QProcess process;
+        process.start(pdftoppmExe, arguments);
+        if (!process.waitForFinished(30000))
+        {
+            qWarning() << "pdftoppm timed out for:" << pdfPath << "page" << pageNumber;
+            return {};
+        }
+
+        const QString renderedFile = outputBase + QStringLiteral(".png");
+        QImage image(renderedFile);
+        if (image.isNull())
+        {
+            qWarning() << "Failed to load rendered page image:" << renderedFile;
+        }
+
+        return image;
+    }
+} // namespace
+
 Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
     : QWidget(parent), Score(score), gameTime(gameTime)
 
@@ -388,9 +474,9 @@ void Score_board::startSlideshow(const QString &folderPath)
         return;
     }
 
-    slideshowFiles = collectSlides(folderPath);
+    slideshowPages = collectSlides(folderPath);
 
-    if (slideshowFiles.isEmpty())
+    if (slideshowPages.isEmpty())
     {
         qWarning() << "No slides found in slideshow folder:" << folderPath;
         return;
@@ -407,30 +493,39 @@ void Score_board::stopSlideshow()
 {
     slideshowTimer->stop();
     slideshowLabel->setVisible(false);
-    slideshowFiles.clear();
+    slideshowPages.clear();
 }
 
 void Score_board::showNextSlide()
 {
-    if (slideshowFiles.isEmpty())
+    if (slideshowPages.isEmpty())
         return;
 
-    const QString fullPath = slideshowFiles.at(slideshowIndex);
-    slideshowIndex = (slideshowIndex + 1) % slideshowFiles.size();
+    const SlidePage slide = slideshowPages.at(slideshowIndex);
+    slideshowIndex = (slideshowIndex + 1) % slideshowPages.size();
 
-    QPixmap pix(fullPath);
-    if (!pix.isNull())
+    QImage pageImage;
+    if (slide.isPdf)
     {
-        slideshowLabel->setPixmap(
-            pix.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        pageImage = renderPdfPage(slide.filePath, slide.pageNumber);
     }
     else
     {
-        qWarning() << "Failed to load slide:" << fullPath;
+        pageImage = QImage(slide.filePath);
+    }
+
+    if (!pageImage.isNull())
+    {
+        slideshowLabel->setPixmap(
+            QPixmap::fromImage(pageImage).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+    else
+    {
+        qWarning() << "Failed to render slide:" << slide.filePath << "page" << slide.pageNumber;
     }
 }
 
-QStringList Score_board::collectSlides(const QString &folderPath)
+QList<Score_board::SlidePage> Score_board::collectSlides(const QString &folderPath)
 {
     qDebug() << "collectSlides called with:" << folderPath;
 
@@ -441,26 +536,49 @@ QStringList Score_board::collectSlides(const QString &folderPath)
         return {};
     }
 
-    QStringList slides;
-    slides << collectImages(dir);
-    slides.removeDuplicates();
-    slides.sort(Qt::CaseInsensitive);
+    QList<SlidePage> slides = collectPdfPages(dir);
 
     return slides;
 }
 
-QStringList Score_board::collectImages(const QDir &dir)
+QList<Score_board::SlidePage> Score_board::collectPdfPages(const QDir &dir)
 {
-    QStringList result;
+    QList<SlidePage> result;
 
     QFileInfoList files = dir.entryInfoList(
-        {"*.png", "*.jpg", "*.jpeg", "*.bmp"},
+        {"*.pdf", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp", "*.gif"},
         QDir::Files | QDir::Readable,
         QDir::Name);
 
     for (const QFileInfo &fi : files)
     {
-        result << fi.absoluteFilePath();
+        const QString suffix = fi.suffix().toLower();
+
+        if (suffix == QStringLiteral("pdf"))
+        {
+            const int pageCount = pdfPageCount(fi.absoluteFilePath());
+            if (pageCount <= 0)
+            {
+                qWarning() << "Skipping PDF without pages:" << fi.absoluteFilePath();
+                continue;
+            }
+
+            for (int page = 1; page <= pageCount; ++page)
+            {
+                result.append({fi.absoluteFilePath(), page, true});
+            }
+        }
+        else
+        {
+            QImage image(fi.absoluteFilePath());
+            if (image.isNull())
+            {
+                qWarning() << "Skipping unreadable image slide:" << fi.absoluteFilePath();
+                continue;
+            }
+
+            result.append({fi.absoluteFilePath(), 0, false});
+        }
     }
 
     return result;

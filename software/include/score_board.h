@@ -111,8 +111,15 @@ private:
     QTimer *slideshowTimer = nullptr;
     /** @brief Full-window label used for slideshow rendering. */
     QLabel *slideshowLabel = nullptr;
-    /** @brief Ordered absolute file paths of slideshow images. */
-    QStringList slideshowFiles;
+    struct SlidePage
+    {
+        QString filePath;
+        int pageNumber = 0;
+        bool isPdf = false;
+    };
+
+    /** @brief Ordered slide entries used for the slideshow. */
+    QList<SlidePage> slideshowPages;
     /** @brief Current zero-based slideshow index. */
     int slideshowIndex = 0;
 
@@ -163,7 +170,7 @@ private:
     /**
      * @brief Starts slideshow from specified folder.
      *
-     * @param folderPath Path to folder containing slide images
+     * @param folderPath Path to folder containing slides
      * @return void
      */
     void startSlideshow(const QString &folderPath);
@@ -190,17 +197,17 @@ private:
      * @brief Collects all slide files from folder.
      *
      * @param folderPath Path to folder containing slides
-     * @return List of absolute file paths to slide images
+     * @return List of absolute slide entries
      */
-    QStringList collectSlides(const QString &folderPath);
+    QList<SlidePage> collectSlides(const QString &folderPath);
 
     /**
-     * @brief Collects image files from directory.
+     * @brief Collects PDF pages and image files from directory.
      *
-     * @param dir Directory to scan for images
-     * @return List of absolute file paths to images
+     * @param dir Directory to scan for slides
+     * @return List of absolute file paths and page numbers
      */
-    QStringList collectImages(const QDir &dir);
+    QList<SlidePage> collectPdfPages(const QDir &dir);
 
 private slots:
     /**
