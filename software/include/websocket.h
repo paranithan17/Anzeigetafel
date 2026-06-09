@@ -22,7 +22,6 @@
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include <QTimer>
 #include <vector>
 #include <memory>
 
@@ -102,23 +101,9 @@ private slots:
     void broadcastTimeUpdate(const QString &elapsedTime);
 
 private:
-    QWebSocketServer m_server;      // WebSocket server instance
-    QList<QWebSocket *> m_clients;  // Connected browser clients
-    match_controller *m_controller; // Central match logic controller
-
-    quint16 m_port = 8080; // Port number for WebSocket server
-    int m_startAttempts = 0; // Counter for server start attempts
-
-    static constexpr int MAX_START_ATTEMPTS = 5; // Max retries for starting server
-    static constexpr int RETRY_DELAY_MS = 2000; // Delay between start retries
-
-    
-    /**
-     * @brief Attempts to start the WebSocket server. If the RPi has not a IP-Adress on boot.
-     * 
-     */
-    void tryStartServer();
-
+    QWebSocketServer m_server;      ///< WebSocket server instance
+    QList<QWebSocket *> m_clients;  ///< Connected browser clients
+    match_controller *m_controller; ///< Central match logic controller
 
     /**
      * @brief Handles a parsed JSON command from browser.

@@ -107,51 +107,15 @@ websocket::websocket(match_controller *controller, QObject *parent)
 // Start WebSocket server
 bool websocket::start_server(quint16 port)
 {
-    m_port = port;
-    m_startAttempts = 0;
-
-    tryStartServer();
-
-    return m_server.isListening();
-}
-// tries to start the server and retries with delay if it fails (e.g. due to no IP address on boot)
-void websocket::tryStartServer()
-{
-    if (m_server.isListening())
-    {
-        qDebug() << "WebSocket server already running on"
-                 << m_server.serverAddress().toString()
-                 << "port" << m_server.serverPort();
-        return;
-    }
-
-    m_startAttempts++;
-
     const QHostAddress serverAddress(QStringLiteral("192.168.200.8"));
-    const bool ok = m_server.listen(serverAddress, m_port);
+    const bool ok = m_server.listen(serverAddress, port);
 
     if (ok)
-    {
-        qDebug() << "WebSocket server started on"
-                 << m_server.serverAddress().toString()
-                 << "port" << m_port
-                 << "after attempt" << m_startAttempts;
-        return;
-    }
-
-    qDebug() << "WebSocket server start failed. Attempt"
-             << m_startAttempts << "of" << MAX_START_ATTEMPTS
-             << "error:" << m_server.errorString();
-
-    if (m_startAttempts < MAX_START_ATTEMPTS)
-    {
-        QTimer::singleShot(RETRY_DELAY_MS, this, &websocket::tryStartServer);
-    }
+        qDebug() << "WebSocket server started on" << m_server.serverAddress().toString() << "port" << port;
     else
-    {
-        qDebug() << "WebSocket server could not be started after"
-                 << MAX_START_ATTEMPTS << "attempts.";
-    }
+        qDebug() << "WebSocket server error:" << m_server.errorString();
+
+    return ok;
 }
 
 // Accept new browser connection
