@@ -5,7 +5,7 @@
  * @caption The score_memory stores data (scores, goals, event time, player),
  * which provides data to controll_window and score_board
  * @author Paranithan Paramalingam. BFH-Ti
- * @version V1.0, 27.05.2025
+ * @version 3.0, 12. June 2026
  *
  *
  * @note This code has been created with help of chatgpt

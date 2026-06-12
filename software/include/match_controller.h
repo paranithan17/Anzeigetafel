@@ -2,7 +2,7 @@
  * @file match_controller.h
  * @brief Central controller for match logic and state management.
  *
- * The match_controller is the business logic layer (Model in MVC pattern) that manages
+ * The match_controller is the business logic layer (Model in the Model-View-Controller pattern) that manages
  * all match-related operations including team rosters, scoring, timer control, and state
  * transitions. All user interactions from the GUI (controll_window) or web interface are
  * delegated to this controller, which processes them and emits signals for view updates.
@@ -13,15 +13,15 @@
  * - Match timer control (start, stop, restart) with phase transitions
  * - Match state machine (PreGame → FirstHalf → HalfTime → SecondHalf → PostGame)
  * - Data persistence through score_memory and timer components
- * - Signal-based communication for MVC pattern
+ * - Signal-based communication for Model-View-Controller pattern
  *
  * Design Pattern:
- * Implements Model-View-Controller (MVC) where controll_window and future web interface
+ * Implements the Model-View-Controller pattern where controll_window and future web interface
  * are views that delegate all business logic to this controller. This enables code reuse
  * across multiple UI implementations.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-04-13 (Refactored for MVC pattern)
+ * @version 3.0, 12. June 2026 (Refactored for Model-View-Controller pattern)
  */
 #ifndef MATCH_CONTROLLER_H
 #define MATCH_CONTROLLER_H

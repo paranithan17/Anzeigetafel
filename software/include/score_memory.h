@@ -19,7 +19,7 @@
  * designation, timestamp, and own goal flag.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.1, 2026-04-13
+ * @version 3.0, 12. June 2026
  */
 #ifndef SCORE_MEMORY_H
 #define SCORE_MEMORY_H

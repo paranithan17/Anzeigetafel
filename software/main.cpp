@@ -10,7 +10,7 @@
  *
  * Author: Paranithan Paramalingam (BFH-Ti)
  * Version: 3.0
- * Date: 2026-06-07
+ * Date: 12. June 2026
  */
 
 #include <QApplication>

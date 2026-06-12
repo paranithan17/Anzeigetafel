@@ -7,7 +7,7 @@
  * synchronizes with timer and score memory components.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.1, 2025-12-25
+ * @version 3.0, 12. June 2026
  */
 #include "score_board.h"
 

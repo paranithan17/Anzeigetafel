@@ -3,7 +3,7 @@
  * @brief Implementation of team roster management.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-04-13
+ * @version 3.0, 12. June 2026
  */
 
 #include "team.h"

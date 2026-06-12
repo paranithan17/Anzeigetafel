@@ -6,7 +6,7 @@
  * operations such as add, remove, and read access to all players.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-04-13
+ * @version 3.0, 12. June 2026
  */
 #ifndef TEAM_H
 #define TEAM_H

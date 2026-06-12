@@ -3,7 +3,7 @@
  * @brief Implementation of Websocket server.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-05-07
+ * @version 3.0, 12. June 2026
  */
 
 #include "websocket.h"

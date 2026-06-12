@@ -18,12 +18,12 @@
  * - Real-time score and time display updates from controller
  *
  * Design Pattern:
- * Implements View component of MVC pattern. All business logic is delegated to
+ * Implements the View component of the Model-View-Controller pattern. All business logic is delegated to
  * match_controller, enabling code reuse for web interfaces and other UI clients.
  * Uses Qt signals/slots for communication with model.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-04-13 (Refactored for MVC pattern)
+ * @version 3.0, 12. June 2026 (Refactored for Model-View-Controller pattern)
  */
 #ifndef CONTROLL_WINDOW_H
 #define CONTROLL_WINDOW_H

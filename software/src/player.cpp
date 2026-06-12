@@ -3,7 +3,7 @@
  * @brief Implementation of player data model.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.0, 2025-06-01
+ * @version 3.0, 12. June 2026
  */
 
 #include "player.h"
@@ -14,7 +14,7 @@ player::player(unsigned number, QString name) : playerNumber(number),
 }
 
 QString player::getName()
-{ 
+{
     return playerName;
 }
 

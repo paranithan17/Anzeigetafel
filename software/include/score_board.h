@@ -14,7 +14,7 @@
  * - Double-click toggle to hide/show control window.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 3.0, 2026-04-13
+ * @version 3.0, 12. June 2026
  */
 #ifndef SCORE_BOARD_H
 #define SCORE_BOARD_H

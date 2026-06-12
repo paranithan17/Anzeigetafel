@@ -8,8 +8,7 @@
  * import for player lists and validates/records goal events.
  *
  * Author: Paranithan Paramalingam (BFH-Ti)
- * Version: 3.0
- * Date: 2026-06-07
+ * @version 3.0, 12. June 2026
  */
 
 #include "match_controller.h"

@@ -3,7 +3,7 @@
  * @brief Implementation of match timer.
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.0, 2025-06-07
+ * @version 3.0, 12. June 2026
  */
 
 #include "timer.h"

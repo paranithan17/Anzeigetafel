@@ -13,7 +13,7 @@
  * - Lightweight data model for roster management
  *
  * @author Paranithan Paramalingam (BFH-Ti)
- * @version 2.0, 2025-06-01
+ * @version 3.0, 12. June 2026
  */
 
 #ifndef PLAYER_H
