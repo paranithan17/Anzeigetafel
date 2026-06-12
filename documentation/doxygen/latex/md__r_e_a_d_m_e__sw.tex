@@ -1,0 +1,67 @@
+\chapter{Anzeigetafel -\/ Football Scoreboard Application -\/ Software}
+\hypertarget{md__r_e_a_d_m_e__sw}{}\label{md__r_e_a_d_m_e__sw}\index{Anzeigetafel -\/ Football Scoreboard Application -\/ Software@{Anzeigetafel -\/ Football Scoreboard Application -\/ Software}}
+\label{md__r_e_a_d_m_e__sw_autotoc_md0}%
+\Hypertarget{md__r_e_a_d_m_e__sw_autotoc_md0}%
+
+
+A modular Qt application to manage and display live football match events. Developed as a mini-\/project for the BTE5058a "{}\+Einstieg in OOP"{} course at BFH.\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md1}{}\doxysection{\texorpdfstring{Author}{Author}}\label{md__r_e_a_d_m_e__sw_autotoc_md1}
+{\bfseries{Paranithan Paramalingam}} ~\newline
+ Bachelor of Engineering, BFH ~\newline
+ Course\+: BTE5058a – Einstieg in OOP ~\newline
+ Submission date\+: 16 June 2025
+
+\begin{quote}
+This project was developed with the assistance of Chat\+GPT (Open\+AI) for code generation and documentation. \end{quote}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md2}{}\doxysection{\texorpdfstring{Project Overview}{Project Overview}}\label{md__r_e_a_d_m_e__sw_autotoc_md2}
+This application provides a {\bfseries{control window}} for match operators and a {\bfseries{scoreboard window}} for public display. It tracks players, goals, and match time, offering real-\/time updates via Qt\textquotesingle{}s signal-\/slot mechanism.\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md3}{}\doxysubsection{\texorpdfstring{Control Window}{Control Window}}\label{md__r_e_a_d_m_e__sw_autotoc_md3}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md4}{}\doxysubsection{\texorpdfstring{Scoreboard Window}{Scoreboard Window}}\label{md__r_e_a_d_m_e__sw_autotoc_md4}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md5}{}\doxysubsection{\texorpdfstring{Key Features}{Key Features}}\label{md__r_e_a_d_m_e__sw_autotoc_md5}
+
+\begin{DoxyItemize}
+\item Two synchronized windows\+: Control (operator) \& Scoreboard (audience)
+\item Dynamic team roster management (add/remove players)
+\item \doxylink{struct_goal}{Goal} logging with timestamp and own goal detection
+\item Match timer with 1st and 2nd half support (00\+:00–45\+:00 and 45\+:00–90\+:00)
+\item CSV import for team lineups
+\item Emblem/logo support for team branding
+\item Undo last goal, reset score, and timer restart
+\item Fullscreen toggle for the scoreboard
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md6}{}\doxysection{\texorpdfstring{Architecture}{Architecture}}\label{md__r_e_a_d_m_e__sw_autotoc_md6}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md7}{}\doxysubsection{\texorpdfstring{Class Diagram}{Class Diagram}}\label{md__r_e_a_d_m_e__sw_autotoc_md7}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md8}{}\doxysubsection{\texorpdfstring{Data Flow Diagram}{Data Flow Diagram}}\label{md__r_e_a_d_m_e__sw_autotoc_md8}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md9}{}\doxysubsection{\texorpdfstring{Main Components}{Main Components}}\label{md__r_e_a_d_m_e__sw_autotoc_md9}
+
+\begin{DoxyItemize}
+\item {\ttfamily Person} – Base class for player objects
+\item {\ttfamily home\+\_\+team} / {\ttfamily away\+\_\+team} – Manage team-\/specific players
+\item {\ttfamily \doxylink{classscore__memory}{score\+\_\+memory}} – Stores goals, scores, and timestamps
+\item {\ttfamily timer} – Manages game time and handles period transitions
+\item {\ttfamily \doxylink{classcontroll__window}{controll\+\_\+window}} – Operator interface for managing events
+\item {\ttfamily score\+\_\+board} – Visual display of score, time, and goals
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md10}{}\doxysubsection{\texorpdfstring{Signal-\/\+Slot Connections}{Signal-\/\+Slot Connections}}\label{md__r_e_a_d_m_e__sw_autotoc_md10}
+
+\begin{DoxyItemize}
+\item \doxylink{struct_goal}{Goal} updates trigger visual refresh in both windows
+\item Timer emits updated time every second
+\item User actions (e.\+g. undo goal, import team) affect game state instantly
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md11}{}\doxysection{\texorpdfstring{Build \& Run Instructions}{Build \& Run Instructions}}\label{md__r_e_a_d_m_e__sw_autotoc_md11}
+\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md12}{}\doxysubsection{\texorpdfstring{Requirements}{Requirements}}\label{md__r_e_a_d_m_e__sw_autotoc_md12}
+
+\begin{DoxyItemize}
+\item Qt 6.\+6 or newer
+\item C++17 compatible compiler
+\item CMake or Qt Creator (without {\ttfamily .ui} files)
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md13}{}\doxysubsection{\texorpdfstring{Build with Qt Creator}{Build with Qt Creator}}\label{md__r_e_a_d_m_e__sw_autotoc_md13}
+
+\begin{DoxyEnumerate}
+\item Open {\ttfamily CMake\+Lists.\+txt} or create a new CMake project and add all {\ttfamily .cpp} and {\ttfamily .h} files.
+\item Configure and run the project using Qt Creator.
+\item No {\ttfamily .ui} files are used — all UI elements are constructed programmatically.
+\end{DoxyEnumerate}\hypertarget{md__r_e_a_d_m_e__sw_autotoc_md14}{}\doxysection{\texorpdfstring{Limitations}{Limitations}}\label{md__r_e_a_d_m_e__sw_autotoc_md14}
+
+\begin{DoxyItemize}
+\item Fixed to 2x 45-\/minute halfes
+\item No support for extra time or custom periods, After 45 minutes the timer starts from 46th minute to 90th minute. After 90 minutes the timer starts from 00\+:00
+\item No duplicate number validation for player lists
+\item No persistent storage or game state saving 
+\end{DoxyItemize}

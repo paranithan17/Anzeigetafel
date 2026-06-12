@@ -1,0 +1,49 @@
+\doxysection{Software/include/controll\+\_\+window.h File Reference}
+\hypertarget{controll__window_8h}{}\label{controll__window_8h}\index{Software/include/controll\_window.h@{Software/include/controll\_window.h}}
+
+
+GUI Control window for match operator (View component).  
+
+
+{\ttfamily \#include $<$QWidget$>$}\newline
+{\ttfamily \#include $<$QPush\+Button$>$}\newline
+{\ttfamily \#include $<$QVBox\+Layout$>$}\newline
+{\ttfamily \#include $<$QHBox\+Layout$>$}\newline
+{\ttfamily \#include $<$QLabel$>$}\newline
+{\ttfamily \#include $<$QList\+Widget$>$}\newline
+{\ttfamily \#include $<$QRadio\+Button$>$}\newline
+{\ttfamily \#include $<$QGroup\+Box$>$}\newline
+{\ttfamily \#include $<$QMouse\+Event$>$}\newline
+{\ttfamily \#include "{}match\+\_\+controller.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classcontroll__window}{controll\+\_\+window}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+GUI Control window for match operator (View component). 
+
+Pure presentation layer that provides the operator control interface for managing matches. Displays team rosters, score, timer, and match state. All user interactions are collected via dialogs and delegated to \doxylink{classmatch__controller}{match\+\_\+controller} for processing. This component receives updates from \doxylink{classmatch__controller}{match\+\_\+controller} through Qt signals and updates the display accordingly.
+
+Features\+:
+\begin{DoxyItemize}
+\item Team roster UI with add/remove player dialogs
+\item \doxylink{struct_goal}{Goal} logging dialogs with player selection and own-\/goal detection
+\item Timer control buttons with state validation feedback
+\item Match state selection (Pre\+Game → First\+Half → Half\+Time → Second\+Half → Post\+Game)
+\item Team emblem upload and logo management
+\item CSV import dialogs for batch player roster management
+\item Scoreboard toggle via double-\/click feature
+\item Real-\/time score and time display updates from controller
+\end{DoxyItemize}
+
+Design Pattern\+: Implements View component of MVC pattern. All business logic is delegated to \doxylink{classmatch__controller}{match\+\_\+controller}, enabling code reuse for web interfaces and other UI clients. Uses Qt signals/slots for communication with model.
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+3.\+0, 2026-\/04-\/13 (Refactored for MVC pattern) 
+\end{DoxyVersion}

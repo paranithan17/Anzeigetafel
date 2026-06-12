@@ -1,0 +1,45 @@
+\doxysection{Software/main.cpp File Reference}
+\hypertarget{main_8cpp}{}\label{main_8cpp}\index{Software/main.cpp@{Software/main.cpp}}
+
+
+Application entry point for the Football Scoreboard.  
+
+
+{\ttfamily \#include $<$QApplication$>$}\newline
+{\ttfamily \#include "{}controll\+\_\+window.\+h"{}}\newline
+{\ttfamily \#include "{}score\+\_\+board.\+h"{}}\newline
+{\ttfamily \#include "{}timer.\+h"{}}\newline
+{\ttfamily \#include "{}score\+\_\+memory.\+h"{}}\newline
+{\ttfamily \#include "{}match\+\_\+controller.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{main_8cpp_a0ddf1224851353fc92bfbff6f499fa97} 
+int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Application entry point for the Football Scoreboard. 
+
+Initializes and launches a modular graphical scoreboard system for managing football match events. Creates two synchronized main windows\+: Control (operator) and Scoreboard (audience display), linked via Qt signals/slots.
+
+Features\+:
+\begin{DoxyItemize}
+\item Real-\/time goal tracking with timestamps and player attribution.
+\item Two-\/half timer management (00\+:00–45\+:00, 45\+:00–90\+:00).
+\item Own goal and undo support.
+\item CSV import for player lists (UTF-\/8, supports umlauts).
+\item Team emblems and fullscreen toggle.
+\item Match state machine with window toggling.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+2.\+1, 2025-\/12-\/25
+\end{DoxyVersion}
+\begin{DoxyNote}{Note}
+Currently designed for 2×45 minute football matches only. 
+\end{DoxyNote}

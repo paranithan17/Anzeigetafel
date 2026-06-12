@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anzeigetafel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="modal-styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="top-bar">
+
+        <button id="fullscreenBtn" class="fullscreen-btn btn-primary-fullscreen material-icons">fullscreen</i>
+        </button>
+        <div id="connectionStatus" class="connection-status status-connecting">Connecting...</div>
+    </div>
+
+    <div class="container">
+        <div class="match-state-section">
+            <h2>Match State</h2>
+
+            <form id="matchStateForm">
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="pregame" name="matchState" value="pregame" checked>
+                        <label for="pregame">Pre game</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="firsthalf" name="matchState" value="firsthalf">
+                        <label for="firsthalf">First half</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="halftime" name="matchState" value="halftime">
+                        <label for="halftime">Half time</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="secondhalf" name="matchState" value="secondhalf">
+                        <label for="secondhalf">Second half</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="postgame" name="matchState" value="postgame">
+                        <label for="postgame">Post game</label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Apply State</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Score and Time synchronization container -->
+    <div class="container" id="scoreTimeContainer">
+        <div class="score-time-inner">
+            <div class="score-block">
+                <div id="homeScore" class="team-score">0</div>
+                <div class="score-sep">:</div>
+                <div id="awayScore" class="team-score">0</div>
+            </div>
+            <div id="matchTime" class="match-time">00:00</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Teams row: Home (left) and Away (right) -->
+        <div class="teams-row">
+            <!-- Home Team -->
+            <div class="team-container" id="homeTeam">
+                <h3>Home Team</h3>
+                <div class="goal-button-group">
+                    <button id="homeGoalBtn" class="btn btn-primary goal-btn">Goal</button>
+                </div>
+
+                <!-- Players section in Home container -->
+                <div class="player-list-section">
+                    <h4>Players</h4>
+
+                    <!-- Control buttons -->
+                    <div class="player-control-buttons">
+                        <button id="homeAddPlayerShowBtn" class="btn btn-primary">+</button>
+                        <button id="homeImportBtn" class="btn btn-primary">Upload List</button>
+                        <input type="file" id="homeImportFile" accept=".csv" class="player-import-input">
+                    </div>
+
+                    <!-- Player list -->
+                    <div id="homePlayersList" class="player-list">
+                        <p>No players</p>
+                    </div>
+                </div>
+                <div class="team-emblem-section">
+                    <button id="homeEmblemBtn" class="btn btn-primary emblem-btn">Upload logo</button>
+                    <input type="file" id="homeEmblemFile" accept="image/png, image/jpeg, image/bmp, image/webp"
+                        class="emblem-input">
+                </div>
+            </div>
+
+            <!-- Away Team -->
+            <div class="team-container" id="awayTeam">
+                <h3>Away Team</h3>
+                <div class="goal-button-group">
+                    <button id="awayGoalBtn" class="btn btn-primary goal-btn">Goal</button>
+                </div>
+
+                <!-- Players section in Away container -->
+                <div class="player-list-section">
+                    <h4>Players</h4>
+
+                    <!-- Control buttons -->
+                    <div class="player-control-buttons">
+                        <button id="awayAddPlayerShowBtn" class="btn btn-primary">+</button>
+                        <button id="awayImportBtn" class="btn btn-primary">Upload List</button>
+                        <input type="file" id="awayImportFile" accept=".csv" class="player-import-input">
+                    </div>
+
+                    <!-- Player list -->
+                    <div id="awayPlayersList" class="player-list">
+                        <p>No players</p>
+                    </div>
+                </div>
+                <div class="team-emblem-section">
+                    <button id="awayEmblemBtn" class="btn btn-primary emblem-btn">upload logo</button>
+                    <input type="file" id="awayEmblemFile" accept="image/png, image/jpeg, image/bmp, image/webp"
+                        class="emblem-input">
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer control button -->
+        <div class="timer-button-container">
+            <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+        </div>
+        <!-- Log button -->
+        <div class="log-button-container">
+            <button id="logBtn" class="btn btn-primary">Log</button>
+        </div>
+    </div>
+
+    <!-- Home Team Add Player Modal -->
+    <div id="homeAddPlayerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Player - Home Team</h3>
+                <button class="modal-close" id="homeModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <input type="number" id="homePlayerNum" placeholder="Jersey Number" min="0" class="modal-input">
+                    <input type="text" id="homePlayerName" placeholder="Player Name" class="modal-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="homeAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
+                <button id="homeAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Away Team Add Player Modal -->
+    <div id="awayAddPlayerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Player - Away Team</h3>
+                <button class="modal-close" id="awayModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <input type="number" id="awayPlayerNum" placeholder="Jersey Number" min="0" class="modal-input">
+                    <input type="text" id="awayPlayerName" placeholder="Player Name" class="modal-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="awayAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
+                <button id="awayAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Selection Modal -->
+    <div id="goalSelectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Scorer</h3>
+                <button class="modal-close" id="goalModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="goal-list-container">
+                    <h4>Home Team</h4>
+                    <div id="goalHomeList" class="goal-list">
+                        <p>No players</p>
+                    </div>
+                </div>
+                <div class="goal-list-container">
+                    <h4>Away Team</h4>
+                    <div id="goalAwayList" class="goal-list">
+                        <p>No players</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal Details Section -->
+            <div class="goal-details-section">
+                <div class="goal-input-group">
+                    <label for="goalMinuteInput">Goal Minute:</label>
+                    <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120"
+                        class="modal-input goal-minute-input">
+                </div>
+                <!-- Manual Own Goal checkbox removed: own goals are detected/confirmed automatically -->
+            </div>
+            <div class="modal-footer">
+                <button id="goalAnonymousBtn" class="btn btn-primary">Save (no scorer)</button>
+                <button id="goalCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Own Goal Confirmation Modal -->
+    <div id="ownGoalConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Own Goal Confirmation</h3>
+                <button class="modal-close" id="ownGoalConfirmModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="ownGoalConfirmText" class="modal-body-confirmation-text">
+                    You selected a player from the opponent team. Should this be marked as an own goal?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="ownGoalConfirmYesBtn" class="btn btn-primary">Yes, Own Goal</button>
+                <button id="ownGoalConfirmNoBtn" class="btn btn-primary">No, Regular Goal</button>
+                <button id="ownGoalConfirmCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match State Confirmation Modal -->
+    <div id="matchStateConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Match State Change Confirmation</h3>
+                <button class="modal-close" id="matchStateConfirmModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="matchStateConfirmText" class="modal-body-confirmation-text">
+                    Are you sure you want to leave the current match state?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="matchStateConfirmYesBtn" class="btn btn-primary">Yes, Continue</button>
+                <button id="matchStateConfirmNoBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Button Menu Modal -->
+    <div id="logMenuModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Match Log</h3>
+                <button class="modal-close" id="logMenuModalClose">&times;</button>
+            </div>
+            <div class="modal-body log-menu-modal-body">
+                <button id="logRestartTimerBtn" class="btn btn-primary log-menu-button">Restart Timer</button>
+                <button id="logResetScoreTimerBtn" class="btn btn-primary log-menu-button">Reset Score & Timer</button>
+                <button id="logRetakeGoalBtn" class="btn btn-primary log-menu-button">Retake Last Goal</button>
+            </div>
+            <div class="modal-footer">
+                <button id="logMenuCancelBtn" class="btn btn-primary modal-cancel-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emblem selection/upload modal -->
+    <div id="emblemSelectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Team Emblem</h3>
+                <button class="modal-close" id="emblemModalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="savedEmblemsList" class="saved-emblems-list">
+                    <p>No saved emblems</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="uploadNewEmblemBtn" class="btn btn-primary">
+                    Upload new emblem
+                </button>
+                <button id="emblemCancelBtn" class="btn btn-primary modal-cancel-btn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV File Selection Modal -->
+    <div id="csvSelectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Player List</h3>
+                <button class="modal-close" id="csvModalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="savedCsvList" class="saved-csv-list">
+                    <p>No saved lists</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="uploadNewCsvBtn" class="btn btn-primary">
+                    Upload new list
+                </button>
+                <button id="csvCancelBtn" class="btn btn-primary modal-cancel-btn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="websocket.js"></script>
+    <script src="application.js"></script>
+    <script src="matchstate.js"></script>
+    <script src="goal-management.js"></script>
+    <script src="player-management.js"></script>
+    <script src="emblem-management.js"></script>
+    <script src="log-modal.js"></script>
+    <script src="timer.js"></script>
+</body>
+
+</html>

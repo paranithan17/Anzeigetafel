@@ -1,0 +1,50 @@
+\doxysection{score\+\_\+memory.\+h}
+\hypertarget{score__memory_8h_source}{}\label{score__memory_8h_source}\index{Software/include/score\_memory.h@{Software/include/score\_memory.h}}
+\mbox{\hyperlink{score__memory_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#ifndef\ SCORE\_MEMORY\_H}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ SCORE\_MEMORY\_H}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QObject>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_goal}{Goal}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_goal_abaafda609315a3260fb26a8fa056f63b}{playerNumber}};}
+\DoxyCodeLine{00036\ \ \ \ \ QString\ \mbox{\hyperlink{struct_goal_a98d0946d1ad4b77e2b41cc966f863f32}{player}};}
+\DoxyCodeLine{00038\ \ \ \ \ QString\ \mbox{\hyperlink{struct_goal_a93720eb5fb5acd7b06bbfe07534bb911}{timeStamp}};}
+\DoxyCodeLine{00040\ \ \ \ \ QString\ \mbox{\hyperlink{struct_goal_a0565cf17960252a7b61060c0654c788d}{team}};}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_goal_a64ac0edc99537132ba00eca4f907bce7}{ownGoal}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00043\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classscore__memory}{score\_memory}}\ :\ \textcolor{keyword}{public}\ QObject}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00051\ \ \ \ \ QList<Goal>\ goals;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classscore__memory_acc0dea03df4a61429c334180d24b372e}{score\_memory}}(QObject\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00067\ \ \ \ \ QList<Goal>\ \mbox{\hyperlink{classscore__memory_afe0eab080e7b11fb524074aedbba5b6f}{getGoals}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classscore__memory_a37f2799ecd45d5a53c9c33cf21a7dc3f}{getHomeScore}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classscore__memory_a03a462ec297c783d54f5d6a0ba708b64}{getAwayScore}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classscore__memory_adf95b4c80f61aa8752808553ff68cfd9}{addGoal}}(\textcolor{keywordtype}{int}\ number,\ QString\ \mbox{\hyperlink{classplayer}{player}},\ \textcolor{keyword}{const}\ QString\ \&timeStamp,\ \textcolor{keyword}{const}\ QString\ \&\mbox{\hyperlink{classteam}{team}},\ \textcolor{keywordtype}{bool}\ ownGoal);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classscore__memory_a2c77882aa421f475b342350ba4ede552}{removeLastGoal}}();}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classscore__memory_a7b6e3ec5c82e5161ab5ccc5240b34f9a}{resetGame}}();}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ signals:}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classscore__memory_a31263335d5855c93f962dc0c0fed6abc}{goalsUpdated}}();}
+\DoxyCodeLine{00127\ \};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SCORE\_MEMORY\_H}}
+
+\end{DoxyCode}

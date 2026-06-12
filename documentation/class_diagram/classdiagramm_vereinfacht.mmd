@@ -1,0 +1,292 @@
+---
+title: Class Diagram - Simplified
+id: 7a9e71e7-bc95-4005-ab5d-66e0d262a46a
+---
+classDiagram
+  %% CENTRAL CONTROLLER - At the top
+  class match_controller {
+    %% - team m_homeTeam
+    %% - team m_awayTeam
+    %% - score_memory* m_scoreMemory
+    %% - timer* m_gameTimer
+    %% - MatchState m_state
+    %% - QString m_homeTeamEmblem
+    %% - QString m_awayTeamEmblem
+    %% + getHomeScore()
+    %% + getAwayScore()
+    %% + getCurrentTime()
+    %% + addPlayer()
+    %% + removePlayer()
+    %% + importPlayersFromCsv()
+    %% + addGoalWithValiddation()
+    %% + removeLastGoal()
+    %% + requestTimerstart()
+    %% + requestTimerRestart()
+    %% + requestTimerStop()
+    %% + requestMatchReset()
+    %% + resetScoreAndTimer()
+    %% + suggestedGoalMinute()
+    %% + requestStateChange()
+    %% + startTimer()
+    %% + setTeamEmblem()
+    %% + getTeamEmblem()
+    %% + homePlayersChanged()
+    %% + awayPlayersChanged()
+    %% + scoreChanged()
+    %% + timeChanged()
+    %% + matchStateChanged()
+    %% + startTimerEnabledChanged()
+    %% + secondHalfDecisionNeeded()
+    %% + emblemChanged()
+    %% + onSecondHalfDecision()
+    %% - onGoalsUpdated()
+    %% - onTimeUpdated()
+    %% - onTimerTimeout()
+    %% - applyTimerPhaseForState()
+    %% - isActiveState()
+  }
+  class score_board {
+    %% - MatchState state
+    %% - score_memory* Score
+    %% - timer* gameTime
+    %% - QLabel* scoreLabel
+    %% - QLabel* timeLabel
+    %% - QListWidget* scorerListTeam1/2
+    %% - QLabel* emblemLabelTeam1/2
+    %% - QTimer* slideshowTimer
+    %% - Qlabel* slideshowLabel
+    %% - QStringList slideshowFiles
+    %% - QString preGamePath
+    %% - QString halfTimePath
+    %% - QString postGamePath
+    %% - setupLayout()
+    %% - applyStyle()
+    %% - adjustFontSize()
+    %% - adjustEmblemSize()
+    %% - updateViewForState()
+    %% - startSlideshow()
+    %% - stopSlideshow()
+    %% - showNextSlide()
+    %% - adjustScorerListWidths()
+    %% - QList collectSlides()
+    %% - QList collectPdfPages()
+    %% - updateScore()
+    %% - extracted()
+    %% - updateGoals()
+    %% - updateTime()
+    %% - adjustScorerListWidths()
+    %% # keyPressEvent()
+    %% # resizeEvent()
+    %% # mouseDoubleClickEvent()
+    %% + updateEmblem()
+    %% + setMatchState()
+    %% + toggleControlWindow()
+  }
+
+  %% Domain Model
+  class player {
+    %% + unsigned number
+    %% + QString name
+    %% + unsigned getNumber()
+    %% + QString getName()
+    %% + setName(QString name)
+    %% + setNumber(unsigned number)
+  }
+
+  class team {
+    %% - vector<player> players
+    %% + team()
+    %% + addPlayer()
+    %% + removePlayer()
+    %% + vector<player> getPlayers()
+  }
+
+  class score_memory {
+    %% - QList<Goal> goals
+    %% + score_memory()
+    %% + QList<Goal> getGoals()
+    %% + int getHomeScore()
+    %% + int getAwayScore()
+    %% + addGoal()
+    %% + removeLastGoal()
+    %% + resetGame()
+    %% + goalsUpdated()
+  }
+
+  %% Timer Component
+  class timer {
+    %% + enum Gampehase
+    %% + start()
+    %% + stop()
+    %% + restart()
+    %% + resetToPhaseStart()
+    %% + isRunning()
+    %% + setPhase()
+    %% + GamePhase phase()
+    %% + QString firsthalf()
+    %% + QString secondhalf()
+    %% + timeout()
+    %% + timeUpdated()
+    %% - updateElapsedTime()
+    %% - QElapsedTimer gameTime
+    %% - QTimer updateTimer
+    %% - bool m_running
+    %% - GamePhase m_phase
+  }
+
+  %% UI Components
+  class control_window {
+    %% - match_controller* m_controller
+    %% - QListWidget* listTeam1/2
+    %% - QWidget* score_board
+    %% - QPushButton* btnAddPlayerTeam1/2
+    %% - QPushButton* btnGoalTeam1/2
+    %% - QPushButton* btnStartTimer
+    %% - QPushButton* btnLog
+    %% - QPushButton* btnImportTeam1/2
+    %% - QPushbutton* btnApplyState
+    %% - QPushButton* btnAddEmblemTeam1/2
+    %% - QListWidget* listTeam1/2
+    %% - QRadioButton* radioPreGame
+    %% - QRadioButton* radioFirstHalf
+    %% - QRadioButton* radioHalfTime
+    %% - QRadioButton* radioSecondHalf
+    %% - QRadioButton* radioPostGame
+    %% - QLabel* score
+    %% - QLabel* time
+    %% + setscore_board()
+    %% + togglescore_board()
+    %% + emblemChanged()
+    %% # mouseDoubleClickEvent()
+    %% - addPlayerTeam1/2()
+    %% - removePlayerTeam1/2()
+    %% - addGoalTeam1/2()
+    %% - startTimer()
+    %% - log()
+    %% - loadEmblemTeam1/2()
+    %% - importTeam1/2()
+    %% - applyStateSelection()
+    %% - updateScoreDisplay()
+    %% - updateTimeDisplay()
+    %% - updateTeamList1/2()
+    %% - controllerStateChanged()
+    %% - setStateSelection()
+  }
+
+  %% Web/Network Components
+  class websocket {
+    %% + bool start_server
+    %% - QWebSocketServer m_server
+    %% - QList<QWebSocket*> m_clients
+    %% - match_controller* m_controller
+    %% - QString createMatchStateJson()
+    %% - handleJSONCommand()
+    %% - createPlayerListJson()
+    %% - broadcastPlayerList()
+    %% - sendSavedEmblems()
+    %% - handleSelectSavedEmblem()
+    %% - handleSetEmblem()
+    %% - sendSavedCsvFiles()
+    %% - handleSelectSavedCsv()
+    %% - handleSetCsvFile()
+    %% - parseAndImportCsv()
+    %% - onNewConnection()
+    %% - onTextMessageReceived()
+    %% - onClientDisconnected()
+    %% - broadcastMatchState()
+    %% - broadcastScoreTime()
+    %% - broadcastTimeUpdate()
+  }
+
+  
+
+  %% Qt Foundation Classes - At the bottom
+  class QObject {
+
+  }
+
+  class QWidget {
+
+  }
+
+  class QTimer {
+
+  }
+
+  class QElapsedTimer {
+
+  }
+
+  class QFile {
+
+  }
+
+  class QDir {
+
+  }
+
+  class QWebSocketServer {
+
+  }
+
+  class QWebSocket {
+
+  }
+
+  class QJsonObject {
+
+  }
+
+  class QJsonDocument {
+
+  }
+
+  class QCoreApplication {
+
+  }
+
+  %% INHERITANCE - Only direct base classes
+  match_controller --|> QObject
+  match_controller --> score_memory
+  match_controller --> timer
+  match_controller --> team
+  match_controller --> control_window
+  match_controller --> websocket
+  score_memory --|> QObject
+  timer --|> QObject
+  control_window --|> QWidget
+  score_board --|> QWidget
+  websocket --|> QObject
+
+  %% COMPOSITION - Member variables/references
+  timer --> QTimer
+  timer --> QElapsedTimer
+  score_board --> QTimer
+  score_board --> QFile
+  score_board --> QDir
+  websocket --> QWebSocketServer
+  websocket --> QWebSocket
+  websocket --> QJsonObject
+  websocket --> QJsonDocument
+  websocket --> QFile
+  websocket --> QDir
+  websocket --> QCoreApplication
+  match_controller --> QFile
+%% score_board --> timer
+
+
+  %% Domain Model Relationships
+  team --* "0..*" player
+
+
+  %% View - State Updates
+ %% score_board --> score_memory
+  control_window --> score_memory
+  control_window --> timer
+  websocket --> score_memory
+  websocket --> timer
+
+  %% Delegations
+  control_window <..> match_controller : delegates all actions
+  score_board <.. match_controller : send state updates
+  websocket <..> match_controller : delegates all actions from web interface

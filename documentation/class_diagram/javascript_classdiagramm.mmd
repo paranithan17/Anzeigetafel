@@ -1,0 +1,141 @@
+---
+title: Refactored JavaScript Webinterface - Class Diagram
+id: 8a1e0d73-4d7d-4b7b-8ef9-c8e3b1c7a5b2
+---
+classDiagram
+  %% CORE APPLICATION - At the top
+  class ApplicationClient["application.js / ApplicationClient"] {
+    - WebSocketClient wsClient
+    - Object stateMap
+    - Object stateNameMap
+    - Object players
+    - String currentEmblemTeam
+    - String currentCsvTeam
+    - String requestingTeam
+    - Number currentMatchState
+    - Object pendingGoalData
+    - bool timerRunning
+    + constructor(serverUrl)
+    + init()
+    + onWsConnected()
+    + onWsDisconnected()
+    + onWsError(error)
+    + onWsMessage(event)
+    + updateConnectionStatus(status)
+    + showNotification(message, type)
+    + showModal(modalId)
+    + hideModal(modalId)
+    + setupFullscreenButton()
+    + isConnected()
+    + disconnect()
+  }
+
+  %% WEBSOCKET / NETWORK CLIENT
+  class WebSocketClient["websocket.js / WebSocketClient"] {
+    - String serverUrl
+    - WebSocket socket
+    - Number reconnectAttempts
+    - Number maxReconnectAttempts
+    - Number reconnectDelay
+    - Function onConnected
+    - Function onDisconnected
+    - Function onError
+    - Function onMessage
+    + constructor(serverUrl)
+    + connect()
+    + onOpen(event)
+    + onWsError(event)
+    + onClose(event)
+    + scheduleReconnect()
+    + send(message)
+    + sendMatchStateChange(stateId)
+    + sendStartTimer()
+    + sendGoal(team, playerNumber, playerName, goalMinute, isOwnGoal)
+    + sendRestartTimer()
+    + sendResetScoreAndTimer()
+    + sendRetakeLastGoal()
+    + sendAddPlayer(team, number, name)
+    + sendImportPlayers(team, players)
+    + sendRemovePlayer(team, number)
+    + requestSavedEmblems()
+    + sendSelectSavedEmblem(team, filePath)
+    + sendEmblem(team, fileName, mimeType, dataUrl)
+    + requestSavedCsvFiles()
+    + sendSelectSavedCsv(team, filePath)
+    + sendCsvFile(team, fileName, fileData)
+    + isConnected()
+    + disconnect()
+  }
+
+  %% MATCH STATE MODULE
+  class matchstate_js["matchstate.js"] {
+    + setupMatchStateHandlers()
+    + handleMatchStateUpdate(stateId, stateName)
+    + updateStateDisplay(stateId, stateName)
+    + handleFormSubmit()
+    + showMatchStateConfirmation(stateId)
+  }
+
+  %% GOAL MODULE
+  class goal_management_js["goal-management.js"] {
+    + setupGoalHandlers()
+    + populateGoalSelectionModal()
+    + showGoalSelector(requestingTeam)
+    + showOwnGoalConfirmation(message)
+    + completeGoalEntry(goalData)
+    + sendGoalWithPlayer(team, player)
+    + getSuggestedGoalMinute()
+  }
+
+  %% PLAYER MODULE
+  class player_management_js["player-management.js"] {
+    + setupPlayerManagementHandlers()
+    + handlePlayerImportFile(file, team)
+    + handlePlayersListUpdate(team, players)
+    + displayPlayersList(team, players)
+    + sendAddPlayer(team, number, name)
+    + sendImportPlayers(team, players)
+    + sendRemovePlayer(team, number)
+    + openCsvModal(team)
+    + requestSavedCsvFiles()
+    + displaySavedCsvFiles(files)
+    + sendSelectSavedCsv(team, filePath)
+    + handleCsvUpload(file, team)
+    + sendCsvFile(team, fileName, fileData)
+  }
+
+  %% EMBLEM MODULE
+  class emblem_management_js["emblem-management.js"] {
+    + setupEmblemManagementHandlers()
+    + openEmblemModal(team)
+    + requestSavedEmblems()
+    + displaySavedEmblems(emblems)
+    + sendSelectSavedEmblem(team, filePath)
+    + handleEmblemUpload(file, team)
+    + sendEmblem(team, fileName, mimeType, dataUrl)
+  }
+
+  %% LOG MODAL MODULE
+  class log_modal_js["log-modal.js"] {
+    + setupLogModalHandlers()
+    + showLogMenu()
+    + requestRestartTimer()
+    + requestResetScoreAndTimer()
+    + requestRetakeLastGoal()
+  }
+
+  %% TIMER MODULE
+  class timer_js["timer.js"] {
+    + setupTimerHandlers()
+    + updateScoreTimeDisplay(home, away, time)
+    + updateStartTimerButtonState()
+  }
+
+  %% RELATIONSHIPS
+  ApplicationClient --> WebSocketClient : communicates with
+  ApplicationClient ..> matchstate_js : prototype extension
+  ApplicationClient ..> goal_management_js : prototype extension
+  ApplicationClient ..> player_management_js : prototype extension
+  ApplicationClient ..> emblem_management_js : prototype extension
+  ApplicationClient ..> log_modal_js : prototype extension
+  ApplicationClient ..> timer_js : prototype extension

@@ -1,0 +1,42 @@
+\doxysection{Software/include/score\+\_\+memory.h File Reference}
+\hypertarget{score__memory_8h}{}\label{score__memory_8h}\index{Software/include/score\_memory.h@{Software/include/score\_memory.h}}
+
+
+Score and goal event management.  
+
+
+{\ttfamily \#include $<$QObject$>$}\newline
+{\ttfamily \#include $<$QString$>$}\newline
+{\ttfamily \#include $<$QList$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_goal}{Goal}}
+\item 
+class \mbox{\hyperlink{classscore__memory}{score\+\_\+memory}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Score and goal event management. 
+
+Manages all scoring information including goal events, player information, and score calculation for both teams. Stores complete match score history and provides methods to add/remove goals and retrieve current scores. Emits signals when goals are updated.
+
+Features\+:
+\begin{DoxyItemize}
+\item \doxylink{struct_goal}{Goal} event storage with player details and timestamps
+\item Home and away team score tracking
+\item Own goal detection and handling
+\item Score reset and goal removal with undo capability
+\item Signal-\/based notifications for score changes
+\item Complete match history for logging and review
+\end{DoxyItemize}
+
+Data Structure\+: Maintains a QList of Goal\+Event objects, each containing player number, name, team designation, timestamp, and own goal flag.
+
+\begin{DoxyAuthor}{Author}
+Paranithan Paramalingam (BFH-\/\+Ti) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+2.\+1, 2026-\/04-\/13 
+\end{DoxyVersion}

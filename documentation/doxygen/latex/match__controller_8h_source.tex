@@ -1,0 +1,137 @@
+\doxysection{match\+\_\+controller.\+h}
+\hypertarget{match__controller_8h_source}{}\label{match__controller_8h_source}\index{Software/include/match\_controller.h@{Software/include/match\_controller.h}}
+\mbox{\hyperlink{match__controller_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifndef\ MATCH\_CONTROLLER\_H}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ MATCH\_CONTROLLER\_H}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <QObject>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <QStringList>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{team_8h}{team.h}}"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{score__memory_8h}{score\_memory.h}}"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{timer_8h}{timer.h}}"{}}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmatch__controller}{match\_controller}}\ :\ \textcolor{keyword}{public}\ QObject}
+\DoxyCodeLine{00040\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}}
+\DoxyCodeLine{00048\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a8cf04a9734132302f96da8e113e80ce5}{Home}}\ =\ 0,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76a312dc56ea9c386a6bc913f988a233791}{Away}}}
+\DoxyCodeLine{00053\ \ \ \ \ \};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a554bc137278892a248cb9fd7d66a66d9}{PreGame}}\ =\ 0,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae49e0f7b63da990b8ddb40bed3acc7cd}{FirstHalf}},}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a4c80456fd750cab4a37baefdea988570}{HalfTime}},}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a8a59e14729ef3c2f7ebe45db856ca0b0}{SecondHalf}},}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38ae5b456c484a0ec6a32301d03121fd80b}{PostGame}}}
+\DoxyCodeLine{00070\ \ \ \ \ \};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{classmatch__controller_a6160b92697ffde13e0d0f79ba96f9a23}{match\_controller}}(\mbox{\hyperlink{classscore__memory}{score\_memory}}\ *scoreMemory,\ \mbox{\hyperlink{classtimer}{timer}}\ *gameTimer,\ QObject\ *parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00090\ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}\ \mbox{\hyperlink{classmatch__controller_a24ebd4d12a7115173b66fdb086ed2a83}{currentState}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::shared\_ptr<player>>\ \&\mbox{\hyperlink{classmatch__controller_af2d07270ec3d2e2df295eb5de7e7e06a}{getHomePlayers}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::shared\_ptr<player>>\ \&\mbox{\hyperlink{classmatch__controller_ab000e67179fa2a6aca2b3127036dfddb}{getAwayPlayers}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classmatch__controller_a43145f1efad4aa2c87ccb7ce80790b04}{getHomeScore}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classmatch__controller_a67bba3d0c8207be2e7463b5d87b43810}{getAwayScore}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a148a4926940492f9955506f40203eaab}{addPlayer}}(\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ side,\ \textcolor{keywordtype}{unsigned}\ number,\ \textcolor{keyword}{const}\ QString\ \&name);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_ae72568c4936d5a4d852998854be6f6c6}{removePlayer}}(\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ side,\ \textcolor{keywordtype}{unsigned}\ number);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmatch__controller_afc52cbae8785bcb3aa9e5e203acac33d}{importPlayersFromCsv}}(\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ side,\ \textcolor{keyword}{const}\ QString\ \&filePath,\ \textcolor{keywordtype}{int}\ *importedCount\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{//\ Goal\ management\ with\ validation\ from\ UI}}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structmatch__controller_1_1_goal_data}{GoalData}}}
+\DoxyCodeLine{00156\ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data_aa4c6b92d585c882f7abf41b7fc8e5200}{scoringTeam}};}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data_a08cbd130a15418ac07647e7032558692}{playerNumber}};}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ QString\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data_acd1e489f7b22f41610f69a00870baa77}{playerName}};}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data_a0e2185580161f6ce280840d083dd82a7}{goalMinute}};}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data_ac807e4dfa3d45bfed17597e564316748}{isOwnGoal}};}
+\DoxyCodeLine{00167\ \ \ \ \ \};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmatch__controller_ac20fec58b1abc375c1e1cbf684d76d1e}{addGoalWithValidation}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structmatch__controller_1_1_goal_data}{GoalData}}\ \&goalData);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a4ecd1f393c6413999627aa6af87a59a1}{removeLastGoal}}();}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{comment}{//\ Timer\ control\ operations\ delegated\ from\ UI}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_aeb2885422eab9f7771bb4e30023eaccb}{requestTimerStart}}();}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a1010858b962b05efdc9b9a550f7a88be}{requestTimerRestart}}();}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_aab5887a01b03952058210d94f14902bb}{requestTimerStop}}();}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_aae77dd3454d0a3fd2c8aeb4502f8fb19}{requestMatchReset}}();}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{comment}{//\ Match\ state\ transitions}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{classmatch__controller_a84e431dd4ce252fcec277d98e87f2596}{suggestedGoalMinute}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmatch__controller_ad02d242f26397da722daa4135bcb12c1}{requestStateChange}}(\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}\ newState,\ \textcolor{keywordtype}{bool}\ confirmedRunningTimerStop);}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classmatch__controller_a641444073991b588031faa8a9ab2b2f8}{startTimer}}();}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{//\ Emblem\ management}}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a013b82209700479cfc679b35461a68de}{setTeamEmblem}}(\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ side,\ \textcolor{keyword}{const}\ QString\ \&emblePath);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00259\ \ \ \ \ QString\ \mbox{\hyperlink{classmatch__controller_ac150e9c9fc108e21d4758dd2325f9e9d}{getTeamEmblem}}(\mbox{\hyperlink{classmatch__controller_a1f46857695e96b5e89368f564cc2fc76}{TeamSide}}\ side)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ signals:}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a4f007ec1d50630393a413832d0dadc92}{homePlayersChanged}}();}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_af1b8375b739597085c47a6a9ca507fee}{awayPlayersChanged}}();}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a067e93d0bb6b639b65bb2add3bdce553}{scoreChanged}}();}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a482f98d80cab03eb9e1b8590c61c72a0}{timeChanged}}(\textcolor{keyword}{const}\ QString\ \&elapsedTime);}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_aacc93f6db22dedabc87ad65189b1a9a2}{matchStateChanged}}(\textcolor{keywordtype}{int}\ state);}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a3a56c4922c5a4512be0179297f4e4312}{startTimerEnabledChanged}}(\textcolor{keywordtype}{bool}\ enabled);}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_aa99fad43c8268f877168250739c9bb41}{secondHalfDecisionNeeded}}();}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a741baff231dbe653b98109b426aaa4c0}{emblemChanged}}(\textcolor{keyword}{const}\ QString\ \&\mbox{\hyperlink{classteam}{team}},\ \textcolor{keyword}{const}\ QString\ \&filepath);}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \textcolor{keyword}{public}\ slots:}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmatch__controller_a539c2f9bc45bb0c1ba16dac7267287c1}{onSecondHalfDecision}}(\textcolor{keywordtype}{bool}\ startSecondHalf);}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \textcolor{keyword}{private}\ slots:}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordtype}{void}\ onGoalsUpdated();}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordtype}{void}\ onTimeUpdated(\textcolor{keyword}{const}\ QString\ \&elapsedTime);}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordtype}{void}\ onTimerTimeout();}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{void}\ applyTimerPhaseForState(\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}\ state);}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keywordtype}{bool}\ isActiveState(\mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}\ state)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00369\ \ \ \ \ \mbox{\hyperlink{classteam}{team}}\ m\_homeTeam;}
+\DoxyCodeLine{00371\ \ \ \ \ \mbox{\hyperlink{classteam}{team}}\ m\_awayTeam;}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00374\ \ \ \ \ \mbox{\hyperlink{classscore__memory}{score\_memory}}\ *m\_scoreMemory\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00376\ \ \ \ \ \mbox{\hyperlink{classtimer}{timer}}\ *m\_gameTimer\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00378\ \ \ \ \ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38}{MatchState}}\ m\_state\ =\ \mbox{\hyperlink{classmatch__controller_adbdf4ca278961c21156e5e2533c28e38a554bc137278892a248cb9fd7d66a66d9}{MatchState::PreGame}};}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00381\ \ \ \ \ QString\ m\_homeTeamEmblem;}
+\DoxyCodeLine{00383\ \ \ \ \ QString\ m\_awayTeamEmblem;}
+\DoxyCodeLine{00384\ \};}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MATCH\_CONTROLLER\_H}}
+
+\end{DoxyCode}

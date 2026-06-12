@@ -1,0 +1,255 @@
+\doxysection{Score\+\_\+board Class Reference}
+\hypertarget{class_score__board}{}\label{class_score__board}\index{Score\_board@{Score\_board}}
+Inheritance diagram for Score\+\_\+board\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_score__board}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8}{Match\+State}} \{ \newline
+\mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a554bc137278892a248cb9fd7d66a66d9}{Pre\+Game}} = 0
+, \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae49e0f7b63da990b8ddb40bed3acc7cd}{First\+Half}}
+, \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a4c80456fd750cab4a37baefdea988570}{Half\+Time}}
+, \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8a8a59e14729ef3c2f7ebe45db856ca0b0}{Second\+Half}}
+, \newline
+\mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae5b456c484a0ec6a32301d03121fd80b}{Post\+Game}}
+ \}
+\begin{DoxyCompactList}\small\item\em Match state enumeration synchronized with \doxylink{classcontroll__window}{controll\+\_\+window}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_score__board_a77c56321ce31224260e4280b9b72d82c}{update\+Emblem}} (const QString \&\mbox{\hyperlink{classteam}{team}}, const QString \&file\+Path)
+\begin{DoxyCompactList}\small\item\em Updates team emblem display. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_score__board_a0403b27579d1787694460fc0bff5f7f4}{set\+Match\+State}} (int state)
+\begin{DoxyCompactList}\small\item\em Changes match state and updates display mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_score__board_aaee006696708f8f4bde960205ed5ed08}{toggle\+Control\+Window}} ()
+\begin{DoxyCompactList}\small\item\em Toggles visibility of control window. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_score__board_a42a7fddce552d01be65dc4541ffa2b96}{Score\+\_\+board}} (\mbox{\hyperlink{classscore__memory}{score\+\_\+memory}} \texorpdfstring{$\ast$}{*}score\+Memory, \mbox{\hyperlink{classtimer}{timer}} \texorpdfstring{$\ast$}{*}game\+Time, QWidget \texorpdfstring{$\ast$}{*}parent=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructs the scoreboard display window. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_score__board_a1bcf2aaa0eb55eabbbe7a879787d3e37}{set\+Control\+Window}} (QWidget \texorpdfstring{$\ast$}{*}window)
+\begin{DoxyCompactList}\small\item\em Sets reference to control window for toggle functionality. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_score__board_afb76e5fc0107a91738d0601f372fcd58}{key\+Press\+Event}} (QKey\+Event \texorpdfstring{$\ast$}{*}event) override
+\begin{DoxyCompactList}\small\item\em Handles keyboard events (ESC to exit fullscreen). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_score__board_a97e9b9f1b8db10b4121329ea7b610407}{resize\+Event}} (QResize\+Event \texorpdfstring{$\ast$}{*}event) override
+\begin{DoxyCompactList}\small\item\em Handles window resize events. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_score__board_a58ce3e5f9f00bc751090189b3364407a}{mouse\+Double\+Click\+Event}} (QMouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\begin{DoxyCompactList}\small\item\em Handles double-\/click to toggle control window. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8}\index{Score\_board@{Score\_board}!MatchState@{MatchState}}
+\index{MatchState@{MatchState}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{MatchState}{MatchState}}
+{\footnotesize\ttfamily \label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+enum class \mbox{\hyperlink{class_score__board_a8054ea245f3c77aea6098d130772bcd8}{Score\+\_\+board\+::\+Match\+State}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Match state enumeration synchronized with \doxylink{classcontroll__window}{controll\+\_\+window}. 
+
+Defines the current phase of the match to control display mode. \begin{DoxySeeAlso}{See also}
+controll\+\_\+window\+::\+Match\+State 
+\end{DoxySeeAlso}
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PreGame@{PreGame}!Score\_board@{Score\_board}}\index{Score\_board@{Score\_board}!PreGame@{PreGame}}}\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8a554bc137278892a248cb9fd7d66a66d9}\label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+Pre\+Game&Before kickoff, setup/presentation phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FirstHalf@{FirstHalf}!Score\_board@{Score\_board}}\index{Score\_board@{Score\_board}!FirstHalf@{FirstHalf}}}\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae49e0f7b63da990b8ddb40bed3acc7cd}\label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+First\+Half&First half running phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HalfTime@{HalfTime}!Score\_board@{Score\_board}}\index{Score\_board@{Score\_board}!HalfTime@{HalfTime}}}\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8a4c80456fd750cab4a37baefdea988570}\label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+Half\+Time&Halftime break phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SecondHalf@{SecondHalf}!Score\_board@{Score\_board}}\index{Score\_board@{Score\_board}!SecondHalf@{SecondHalf}}}\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8a8a59e14729ef3c2f7ebe45db856ca0b0}\label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+Second\+Half&Second half running phase. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PostGame@{PostGame}!Score\_board@{Score\_board}}\index{Score\_board@{Score\_board}!PostGame@{PostGame}}}\Hypertarget{class_score__board_a8054ea245f3c77aea6098d130772bcd8ae5b456c484a0ec6a32301d03121fd80b}\label{class_score__board_a8054ea245f3c77aea6098d130772bcd8} 
+Post\+Game&Match finished phase. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_score__board_a42a7fddce552d01be65dc4541ffa2b96}\index{Score\_board@{Score\_board}!Score\_board@{Score\_board}}
+\index{Score\_board@{Score\_board}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{Score\_board()}{Score\_board()}}
+{\footnotesize\ttfamily \label{class_score__board_a42a7fddce552d01be65dc4541ffa2b96} 
+Score\+\_\+board\+::\+Score\+\_\+board (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classscore__memory}{score\+\_\+memory}} \texorpdfstring{$\ast$}{*}}]{score\+Memory}{, }\item[{\mbox{\hyperlink{classtimer}{timer}} \texorpdfstring{$\ast$}{*}}]{game\+Time}{, }\item[{QWidget \texorpdfstring{$\ast$}{*}}]{parent}{ = {\ttfamily nullptr}}\end{DoxyParamCaption})}
+
+
+
+Constructs the scoreboard display window. 
+
+Initializes fullscreen display with score, time, and goal lists. Sets up slideshow system for non-\/game states and connects to score/timer updates.
+
+
+\begin{DoxyParams}{Parameters}
+{\em score\+Memory} & Pointer to score data manager \\
+\hline
+{\em game\+Time} & Pointer to match timer \\
+\hline
+{\em parent} & Parent widget (default nullptr) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_score__board_afb76e5fc0107a91738d0601f372fcd58}\index{Score\_board@{Score\_board}!keyPressEvent@{keyPressEvent}}
+\index{keyPressEvent@{keyPressEvent}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{keyPressEvent()}{keyPressEvent()}}
+{\footnotesize\ttfamily \label{class_score__board_afb76e5fc0107a91738d0601f372fcd58} 
+void Score\+\_\+board\+::key\+Press\+Event (\begin{DoxyParamCaption}\item[{QKey\+Event \texorpdfstring{$\ast$}{*}}]{event}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Handles keyboard events (ESC to exit fullscreen). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & Keyboard event \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_a58ce3e5f9f00bc751090189b3364407a}\index{Score\_board@{Score\_board}!mouseDoubleClickEvent@{mouseDoubleClickEvent}}
+\index{mouseDoubleClickEvent@{mouseDoubleClickEvent}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{mouseDoubleClickEvent()}{mouseDoubleClickEvent()}}
+{\footnotesize\ttfamily \label{class_score__board_a58ce3e5f9f00bc751090189b3364407a} 
+void Score\+\_\+board\+::mouse\+Double\+Click\+Event (\begin{DoxyParamCaption}\item[{QMouse\+Event \texorpdfstring{$\ast$}{*}}]{event}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Handles double-\/click to toggle control window. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & Mouse event \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_a97e9b9f1b8db10b4121329ea7b610407}\index{Score\_board@{Score\_board}!resizeEvent@{resizeEvent}}
+\index{resizeEvent@{resizeEvent}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{resizeEvent()}{resizeEvent()}}
+{\footnotesize\ttfamily \label{class_score__board_a97e9b9f1b8db10b4121329ea7b610407} 
+void Score\+\_\+board\+::resize\+Event (\begin{DoxyParamCaption}\item[{QResize\+Event \texorpdfstring{$\ast$}{*}}]{event}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Handles window resize events. 
+
+Adjusts font sizes and emblem scaling based on new window dimensions. Updates slideshow label geometry to cover full window.
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & Resize event \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_a1bcf2aaa0eb55eabbbe7a879787d3e37}\index{Score\_board@{Score\_board}!setControlWindow@{setControlWindow}}
+\index{setControlWindow@{setControlWindow}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{setControlWindow()}{setControlWindow()}}
+{\footnotesize\ttfamily \label{class_score__board_a1bcf2aaa0eb55eabbbe7a879787d3e37} 
+void Score\+\_\+board\+::set\+Control\+Window (\begin{DoxyParamCaption}\item[{QWidget \texorpdfstring{$\ast$}{*}}]{window}{}\end{DoxyParamCaption})}
+
+
+
+Sets reference to control window for toggle functionality. 
+
+Allows double-\/click on scoreboard to show/hide operator control window.
+
+
+\begin{DoxyParams}{Parameters}
+{\em window} & Pointer to control window widget \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_a0403b27579d1787694460fc0bff5f7f4}\index{Score\_board@{Score\_board}!setMatchState@{setMatchState}}
+\index{setMatchState@{setMatchState}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{setMatchState}{setMatchState}}
+{\footnotesize\ttfamily \label{class_score__board_a0403b27579d1787694460fc0bff5f7f4} 
+void Score\+\_\+board\+::set\+Match\+State (\begin{DoxyParamCaption}\item[{int}]{state}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+Changes match state and updates display mode. 
+
+Switches between scoreboard view (First\+Half/\+Second\+Half) and slideshow mode (Pre\+Game/\+Half\+Time/\+Post\+Game).
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & Integer representation of Match\+State (0-\/4) \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_score__board_a8054ea245f3c77aea6098d130772bcd8}{Match\+State} 
+\end{DoxySeeAlso}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_aaee006696708f8f4bde960205ed5ed08}\index{Score\_board@{Score\_board}!toggleControlWindow@{toggleControlWindow}}
+\index{toggleControlWindow@{toggleControlWindow}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{toggleControlWindow}{toggleControlWindow}}
+{\footnotesize\ttfamily \label{class_score__board_aaee006696708f8f4bde960205ed5ed08} 
+void Score\+\_\+board\+::toggle\+Control\+Window (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+Toggles visibility of control window. 
+
+Shows control window if hidden, hides if visible. Triggered by double-\/click on scoreboard.
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\Hypertarget{class_score__board_a77c56321ce31224260e4280b9b72d82c}\index{Score\_board@{Score\_board}!updateEmblem@{updateEmblem}}
+\index{updateEmblem@{updateEmblem}!Score\_board@{Score\_board}}
+\doxysubsubsection{\texorpdfstring{updateEmblem}{updateEmblem}}
+{\footnotesize\ttfamily \label{class_score__board_a77c56321ce31224260e4280b9b72d82c} 
+void Score\+\_\+board\+::update\+Emblem (\begin{DoxyParamCaption}\item[{const QString \&}]{team}{, }\item[{const QString \&}]{file\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+Updates team emblem display. 
+
+Loads and displays team emblem image from file path. Supports dynamic emblem updates during match setup.
+
+
+\begin{DoxyParams}{Parameters}
+{\em team} & Team identifier ("{}\+Home"{} or "{}\+Away"{}) \\
+\hline
+{\em file\+Path} & Absolute path to emblem image file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Software/include/\mbox{\hyperlink{score__board_8h}{score\+\_\+board.\+h}}\item 
+Software/src/\mbox{\hyperlink{score__board_8cpp}{score\+\_\+board.\+cpp}}\end{DoxyCompactItemize}
