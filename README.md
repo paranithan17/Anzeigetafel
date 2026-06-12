@@ -96,7 +96,7 @@ _Data flow between external inputs, processing units, data storage, and display 
 
 ### System Class Diagram
 
-![Class Diagram](documentation/class_diagram/scoreboard_system.png)
+![Class Diagram](documentation/class_diagram/classdiagramm.png)
 
 _Complete class structure showing inheritance, composition, and relationships in the current controller-based architecture._
 
