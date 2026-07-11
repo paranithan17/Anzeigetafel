@@ -24,25 +24,40 @@
 
             <form id="matchStateForm">
                 <div class="radio-group">
-                    <div class="radio-option">
-                        <input type="radio" id="pregame" name="matchState" value="pregame" checked>
-                        <label for="pregame">Pre game</label>
+                    <div class="radio-option radio-option-with-manage">
+                        <div class="radio-option-main">
+                            <input type="radio" id="pregame" name="matchState" value="pregame" checked>
+                            <label for="pregame">Pre game</label>
+                        </div>
+                        <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="PreGame">
+                            Manage Slides
+                        </button>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="firsthalf" name="matchState" value="firsthalf">
                         <label for="firsthalf">First half</label>
                     </div>
-                    <div class="radio-option">
-                        <input type="radio" id="halftime" name="matchState" value="halftime">
-                        <label for="halftime">Half time</label>
+                    <div class="radio-option radio-option-with-manage">
+                        <div class="radio-option-main">
+                            <input type="radio" id="halftime" name="matchState" value="halftime">
+                            <label for="halftime">Half time</label>
+                        </div>
+                        <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="HalfTime">
+                            Manage Slides
+                        </button>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="secondhalf" name="matchState" value="secondhalf">
                         <label for="secondhalf">Second half</label>
                     </div>
-                    <div class="radio-option">
-                        <input type="radio" id="postgame" name="matchState" value="postgame">
-                        <label for="postgame">Post game</label>
+                    <div class="radio-option radio-option-with-manage">
+                        <div class="radio-option-main">
+                            <input type="radio" id="postgame" name="matchState" value="postgame">
+                            <label for="postgame">Post game</label>
+                        </div>
+                        <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="PostGame">
+                            Manage Slides
+                        </button>
                     </div>
                 </div>
 
@@ -255,6 +270,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Matchstate Slides Management Modal -->
+    <div id="matchStateSlidesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="matchStateSlidesModalTitle">Manage Slides</h3>
+                <button class="modal-close" id="matchStateSlidesModalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="matchStateSlidesList" class="matchstate-slides-list">
+                    <p>Loading slides...</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="matchStateSlidesUploadBtn" class="btn btn-primary">Upload</button>
+                <button id="matchStateSlidesCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="matchStateSlidesUploadInput" accept=".pdf,image/png,image/jpeg,image/bmp,image/webp,image/gif"
+        multiple class="player-import-input" title="Upload matchstate slides" aria-label="Upload matchstate slides">
 
     <!-- Log Button Menu Modal -->
     <div id="logMenuModal" class="modal">

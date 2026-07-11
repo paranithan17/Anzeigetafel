@@ -7,7 +7,7 @@
  */
 
 class WebSocketClient {
-  constructor(serverUrl = "ws://192.168.200.8:8080") {
+  constructor(serverUrl = "ws://localhost:8080") {
     this.serverUrl = serverUrl;
     this.socket = null;
     this.reconnectAttempts = 0;
@@ -247,6 +247,39 @@ class WebSocketClient {
       team: team,
       fileName: fileName,
       fileData: fileData,
+    });
+  }
+
+  /**
+   * Request list of files/directories for a matchstate slide folder.
+   */
+  requestMatchStateSlides(stateKey) {
+    return this.send({
+      type: "getMatchStateSlides",
+      stateKey,
+    });
+  }
+
+  /**
+   * Delete a file from a matchstate slide folder.
+   */
+  deleteMatchStateSlide(stateKey, entryPath) {
+    return this.send({
+      type: "deleteMatchStateSlide",
+      stateKey,
+      entryPath,
+    });
+  }
+
+  /**
+   * Upload a new slide to a matchstate slide folder.
+   */
+  uploadMatchStateSlide(stateKey, fileName, dataUrl) {
+    return this.send({
+      type: "uploadMatchStateSlide",
+      stateKey,
+      fileName,
+      dataUrl,
     });
   }
 

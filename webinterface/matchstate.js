@@ -15,6 +15,184 @@ ApplicationClient.prototype.setupMatchStateHandlers = function () {
       console.log(`[UI] Radio selected: ${e.target.value}`);
     });
   });
+
+  const matchStateSlidesButtons = document.querySelectorAll(
+    ".matchstate-files-btn[data-state-key]",
+  );
+  matchStateSlidesButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      this.openMatchStateSlidesModal(button.dataset.stateKey);
+    });
+  });
+
+  const matchStateSlidesModalClose = document.getElementById(
+    "matchStateSlidesModalClose",
+  );
+  if (matchStateSlidesModalClose) {
+    matchStateSlidesModalClose.addEventListener("click", () => {
+      this.hideModal("matchStateSlidesModal");
+    });
+  }
+
+  const matchStateSlidesCancelBtn = document.getElementById(
+    "matchStateSlidesCancelBtn",
+  );
+  if (matchStateSlidesCancelBtn) {
+    matchStateSlidesCancelBtn.addEventListener("click", () => {
+      this.hideModal("matchStateSlidesModal");
+    });
+  }
+
+  const matchStateSlidesUploadBtn = document.getElementById(
+    "matchStateSlidesUploadBtn",
+  );
+  const matchStateSlidesUploadInput = document.getElementById(
+    "matchStateSlidesUploadInput",
+  );
+
+  if (matchStateSlidesUploadBtn && matchStateSlidesUploadInput) {
+    matchStateSlidesUploadBtn.addEventListener("click", () => {
+      matchStateSlidesUploadInput.click();
+    });
+
+    matchStateSlidesUploadInput.addEventListener("change", (e) => {
+      this.handleMatchStateSlidesUpload(e.target.files);
+      matchStateSlidesUploadInput.value = "";
+    });
+  }
+};
+
+ApplicationClient.prototype.openMatchStateSlidesModal = function (stateKey) {
+  if (!stateKey) {
+    this.showNotification("No slides state selected", "warning");
+    return;
+  }
+
+  this.currentSlidesStateKey = stateKey;
+
+  const title = document.getElementById("matchStateSlidesModalTitle");
+  if (title) {
+    title.textContent = `Manage Slides - ${stateKey}`;
+  }
+
+  this.showModal("matchStateSlidesModal");
+  this.requestMatchStateSlides(stateKey);
+};
+
+ApplicationClient.prototype.requestMatchStateSlides = function (stateKey) {
+  if (!this.wsClient.isConnected()) {
+    this.showNotification("Not connected to server", "error");
+    return false;
+  }
+
+  return this.wsClient.requestMatchStateSlides(stateKey);
+};
+
+ApplicationClient.prototype.displayMatchStateSlides = function (
+  stateKey,
+  directory,
+  entries,
+) {
+  if (stateKey !== this.currentSlidesStateKey) {
+    return;
+  }
+
+  const listElement = document.getElementById("matchStateSlidesList");
+  if (!listElement) {
+    return;
+  }
+
+  if (!entries || entries.length === 0) {
+    listElement.innerHTML =
+      '<p class="empty-list-message">No files or directories found</p>';
+    return;
+  }
+
+  let html = "";
+  for (const entry of entries) {
+    const entryLabel = entry.isDir
+      ? `[DIR] ${entry.name}`
+      : `[FILE] ${entry.name}`;
+    const entryClass = entry.isDir
+      ? "matchstate-slides-item-name matchstate-slides-item-dir"
+      : "matchstate-slides-item-name";
+
+    html += `<div class="matchstate-slides-item" data-path="${entry.path}" data-name="${entry.name}" data-is-dir="${entry.isDir}">
+      <span class="${entryClass}">${entryLabel}</span>
+      <button class="matchstate-delete-btn" type="button">Delete</button>
+    </div>`;
+  }
+
+  listElement.innerHTML = html;
+
+  const deleteButtons = listElement.querySelectorAll(".matchstate-delete-btn");
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const item = e.target.closest(".matchstate-slides-item");
+      if (!item) {
+        return;
+      }
+
+      const entryPath = item.dataset.path;
+      const entryName = item.dataset.name;
+      const isDir = item.dataset.isDir === "true";
+
+      if (
+        window.confirm(
+          `Delete ${isDir ? "directory" : "file"} \"${entryName}\" from ${directory}?`,
+        )
+      ) {
+        this.deleteMatchStateSlide(this.currentSlidesStateKey, entryPath);
+      }
+    });
+  });
+};
+
+ApplicationClient.prototype.deleteMatchStateSlide = function (
+  stateKey,
+  entryPath,
+) {
+  if (!this.wsClient.isConnected()) {
+    this.showNotification("Not connected to server", "error");
+    return false;
+  }
+
+  return this.wsClient.deleteMatchStateSlide(stateKey, entryPath);
+};
+
+ApplicationClient.prototype.handleMatchStateSlidesUpload = function (fileList) {
+  if (!fileList || fileList.length === 0) {
+    return;
+  }
+
+  if (!this.wsClient.isConnected()) {
+    this.showNotification("Not connected to server", "error");
+    return;
+  }
+
+  if (!this.currentSlidesStateKey) {
+    this.showNotification("No matchstate slide folder selected", "warning");
+    return;
+  }
+
+  for (const file of fileList) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      const sent = this.wsClient.uploadMatchStateSlide(
+        this.currentSlidesStateKey,
+        file.name,
+        dataUrl,
+      );
+      if (!sent) {
+        this.showNotification(`Failed to upload: ${file.name}`, "error");
+      }
+    };
+    reader.onerror = () => {
+      this.showNotification(`Failed to read file: ${file.name}`, "error");
+    };
+    reader.readAsDataURL(file);
+  }
 };
 
 ApplicationClient.prototype.handleMatchStateUpdate = function (

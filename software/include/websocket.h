@@ -188,6 +188,47 @@ private:
     void handleSetCsvFile(const QString &team, const QString &fileName, const QString &fileData);
 
     /**
+     * @brief Sends files/directories from the selected matchstate slide directory.
+     *
+     * @param stateKey Matchstate key: PreGame, HalfTime, or PostGame
+     */
+    void sendMatchStateSlides(const QString &stateKey);
+
+    /**
+     * @brief Deletes a single slide file in the selected matchstate directory.
+     *
+     * @param stateKey Matchstate key: PreGame, HalfTime, or PostGame
+     * @param entryPath Absolute file path to remove
+     */
+    void handleDeleteMatchStateSlide(const QString &stateKey, const QString &entryPath);
+
+    /**
+     * @brief Uploads a new slide file into the selected matchstate directory.
+     *
+     * @param stateKey Matchstate key: PreGame, HalfTime, or PostGame
+     * @param fileName Uploaded file name
+     * @param dataUrl Data URL containing uploaded file bytes
+     */
+    void handleUploadMatchStateSlide(const QString &stateKey, const QString &fileName, const QString &dataUrl);
+
+    /**
+     * @brief Finds the root slide directory that contains PreGame/HalfTime/PostGame.
+     */
+    QString findSlideBasePath() const;
+
+    /**
+     * @brief Resolves one matchstate key to an absolute slide directory.
+     *
+     * @return Absolute directory path or empty string if invalid/missing
+     */
+    QString resolveSlideDirectory(const QString &stateKey) const;
+
+    /**
+     * @brief Check if candidate path is inside a base directory.
+     */
+    bool isPathInside(const QString &baseDir, const QString &candidatePath) const;
+
+    /**
      * @brief Parses a CSV file and imports players for a team.
      *
      * @param team Team identifier ("Home" or "Away")

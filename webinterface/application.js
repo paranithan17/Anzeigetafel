@@ -7,7 +7,7 @@
  */
 
 class ApplicationClient {
-  constructor(serverUrl = "ws://192.168.200.8:8080") {
+  constructor(serverUrl = "ws://localhost:8080") {
     this.wsClient = new WebSocketClient(serverUrl);
 
     this.stateMap = {
@@ -106,6 +106,8 @@ class ApplicationClient {
         this.displaySavedEmblems(data.emblems);
       } else if (data.type === "savedCsvFilesList") {
         this.displaySavedCsvFiles(data.files);
+      } else if (data.type === "savedMatchStateSlidesList") {
+        this.displayMatchStateSlides(data.stateKey, data.directory, data.entries);
       }
     } catch (error) {
       console.error(
@@ -239,7 +241,7 @@ class ApplicationClient {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[Application] Initializing Anzeigetafel Application");
 
-  window.anzeigetafelClient = new ApplicationClient("ws://192.168.200.8:8080");
+  window.anzeigetafelClient = new ApplicationClient("ws://localhost:8080");
 
   console.log("[Application] Client initialized");
 });

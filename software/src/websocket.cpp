@@ -107,7 +107,7 @@ websocket::websocket(match_controller *controller, QObject *parent)
 // Start WebSocket server
 bool websocket::start_server(quint16 port)
 {
-    const QHostAddress serverAddress(QStringLiteral("192.168.200.8"));
+    const QHostAddress serverAddress(QHostAddress::LocalHost);
     const bool ok = m_server.listen(serverAddress, port);
 
     if (ok)
@@ -292,6 +292,27 @@ void websocket::handleJsonCommand(const QJsonObject &obj)
         const bool added = m_controller->addGoalWithValidation(goalData);
         qDebug() << "Goal request from browser:" << team << "#" << playerNumber << playerName
                  << "minute=" << goalMinute << "ownGoal=" << isOwnGoal << "accepted=" << added;
+    }
+    else if (type == "getMatchStateSlides")
+    {
+        const QString stateKey = obj.value("stateKey").toString();
+        sendMatchStateSlides(stateKey);
+        return;
+    }
+    else if (type == "deleteMatchStateSlide")
+    {
+        const QString stateKey = obj.value("stateKey").toString();
+        const QString entryPath = obj.value("entryPath").toString();
+        handleDeleteMatchStateSlide(stateKey, entryPath);
+        return;
+    }
+    else if (type == "uploadMatchStateSlide")
+    {
+        const QString stateKey = obj.value("stateKey").toString();
+        const QString fileName = obj.value("fileName").toString();
+        const QString dataUrl = obj.value("dataUrl").toString();
+        handleUploadMatchStateSlide(stateKey, fileName, dataUrl);
+        return;
     }
     else if (type == "addPlayer")
     {
@@ -883,7 +904,6 @@ void websocket::parseAndImportCsv(const QString &team, QFile &file)
 
     QByteArray line;
     QList<std::pair<int, QString>> players;
-
     while ((line = file.readLine()).size() > 0)
     {
         QString lineStr = QString::fromUtf8(line).trimmed();
@@ -939,6 +959,274 @@ void websocket::parseAndImportCsv(const QString &team, QFile &file)
     }
 
     qDebug() << "Parsed and imported" << players.size() << "players for team:" << team;
+}
+
+QString websocket::findSlideBasePath() const
+{
+    const QStringList possiblePaths = {
+        QDir::homePath() + QStringLiteral("/Anzeigetafel/slides"),
+        QDir::homePath() + QStringLiteral("/Desktop/Anzeigetafel/slides"),
+        QCoreApplication::applicationDirPath() + QStringLiteral("/slides"),
+        QCoreApplication::applicationDirPath() + QStringLiteral("/../slides"),
+        QCoreApplication::applicationDirPath() + QStringLiteral("/../../slides")};
+
+    for (const QString &path : possiblePaths)
+    {
+        QDir dir(path);
+        if (dir.exists(QStringLiteral("PreGame")) &&
+            dir.exists(QStringLiteral("HalfTime")) &&
+            dir.exists(QStringLiteral("PostGame")))
+        {
+            return dir.absolutePath();
+        }
+    }
+
+    return QString();
+}
+
+QString websocket::resolveSlideDirectory(const QString &stateKey) const
+{
+    QString normalized = stateKey.trimmed();
+    if (normalized.compare(QStringLiteral("pregame"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("PreGame");
+    }
+    else if (normalized.compare(QStringLiteral("halftime"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("HalfTime");
+    }
+    else if (normalized.compare(QStringLiteral("postgame"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("PostGame");
+    }
+    else
+    {
+        return QString();
+    }
+
+    const QString basePath = findSlideBasePath();
+    if (basePath.isEmpty())
+    {
+        return QString();
+    }
+
+    QDir baseDir(basePath);
+    const QString targetPath = QDir::cleanPath(baseDir.absoluteFilePath(normalized));
+    if (!QDir(targetPath).exists())
+    {
+        return QString();
+    }
+
+    return targetPath;
+}
+
+bool websocket::isPathInside(const QString &baseDir, const QString &candidatePath) const
+{
+    const QString normalizedBase = QDir::fromNativeSeparators(
+        QDir::cleanPath(QDir(baseDir).absolutePath()));
+    const QString normalizedCandidate = QDir::fromNativeSeparators(
+        QDir::cleanPath(QFileInfo(candidatePath).absoluteFilePath()));
+
+    if (normalizedBase.isEmpty() || normalizedCandidate.isEmpty())
+    {
+        return false;
+    }
+
+    QDir base(normalizedBase);
+    const QString relative = QDir::cleanPath(base.relativeFilePath(normalizedCandidate));
+
+    if (relative == QStringLiteral("."))
+    {
+        return true;
+    }
+
+    return !relative.startsWith(QStringLiteral("../")) &&
+           relative != QStringLiteral("..") &&
+           !relative.isEmpty();
+}
+
+void websocket::sendMatchStateSlides(const QString &stateKey)
+{
+    QJsonArray entries;
+
+    QString normalized = stateKey.trimmed();
+    if (normalized.compare(QStringLiteral("pregame"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("PreGame");
+    }
+    else if (normalized.compare(QStringLiteral("halftime"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("HalfTime");
+    }
+    else if (normalized.compare(QStringLiteral("postgame"), Qt::CaseInsensitive) == 0)
+    {
+        normalized = QStringLiteral("PostGame");
+    }
+
+    const QString directoryPath = resolveSlideDirectory(normalized);
+    if (directoryPath.isEmpty())
+    {
+        qDebug() << "Could not resolve slide directory for state" << stateKey;
+    }
+    else
+    {
+        QDir dir(directoryPath);
+        const QFileInfoList infoList = dir.entryInfoList(
+            QDir::NoDotAndDotDot | QDir::AllEntries | QDir::Readable,
+            QDir::DirsFirst | QDir::Name);
+
+        for (const QFileInfo &info : infoList)
+        {
+            QJsonObject entry;
+            entry["name"] = info.fileName();
+            entry["path"] = info.absoluteFilePath();
+            entry["isDir"] = info.isDir();
+            entry["size"] = static_cast<int>(info.size());
+            entries.append(entry);
+        }
+    }
+
+    QJsonObject response;
+    response["type"] = "savedMatchStateSlidesList";
+    response["stateKey"] = normalized;
+    response["directory"] = directoryPath;
+    response["entries"] = entries;
+
+    const QString json = QString::fromUtf8(QJsonDocument(response).toJson(QJsonDocument::Compact));
+
+    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+    if (client && client->isValid())
+    {
+        client->sendTextMessage(json);
+        return;
+    }
+
+    for (QWebSocket *connectedClient : std::as_const(m_clients))
+    {
+        if (connectedClient && connectedClient->isValid())
+        {
+            connectedClient->sendTextMessage(json);
+        }
+    }
+}
+
+void websocket::handleDeleteMatchStateSlide(const QString &stateKey, const QString &entryPath)
+{
+    const QString directoryPath = resolveSlideDirectory(stateKey);
+    if (directoryPath.isEmpty())
+    {
+        qDebug() << "Delete slide rejected: could not resolve state" << stateKey;
+        return;
+    }
+
+    const QString cleanedPath = QDir::cleanPath(entryPath);
+    QFileInfo info(cleanedPath);
+
+    if (!info.exists() || (!info.isFile() && !info.isDir()))
+    {
+        qDebug() << "Delete slide rejected: entry does not exist" << cleanedPath;
+        return;
+    }
+
+    if (!isPathInside(directoryPath, cleanedPath))
+    {
+        qDebug() << "Delete slide rejected: path outside directory" << cleanedPath;
+        return;
+    }
+
+    if (QDir::cleanPath(cleanedPath) == QDir::cleanPath(directoryPath))
+    {
+        qDebug() << "Delete slide rejected: refusing to delete state root directory" << cleanedPath;
+        return;
+    }
+
+    bool removed = false;
+    if (info.isDir())
+    {
+        QDir deleteDir(cleanedPath);
+        removed = deleteDir.removeRecursively();
+    }
+    else
+    {
+        QFile file(cleanedPath);
+        removed = file.remove();
+    }
+
+    if (!removed)
+    {
+        qDebug() << "Delete slide failed:" << cleanedPath;
+        return;
+    }
+
+    qDebug() << "Deleted slide entry:" << cleanedPath;
+    sendMatchStateSlides(stateKey);
+}
+
+void websocket::handleUploadMatchStateSlide(const QString &stateKey,
+                                            const QString &fileName,
+                                            const QString &dataUrl)
+{
+    const QString directoryPath = resolveSlideDirectory(stateKey);
+    if (directoryPath.isEmpty())
+    {
+        qDebug() << "Upload slide rejected: could not resolve state" << stateKey;
+        return;
+    }
+
+    QDir dir(directoryPath);
+    if (!dir.exists() && !dir.mkpath(QStringLiteral(".")))
+    {
+        qDebug() << "Upload slide failed: cannot create directory" << directoryPath;
+        return;
+    }
+
+    QString safeFileName = QFileInfo(fileName.trimmed()).fileName();
+    if (safeFileName.isEmpty())
+    {
+        qDebug() << "Upload slide rejected: invalid filename" << fileName;
+        return;
+    }
+    safeFileName.replace(QStringLiteral(" "), QStringLiteral("_"));
+
+    QString base64Data = dataUrl;
+    const int commaIndex = base64Data.indexOf(',');
+    if (commaIndex >= 0)
+    {
+        base64Data = base64Data.mid(commaIndex + 1);
+    }
+
+    const QByteArray rawData = QByteArray::fromBase64(base64Data.toUtf8());
+    if (rawData.isEmpty())
+    {
+        qDebug() << "Upload slide rejected: empty data for" << safeFileName;
+        return;
+    }
+
+    const QString fullPath = QDir::cleanPath(dir.absoluteFilePath(safeFileName));
+    if (!isPathInside(directoryPath, fullPath))
+    {
+        qDebug() << "Upload slide rejected: path outside directory" << fullPath;
+        return;
+    }
+
+    QFile file(fullPath);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Upload slide failed: cannot open" << fullPath << file.errorString();
+        return;
+    }
+
+    const qint64 bytesWritten = file.write(rawData);
+    file.close();
+
+    if (bytesWritten <= 0)
+    {
+        qDebug() << "Upload slide failed: no bytes written" << fullPath;
+        return;
+    }
+
+    qDebug() << "Uploaded slide file:" << fullPath;
+    sendMatchStateSlides(stateKey);
 }
 
 void websocket::broadcastScoreTime()
