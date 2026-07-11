@@ -107,7 +107,11 @@ class ApplicationClient {
       } else if (data.type === "savedCsvFilesList") {
         this.displaySavedCsvFiles(data.files);
       } else if (data.type === "savedMatchStateSlidesList") {
-        this.displayMatchStateSlides(data.stateKey, data.directory, data.entries);
+        this.displayMatchStateSlides(
+          data.stateKey,
+          data.directory,
+          data.entries,
+        );
       }
     } catch (error) {
       console.error(
@@ -237,11 +241,19 @@ class ApplicationClient {
   }
 }
 
+function resolveWebSocketUrl() {
+  const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const host = window.location.hostname || "localhost";
+  return `${wsProtocol}://${host}:8080`;
+}
+
 // Initialize client when DOM is ready.
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[Application] Initializing Anzeigetafel Application");
 
-  window.anzeigetafelClient = new ApplicationClient("ws://localhost:8080");
+  const websocketUrl = resolveWebSocketUrl();
+  console.log(`[Application] Using WebSocket URL: ${websocketUrl}`);
+  window.anzeigetafelClient = new ApplicationClient(websocketUrl);
 
   console.log("[Application] Client initialized");
 });

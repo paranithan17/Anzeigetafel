@@ -107,7 +107,7 @@ websocket::websocket(match_controller *controller, QObject *parent)
 // Start WebSocket server
 bool websocket::start_server(quint16 port)
 {
-    const QHostAddress serverAddress(QHostAddress::LocalHost);
+    const QHostAddress serverAddress(QHostAddress::AnyIPv4);
     const bool ok = m_server.listen(serverAddress, port);
 
     if (ok)
