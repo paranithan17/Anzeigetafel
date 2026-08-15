@@ -482,7 +482,7 @@ void Score_board::startSlideshow(const QString &folderPath) {
   slideshowLabel->setVisible(true);
 
   showNextSlide();
-  slideshowTimer->start(5000);
+  slideshowTimer->start(15000);
 }
 
 void Score_board::stopSlideshow() {
