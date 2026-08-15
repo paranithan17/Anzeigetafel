@@ -236,7 +236,7 @@ void Score_board::setupLayout() {
   mainlayout->addSpacing(-5);
   mainlayout->addLayout(topLayout);
   //    mainlayout->addSpacing(0);
-  mainlayout->addLayout(scorerLayout);
+  // mainlayout->addLayout(scorerLayout);
   setLayout(mainlayout);
 }
 
@@ -482,7 +482,7 @@ void Score_board::startSlideshow(const QString &folderPath) {
   slideshowLabel->setVisible(true);
 
   showNextSlide();
-  slideshowTimer->start(15000);
+  slideshowTimer->start(5000);
 }
 
 void Score_board::stopSlideshow() {
