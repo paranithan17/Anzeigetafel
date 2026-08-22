@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
 
   // Add emblem changed signal connection
   QObject::connect(controller, &match_controller::emblemChanged, scoreboard, &Score_board::updateEmblem);
+  QObject::connect(controller, &match_controller::wallClockUpdated,
+                   scoreboard, &Score_board::setWallClockDisplay);
 
   // Match controller is the source for interaction state changes
   QObject::connect(controller, &match_controller::matchStateChanged,

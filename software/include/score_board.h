@@ -116,12 +116,29 @@ private:
         QString filePath;
         int pageNumber = 0;
         bool isPdf = false;
+        int durationMs = 15000;
+    };
+
+    enum class PreGameCycleMode
+    {
+        Slides = 0,
+        Clock
     };
 
     /** @brief Ordered slide entries used for the slideshow. */
     QList<SlidePage> slideshowPages;
     /** @brief Current zero-based slideshow index. */
     int slideshowIndex = 0;
+    /** @brief True while slides and wall-clock alternate in PreGame state. */
+    PreGameCycleMode preGameCycleMode = PreGameCycleMode::Slides;
+    /** @brief Default slide duration used when no per-slide override is defined. */
+    int defaultSlideDurationMs = 15000;
+    /** @brief Duration for clock-only block in PreGame. */
+    int preGameClockDurationMs = 30000;
+    /** @brief Last synchronized wall-clock display text. */
+    QString wallClockDisplay = QStringLiteral("00:00:00");
+    /** @brief True while the slideshow label currently shows the PreGame clock. */
+    bool showingPreGameClock = false;
 
     QString baseSlidePath;
     QString preGamePath;
@@ -186,6 +203,16 @@ private:
      * @return void
      */
     void showNextSlide();
+
+    /**
+     * @brief Shows the current wall-clock in fullscreen slideshow area.
+     */
+    void showPreGameClock();
+
+    /**
+     * @brief Parses optional per-slide duration override from slide file name.
+     */
+    int resolveSlideDurationMs(const QFileInfo &fileInfo) const;
 
     /**
      * @brief Adujusts scorer list widgets dependon on longest name
@@ -298,6 +325,11 @@ public slots:
      * @return void
      */
     void setMatchState(int state);
+
+    /**
+     * @brief Updates internally displayed wall-clock text from synchronized source.
+     */
+    void setWallClockDisplay(const QString &displayTime, qint64 epochMs);
 
     /**
      * @brief Toggles visibility of control window.

@@ -29,6 +29,9 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QDateTime>
+#include <QElapsedTimer>
+#include <QTimer>
 #include <vector>
 #include <memory>
 
@@ -123,6 +126,26 @@ public:
      * @return Formatted time string or empty if unavailable
      */
     QString getCurrentTime() const;
+
+    /**
+     * @brief Returns current internally managed wall-clock time in HH:mm:ss.
+     */
+    QString getCurrentWallClockText() const;
+
+    /**
+     * @brief Returns current internally managed wall-clock as Unix epoch milliseconds.
+     */
+    qint64 getCurrentWallClockEpochMs() const;
+
+    /**
+     * @brief Synchronizes internal wall-clock from epoch milliseconds.
+     */
+    bool synchronizeWallClock(qint64 epochMs);
+
+    /**
+     * @brief Synchronizes internal wall-clock from ISO datetime string.
+     */
+    bool synchronizeWallClock(const QString &isoDateTime);
 
     /**
      * @brief Adds a player to the selected team roster.
@@ -332,6 +355,14 @@ signals:
      */
     void emblemChanged(const QString &team, const QString &filepath);
 
+    /**
+     * @brief Emitted whenever the internally managed wall-clock changes.
+     *
+     * @param displayTime Human readable wall-clock time (HH:mm:ss)
+     * @param epochMs Unix epoch milliseconds of internal wall-clock
+     */
+    void wallClockUpdated(const QString &displayTime, qint64 epochMs);
+
 public slots:
     /**
      * @brief Processes user decision for starting second half.
@@ -362,6 +393,11 @@ private slots:
      */
     void onTimerTimeout();
 
+    /**
+     * @brief Emits periodic wall-clock updates while app is running.
+     */
+    void onWallClockTick();
+
 private:
     /**
      * @brief Applies timer phase configuration for a given match state.
@@ -381,6 +417,11 @@ private:
      */
     bool isActiveState(MatchState state) const;
 
+    /**
+     * @brief Returns current internally managed wall-clock in UTC.
+     */
+    QDateTime currentWallClockUtc() const;
+
     /** @brief Home team roster/model instance. */
     team m_homeTeam;
     /** @brief Away team roster/model instance. */
@@ -397,6 +438,13 @@ private:
     QString m_homeTeamEmblem;
     /** @brief Stored emblem path for away team. */
     QString m_awayTeamEmblem;
+
+    /** @brief UTC base timestamp used for internal wall-clock progression. */
+    QDateTime m_wallClockBaseUtc;
+    /** @brief Monotonic elapsed timer since last clock synchronization. */
+    QElapsedTimer m_wallClockElapsed;
+    /** @brief Periodic notifier for wall-clock updates. */
+    QTimer m_wallClockTickTimer;
 };
 
 #endif // MATCH_CONTROLLER_H

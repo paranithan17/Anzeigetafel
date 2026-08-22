@@ -16,6 +16,7 @@
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QTemporaryDir>
+#include <algorithm>
 
 #ifdef HAVE_QTPDF
 #include <QPdfDocument>
@@ -147,7 +148,7 @@ Score_board::Score_board(score_memory *score, timer *gameTime, QWidget *parent)
 
   slideshowLabel = new QLabel(this);
   slideshowLabel->setAlignment(Qt::AlignCenter);
-  slideshowLabel->setStyleSheet("background-color: black;");
+  slideshowLabel->setStyleSheet("background-color: black; color: white;");
   slideshowLabel->setVisible(false);
   slideshowLabel->raise();
   slideshowLabel->setGeometry(this->rect());
@@ -347,6 +348,8 @@ void Score_board::resizeEvent(QResizeEvent *event) {
     if (!pix.isNull()) {
       slideshowLabel->setPixmap(
           pix.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else if (showingPreGameClock) {
+      showPreGameClock();
     }
   }
 
@@ -479,21 +482,59 @@ void Score_board::startSlideshow(const QString &folderPath) {
   }
 
   slideshowIndex = 0;
+  preGameCycleMode = PreGameCycleMode::Slides;
   slideshowLabel->setVisible(true);
 
   showNextSlide();
-  slideshowTimer->start(15000);
 }
 
 void Score_board::stopSlideshow() {
   slideshowTimer->stop();
   slideshowLabel->setVisible(false);
   slideshowPages.clear();
+  showingPreGameClock = false;
 }
 
 void Score_board::showNextSlide() {
   if (slideshowPages.isEmpty())
     return;
+
+  if (m_state == MatchState::PreGame) {
+    if (preGameCycleMode == PreGameCycleMode::Clock) {
+      showPreGameClock();
+      preGameCycleMode = PreGameCycleMode::Slides;
+      slideshowTimer->start(preGameClockDurationMs);
+      return;
+    }
+
+    const SlidePage slide = slideshowPages.at(slideshowIndex);
+    const bool isLastSlide = (slideshowIndex == slideshowPages.size() - 1);
+    slideshowIndex = (slideshowIndex + 1) % slideshowPages.size();
+
+    QImage pageImage;
+    if (slide.isPdf) {
+      pageImage = renderPdfPage(slide.filePath, slide.pageNumber);
+    } else {
+      pageImage = QImage(slide.filePath);
+    }
+
+    if (!pageImage.isNull()) {
+      showingPreGameClock = false;
+      slideshowLabel->clear();
+      slideshowLabel->setPixmap(QPixmap::fromImage(pageImage).scaled(
+          size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else {
+      qWarning() << "Failed to render slide:" << slide.filePath << "page"
+                 << slide.pageNumber;
+    }
+
+    if (isLastSlide) {
+      preGameCycleMode = PreGameCycleMode::Clock;
+    }
+
+    slideshowTimer->start(std::max(1000, slide.durationMs));
+    return;
+  }
 
   const SlidePage slide = slideshowPages.at(slideshowIndex);
   slideshowIndex = (slideshowIndex + 1) % slideshowPages.size();
@@ -506,12 +547,16 @@ void Score_board::showNextSlide() {
   }
 
   if (!pageImage.isNull()) {
+    showingPreGameClock = false;
+    slideshowLabel->clear();
     slideshowLabel->setPixmap(QPixmap::fromImage(pageImage).scaled(
         size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
   } else {
     qWarning() << "Failed to render slide:" << slide.filePath << "page"
                << slide.pageNumber;
   }
+
+  slideshowTimer->start(std::max(1000, slide.durationMs));
 }
 
 QList<Score_board::SlidePage>
@@ -538,6 +583,7 @@ QList<Score_board::SlidePage> Score_board::collectPdfPages(const QDir &dir) {
 
   for (const QFileInfo &fi : files) {
     const QString suffix = fi.suffix().toLower();
+    const int durationMs = resolveSlideDurationMs(fi);
 
     if (suffix == QStringLiteral("pdf")) {
       const int pageCount = pdfPageCount(fi.absoluteFilePath());
@@ -547,7 +593,7 @@ QList<Score_board::SlidePage> Score_board::collectPdfPages(const QDir &dir) {
       }
 
       for (int page = 1; page <= pageCount; ++page) {
-        result.append({fi.absoluteFilePath(), page, true});
+        result.append({fi.absoluteFilePath(), page, true, durationMs});
       }
     } else {
       QImage image(fi.absoluteFilePath());
@@ -557,11 +603,44 @@ QList<Score_board::SlidePage> Score_board::collectPdfPages(const QDir &dir) {
         continue;
       }
 
-      result.append({fi.absoluteFilePath(), 0, false});
+      result.append({fi.absoluteFilePath(), 0, false, durationMs});
     }
   }
 
   return result;
+}
+
+void Score_board::showPreGameClock() {
+  QFont clockFont;
+  clockFont.setBold(true);
+
+  if (isFullScreen()) {
+    clockFont.setPointSize(std::max(24, std::min(width(), height()) / 5));
+  } else {
+    clockFont.setPixelSize(96);
+  }
+
+  slideshowLabel->setPixmap(QPixmap());
+  slideshowLabel->setFont(clockFont);
+  slideshowLabel->setText(wallClockDisplay);
+  showingPreGameClock = true;
+}
+
+int Score_board::resolveSlideDurationMs(const QFileInfo &fileInfo) const {
+  const QString baseName = fileInfo.completeBaseName();
+  QRegularExpression pattern(QStringLiteral(R"((?:^|[_-])(\d{1,3})s(?:$|[_-]))"));
+  const QRegularExpressionMatch match = pattern.match(baseName);
+  if (!match.hasMatch()) {
+    return defaultSlideDurationMs;
+  }
+
+  bool ok = false;
+  const int seconds = match.captured(1).toInt(&ok);
+  if (!ok || seconds <= 0) {
+    return defaultSlideDurationMs;
+  }
+
+  return seconds * 1000;
 }
 
 void Score_board::setControlWindow(QWidget *window) { controlWindow = window; }
@@ -614,6 +693,25 @@ void Score_board::setupSlidePaths() {
   qDebug() << "PreGame path:" << preGamePath;
   qDebug() << "HalfTime path:" << halfTimePath;
   qDebug() << "PostGame path:" << postGamePath;
+}
+
+void Score_board::setWallClockDisplay(const QString &displayTime,
+                                      qint64 epochMs) {
+  Q_UNUSED(epochMs);
+
+  if (!displayTime.isEmpty()) {
+    const QStringList parts = displayTime.split(':');
+    if (parts.size() >= 2) {
+      wallClockDisplay = parts.at(0) + ":" + parts.at(1);
+    } else {
+      wallClockDisplay = displayTime;
+    }
+  }
+
+  if (m_state == MatchState::PreGame && slideshowLabel && slideshowLabel->isVisible() &&
+      showingPreGameClock) {
+    showPreGameClock();
+  }
 }
 void Score_board::adjustScorerListWidths() {
   const int minWidth = 80;

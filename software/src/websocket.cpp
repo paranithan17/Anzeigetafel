@@ -101,6 +101,11 @@ websocket::websocket(match_controller *controller, QObject *parent)
                 &match_controller::timeChanged,
                 this,
                 &websocket::broadcastTimeUpdate);
+
+        connect(m_controller,
+            &match_controller::wallClockUpdated,
+            this,
+            &websocket::broadcastWallClock);
     }
 }
 
@@ -159,6 +164,10 @@ void websocket::onNewConnection()
         const QString currentTime = m_controller->getCurrentTime();
         scoreObj["time"] = currentTime.isEmpty() ? QStringLiteral("00:00") : currentTime;
         client->sendTextMessage(QString::fromUtf8(QJsonDocument(scoreObj).toJson(QJsonDocument::Compact)));
+
+        client->sendTextMessage(createWallClockJson(
+            m_controller->getCurrentWallClockText(),
+            m_controller->getCurrentWallClockEpochMs()));
     }
 }
 
@@ -408,6 +417,44 @@ void websocket::handleJsonCommand(const QJsonObject &obj)
         const QString fileData = obj.value("fileData").toString();
 
         handleSetCsvFile(team, fileName, fileData);
+        return;
+    }
+    else if (type == "setClockTime")
+    {
+        bool synced = false;
+
+        if (obj.contains("epochMs"))
+        {
+            bool ok = false;
+            const qint64 epochMs = obj.value("epochMs").toVariant().toLongLong(&ok);
+            if (ok)
+            {
+                synced = m_controller->synchronizeWallClock(epochMs);
+            }
+        }
+        else
+        {
+            const QString iso = obj.value("iso").toString();
+            synced = m_controller->synchronizeWallClock(iso);
+        }
+
+        if (!synced)
+        {
+            qDebug() << "setClockTime rejected: invalid payload";
+            return;
+        }
+
+        return;
+    }
+    else if (type == "getClockTime")
+    {
+        QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+        if (client && client->isValid())
+        {
+            client->sendTextMessage(createWallClockJson(
+                m_controller->getCurrentWallClockText(),
+                m_controller->getCurrentWallClockEpochMs()));
+        }
         return;
     }
 }
@@ -1274,6 +1321,28 @@ void websocket::broadcastTimeUpdate(const QString &elapsedTime)
             client->sendTextMessage(json);
         }
     }
+}
+
+void websocket::broadcastWallClock(const QString &displayTime, qint64 epochMs)
+{
+    const QString json = createWallClockJson(displayTime, epochMs);
+
+    for (QWebSocket *client : std::as_const(m_clients))
+    {
+        if (client && client->isValid())
+        {
+            client->sendTextMessage(json);
+        }
+    }
+}
+
+QString websocket::createWallClockJson(const QString &displayTime, qint64 epochMs) const
+{
+    QJsonObject obj;
+    obj["type"] = "clockTime";
+    obj["time"] = displayTime;
+    obj["epochMs"] = static_cast<double>(epochMs);
+    return QString::fromUtf8(QJsonDocument(obj).toJson(QJsonDocument::Compact));
 }
 
 // Create JSON text for a team's players (used for single-client sends)

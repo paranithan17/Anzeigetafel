@@ -100,6 +100,11 @@ private slots:
      */
     void broadcastTimeUpdate(const QString &elapsedTime);
 
+    /**
+     * @brief Broadcasts internal wall-clock update to all browsers.
+     */
+    void broadcastWallClock(const QString &displayTime, qint64 epochMs);
+
 private:
     QWebSocketServer m_server;      ///< WebSocket server instance
     QList<QWebSocket *> m_clients;  ///< Connected browser clients
@@ -111,6 +116,11 @@ private:
      * @param obj JSON object received from client
      */
     void handleJsonCommand(const QJsonObject &obj);
+
+    /**
+     * @brief Creates wall-clock JSON payload for browser clients.
+     */
+    QString createWallClockJson(const QString &displayTime, qint64 epochMs) const;
 
     /**
      * @brief Converts controller state integer into JSON message.

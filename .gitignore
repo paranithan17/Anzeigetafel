@@ -42,6 +42,8 @@ Thumbs.db
 *.qrc.dep
 
 # --- Optional: ignore generated build directories (out-of-source builds) ---
-/Software/build*/
-/Software/.qtcreator
-/Software/CMakeLists.txt.user
+/software/build*/
+/software/.qtcreator
+/software/CMakeLists.txt.user
+
+/slides

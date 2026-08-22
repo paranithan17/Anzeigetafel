@@ -16,6 +16,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QTimeZone>
 #include <QtGlobal>
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -38,6 +39,12 @@ match_controller::match_controller(score_memory *scoreMemory, timer *gameTimer, 
         connect(m_gameTimer, &timer::timeout, this, &match_controller::onTimerTimeout);
         applyTimerPhaseForState(m_state);
     }
+
+    m_wallClockBaseUtc = QDateTime::currentDateTimeUtc();
+    m_wallClockElapsed.start();
+    m_wallClockTickTimer.setInterval(1000);
+    connect(&m_wallClockTickTimer, &QTimer::timeout, this, &match_controller::onWallClockTick);
+    m_wallClockTickTimer.start();
 }
 
 match_controller::MatchState match_controller::currentState() const
@@ -298,6 +305,59 @@ QString match_controller::getCurrentTime() const
     return QString();
 }
 
+QString match_controller::getCurrentWallClockText() const
+{
+    return currentWallClockUtc().toLocalTime().toString(QStringLiteral("HH:mm:ss"));
+}
+
+qint64 match_controller::getCurrentWallClockEpochMs() const
+{
+    return currentWallClockUtc().toMSecsSinceEpoch();
+}
+
+bool match_controller::synchronizeWallClock(qint64 epochMs)
+{
+    const QDateTime syncedUtc = QDateTime::fromMSecsSinceEpoch(epochMs, QTimeZone::UTC);
+    if (!syncedUtc.isValid())
+    {
+        return false;
+    }
+
+    m_wallClockBaseUtc = syncedUtc;
+    m_wallClockElapsed.restart();
+    emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
+    return true;
+}
+
+bool match_controller::synchronizeWallClock(const QString &isoDateTime)
+{
+    const QString value = isoDateTime.trimmed();
+    if (value.isEmpty())
+    {
+        return false;
+    }
+
+    QDateTime parsed = QDateTime::fromString(value, Qt::ISODateWithMs);
+    if (!parsed.isValid())
+    {
+        parsed = QDateTime::fromString(value, Qt::ISODate);
+    }
+    if (!parsed.isValid())
+    {
+        return false;
+    }
+
+    if (parsed.timeSpec() != Qt::UTC)
+    {
+        parsed = parsed.toUTC();
+    }
+
+    m_wallClockBaseUtc = parsed;
+    m_wallClockElapsed.restart();
+    emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
+    return true;
+}
+
 bool match_controller::requestStateChange(MatchState newState, bool confirmedRunningTimerStop)
 {
     if (newState == m_state)
@@ -397,6 +457,21 @@ void match_controller::onTimerTimeout()
     {
         emit secondHalfDecisionNeeded();
     }
+}
+
+void match_controller::onWallClockTick()
+{
+    emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
+}
+
+QDateTime match_controller::currentWallClockUtc() const
+{
+    if (!m_wallClockElapsed.isValid())
+    {
+        return m_wallClockBaseUtc;
+    }
+
+    return m_wallClockBaseUtc.addMSecs(m_wallClockElapsed.elapsed());
 }
 
 void match_controller::applyTimerPhaseForState(MatchState state)

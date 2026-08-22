@@ -284,6 +284,25 @@ class WebSocketClient {
   }
 
   /**
+   * Synchronize server-side internal clock using browser epoch milliseconds.
+   */
+  sendSetClockTime(epochMs) {
+    return this.send({
+      type: "setClockTime",
+      epochMs,
+    });
+  }
+
+  /**
+   * Request current server-side internal clock snapshot.
+   */
+  requestClockTime() {
+    return this.send({
+      type: "getClockTime",
+    });
+  }
+
+  /**
    * Check if connected to server
    */
   isConnected() {

@@ -634,3 +634,20 @@ button:disabled,
     font-size: 20px;
     color: #cccccc;
 }
+
+.clock-sync-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: 1px solid #2f2f2f;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    color: #f0f0f0;
+    font-size: 14px;
+}
+
+#syncClockBtn {
+    min-width: 160px;
+}

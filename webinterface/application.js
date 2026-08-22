@@ -68,6 +68,8 @@ class ApplicationClient {
     console.log("[Application] WebSocket connected");
     this.updateConnectionStatus("connected");
     this.showNotification("Connected to server", "success");
+    this.wsClient.sendSetClockTime(Date.now());
+    this.wsClient.requestClockTime();
   }
 
   /**
@@ -112,6 +114,8 @@ class ApplicationClient {
           data.directory,
           data.entries,
         );
+      } else if (data.type === "clockTime") {
+        this.updateClockTimeDisplay(data.time, data.epochMs);
       }
     } catch (error) {
       console.error(
