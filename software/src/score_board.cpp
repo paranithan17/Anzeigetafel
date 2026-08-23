@@ -617,7 +617,7 @@ void Score_board::showPreGameClock() {
   if (isFullScreen()) {
     clockFont.setPointSize(std::max(24, std::min(width(), height()) / 5));
   } else {
-    clockFont.setPixelSize(96);
+    clockFont.setPixelSize(180);
   }
 
   slideshowLabel->setPixmap(QPixmap());
