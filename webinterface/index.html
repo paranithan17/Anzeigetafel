@@ -15,54 +15,54 @@
 
         <button id="fullscreenBtn" class="fullscreen-btn btn-primary-fullscreen material-icons">fullscreen</i>
         </button>
-        <div id="connectionStatus" class="connection-status status-connecting">Connecting...</div>
+        <div id="connectionStatus" class="connection-status status-connecting">Verbindung...</div>
     </div>
 
     <div class="container">
         <div class="match-state-section">
-            <h2>Match State</h2>
+            <h2>SPIELBETRIEB</h2>
 
             <form id="matchStateForm">
                 <div class="radio-group">
                     <div class="radio-option radio-option-with-manage">
                         <div class="radio-option-main">
                             <input type="radio" id="pregame" name="matchState" value="pregame" checked>
-                            <label for="pregame">Pre game</label>
+                            <label for="pregame">Vor dem Spiel</label>
                         </div>
                         <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="PreGame">
-                            Manage Slides
+                            Folien verwalten
                         </button>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="firsthalf" name="matchState" value="firsthalf">
-                        <label for="firsthalf">First half</label>
+                        <label for="firsthalf">Erste Halbzeit</label>
                     </div>
                     <div class="radio-option radio-option-with-manage">
                         <div class="radio-option-main">
                             <input type="radio" id="halftime" name="matchState" value="halftime">
-                            <label for="halftime">Half time</label>
+                            <label for="halftime">Pause</label>
                         </div>
                         <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="HalfTime">
-                            Manage Slides
+                            Folien verwalten
                         </button>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="secondhalf" name="matchState" value="secondhalf">
-                        <label for="secondhalf">Second half</label>
+                        <label for="secondhalf"> Zweite Halbzeit</label>
                     </div>
                     <div class="radio-option radio-option-with-manage">
                         <div class="radio-option-main">
                             <input type="radio" id="postgame" name="matchState" value="postgame">
-                            <label for="postgame">Post game</label>
+                            <label for="postgame">Spielende</label>
                         </div>
                         <button type="button" class="btn btn-primary matchstate-files-btn" data-state-key="PostGame">
-                            Manage Slides
+                            Folien verwalten
                         </button>
                     </div>
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="btn btn-primary">Apply State</button>
+                    <button type="submit" class="btn btn-primary">Spielbetrieb wechseln</button>
                 </div>
             </form>
         </div>
@@ -85,14 +85,14 @@
         <div class="teams-row">
             <!-- Home Team -->
             <div class="team-container" id="homeTeam">
-                <h3>Home Team</h3>
+                <h3>Heimteam</h3>
                 <div class="goal-button-group">
-                    <button id="homeGoalBtn" class="btn btn-primary goal-btn">Goal</button>
+                    <button id="homeGoalBtn" class="btn btn-primary goal-btn">Tor</button>
                 </div>
 
                 <!-- Players section in Home container -->
                 <div class="player-list-section">
-                    <h4>Players</h4>
+                    <h4>Spieler</h4>
 
                     <!-- Control buttons -->
                     <div class="player-control-buttons">
@@ -115,14 +115,14 @@
 
             <!-- Away Team -->
             <div class="team-container" id="awayTeam">
-                <h3>Away Team</h3>
+                <h3>Gastteam</h3>
                 <div class="goal-button-group">
-                    <button id="awayGoalBtn" class="btn btn-primary goal-btn">Goal</button>
+                    <button id="awayGoalBtn" class="btn btn-primary goal-btn">Tor</button>
                 </div>
 
                 <!-- Players section in Away container -->
                 <div class="player-list-section">
-                    <h4>Players</h4>
+                    <h4>Spieler</h4>
 
                     <!-- Control buttons -->
                     <div class="player-control-buttons">
@@ -146,11 +146,11 @@
 
         <!-- Timer control button -->
         <div class="timer-button-container">
-            <button id="startTimerBtn" class="btn btn-primary">Start Timer</button>
+            <button id="startTimerBtn" class="btn btn-primary">Timer starten</button>
         </div>
         <!-- Log button -->
         <div class="log-button-container">
-            <button id="logBtn" class="btn btn-primary">Log</button>
+            <button id="logBtn" class="btn btn-primary">Einstellungen</button>
         </div>
     </div>
 
@@ -158,18 +158,18 @@
     <div id="homeAddPlayerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Player - Home Team</h3>
+                <h3>Spieler hinzufügen - Heim Team</h3>
                 <button class="modal-close" id="homeModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-input-group">
-                    <input type="number" id="homePlayerNum" placeholder="Jersey Number" min="0" class="modal-input">
-                    <input type="text" id="homePlayerName" placeholder="Player Name" class="modal-input">
+                    <input type="number" id="homePlayerNum" placeholder="Trikotnummer" min="0" class="modal-input">
+                    <input type="text" id="homePlayerName" placeholder="Spielername" class="modal-input">
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="homeAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
-                <button id="homeAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="homeAddPlayerConfirmBtn" class="btn btn-primary">Hinzufügen</button>
+                <button id="homeAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -178,18 +178,18 @@
     <div id="awayAddPlayerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Player - Away Team</h3>
+                <h3>Spieler hinzufügen - Gast Team</h3>
                 <button class="modal-close" id="awayModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-input-group">
-                    <input type="number" id="awayPlayerNum" placeholder="Jersey Number" min="0" class="modal-input">
-                    <input type="text" id="awayPlayerName" placeholder="Player Name" class="modal-input">
+                    <input type="number" id="awayPlayerNum" placeholder="Trikotnummer" min="0" class="modal-input">
+                    <input type="text" id="awayPlayerName" placeholder="Spielername" class="modal-input">
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="awayAddPlayerConfirmBtn" class="btn btn-primary">Add</button>
-                <button id="awayAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="awayAddPlayerConfirmBtn" class="btn btn-primary">Hinzufügen</button>
+                <button id="awayAddPlayerCancelBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -198,18 +198,18 @@
     <div id="goalSelectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Scorer</h3>
+                <h3>Torschütze Wählen</h3>
                 <button class="modal-close" id="goalModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="goal-list-container">
-                    <h4>Home Team</h4>
+                    <h4>Heim Team</h4>
                     <div id="goalHomeList" class="goal-list">
                         <p>No players</p>
                     </div>
                 </div>
                 <div class="goal-list-container">
-                    <h4>Away Team</h4>
+                    <h4>Gast Team</h4>
                     <div id="goalAwayList" class="goal-list">
                         <p>No players</p>
                     </div>
@@ -219,15 +219,15 @@
             <!-- Goal Details Section -->
             <div class="goal-details-section">
                 <div class="goal-input-group">
-                    <label for="goalMinuteInput">Goal Minute:</label>
+                    <label for="goalMinuteInput">Tor Minute:</label>
                     <input type="number" id="goalMinuteInput" placeholder="0" min="0" max="120"
                         class="modal-input goal-minute-input">
                 </div>
                 <!-- Manual Own Goal checkbox removed: own goals are detected/confirmed automatically -->
             </div>
             <div class="modal-footer">
-                <button id="goalAnonymousBtn" class="btn btn-primary">Save (no scorer)</button>
-                <button id="goalCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="goalAnonymousBtn" class="btn btn-primary">Speichern (ohne Torschützen)</button>
+                <button id="goalCancelBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -236,18 +236,19 @@
     <div id="ownGoalConfirmModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Own Goal Confirmation</h3>
+                <h3>Eigentor bestätigen</h3>
                 <button class="modal-close" id="ownGoalConfirmModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <p id="ownGoalConfirmText" class="modal-body-confirmation-text">
-                    You selected a player from the opponent team. Should this be marked as an own goal?
+                    Du hast einen Spieler der gegnerischen Mannschaft ausgewählt. Sollte dies als Eigentor gewertet
+                    werden?
                 </p>
             </div>
             <div class="modal-footer">
-                <button id="ownGoalConfirmYesBtn" class="btn btn-primary">Yes, Own Goal</button>
-                <button id="ownGoalConfirmNoBtn" class="btn btn-primary">No, Regular Goal</button>
-                <button id="ownGoalConfirmCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="ownGoalConfirmYesBtn" class="btn btn-primary">Ja, Eigentor</button>
+                <button id="ownGoalConfirmNoBtn" class="btn btn-primary">Nein, reguläres Tor</button>
+                <button id="ownGoalConfirmCancelBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -256,17 +257,17 @@
     <div id="matchStateConfirmModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Match State Change Confirmation</h3>
+                <h3>Spielbetriebwechsel Bestätigen</h3>
                 <button class="modal-close" id="matchStateConfirmModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <p id="matchStateConfirmText" class="modal-body-confirmation-text">
-                    Are you sure you want to leave the current match state?
+                    Möchtest Du den aktuellen Spielstand wirklich verlassen?
                 </p>
             </div>
             <div class="modal-footer">
-                <button id="matchStateConfirmYesBtn" class="btn btn-primary">Yes, Continue</button>
-                <button id="matchStateConfirmNoBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="matchStateConfirmYesBtn" class="btn btn-primary">Ja, weiter</button>
+                <button id="matchStateConfirmNoBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -275,19 +276,19 @@
     <div id="matchStateSlidesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="matchStateSlidesModalTitle">Manage Slides</h3>
+                <h3 id="matchStateSlidesModalTitle">Folien Verwalten</h3>
                 <button class="modal-close" id="matchStateSlidesModalClose">&times;</button>
             </div>
 
             <div class="modal-body">
                 <div id="matchStateSlidesList" class="matchstate-slides-list">
-                    <p>Loading slides...</p>
+                    <p>Folien laden...</p>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <button id="matchStateSlidesUploadBtn" class="btn btn-primary">Upload</button>
-                <button id="matchStateSlidesCancelBtn" class="btn btn-primary modal-cancel-btn">Cancel</button>
+                <button id="matchStateSlidesCancelBtn" class="btn btn-primary modal-cancel-btn">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -304,13 +305,14 @@
                 <button class="modal-close" id="logMenuModalClose">&times;</button>
             </div>
             <div class="modal-body log-menu-modal-body">
-                <button id="logRestartTimerBtn" class="btn btn-primary log-menu-button">Restart Timer</button>
-                <button id="logResetScoreTimerBtn" class="btn btn-primary log-menu-button">Reset Score & Timer</button>
-                <button id="logRetakeGoalBtn" class="btn btn-primary log-menu-button">Retake Last Goal</button>
-                <button id="syncClockBtn" class="btn btn-primary log-menu-button">Sync Clock</button>
+                <button id="logRestartTimerBtn" class="btn btn-primary log-menu-button">Timer reset</button>
+                <button id="logResetScoreTimerBtn" class="btn btn-primary log-menu-button">Spielstand & Timer
+                    reset</button>
+                <button id="logRetakeGoalBtn" class="btn btn-primary log-menu-button">Letztes Tor zurücknehmen</button>
+                <button id="syncClockBtn" class="btn btn-primary log-menu-button">Uhrzeit Synchronisieren</button>
             </div>
             <div class="modal-footer">
-                <button id="logMenuCancelBtn" class="btn btn-primary modal-cancel-btn">Close</button>
+                <button id="logMenuCancelBtn" class="btn btn-primary modal-cancel-btn">Schliessen</button>
             </div>
         </div>
     </div>
@@ -319,22 +321,22 @@
     <div id="emblemSelectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Team Emblem</h3>
+                <h3>Vereinslogo Wählen</h3>
                 <button class="modal-close" id="emblemModalClose">&times;</button>
             </div>
 
             <div class="modal-body">
                 <div id="savedEmblemsList" class="saved-emblems-list">
-                    <p>No saved emblems</p>
+                    <p>Keine gespeicherte Logos</p>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <button id="uploadNewEmblemBtn" class="btn btn-primary">
-                    Upload new emblem
+                    Upload neues Logo
                 </button>
                 <button id="emblemCancelBtn" class="btn btn-primary modal-cancel-btn">
-                    Cancel
+                    Abbrechen
                 </button>
             </div>
         </div>
@@ -344,13 +346,13 @@
     <div id="csvSelectModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Player List</h3>
+                <h3>Spielerliste Wählen</h3>
                 <button class="modal-close" id="csvModalClose">&times;</button>
             </div>
 
             <div class="modal-body">
                 <div id="savedCsvList" class="saved-csv-list">
-                    <p>No saved lists</p>
+                    <p>Keine gespeicherten Listen</p>
                 </div>
             </div>
 
@@ -359,7 +361,7 @@
                     Upload new list
                 </button>
                 <button id="csvCancelBtn" class="btn btn-primary modal-cancel-btn">
-                    Cancel
+                    Abbrechen
                 </button>
             </div>
         </div>

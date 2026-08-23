@@ -384,7 +384,7 @@ void Score_board::adjustFontSize() {
   // Font sizes adjusted for LED wall mode, in this case 640x320
   else {
     QFont scoreFont;
-    scoreFont.setPixelSize(150);
+    scoreFont.setPixelSize(140);
     scoreFont.setBold(true);
     scoreLabel->setFont(scoreFont);
 
