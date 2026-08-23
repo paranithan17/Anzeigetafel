@@ -384,13 +384,13 @@ void Score_board::adjustFontSize() {
   // Font sizes adjusted for LED wall mode, in this case 640x320
   else {
     QFont scoreFont;
-    scoreFont.setPixelSize(110);
+    scoreFont.setPixelSize(150);
     scoreFont.setBold(true);
     scoreLabel->setFont(scoreFont);
 
     QFont timeFont;
-    timeFont.setPixelSize(65);
-    timeFont.setBold(true);
+    timeFont.setPixelSize(120);
+    timeFont.setBold(false);
     timeLabel->setFont(timeFont);
 
     QFont goalFont;
@@ -628,7 +628,8 @@ void Score_board::showPreGameClock() {
 
 int Score_board::resolveSlideDurationMs(const QFileInfo &fileInfo) const {
   const QString baseName = fileInfo.completeBaseName();
-  QRegularExpression pattern(QStringLiteral(R"((?:^|[_-])(\d{1,3})s(?:$|[_-]))"));
+  QRegularExpression pattern(
+      QStringLiteral(R"((?:^|[_-])(\d{1,3})s(?:$|[_-]))"));
   const QRegularExpressionMatch match = pattern.match(baseName);
   if (!match.hasMatch()) {
     return defaultSlideDurationMs;
@@ -708,8 +709,8 @@ void Score_board::setWallClockDisplay(const QString &displayTime,
     }
   }
 
-  if (m_state == MatchState::PreGame && slideshowLabel && slideshowLabel->isVisible() &&
-      showingPreGameClock) {
+  if (m_state == MatchState::PreGame && slideshowLabel &&
+      slideshowLabel->isVisible() && showingPreGameClock) {
     showPreGameClock();
   }
 }
