@@ -40,8 +40,6 @@ match_controller::match_controller(score_memory *scoreMemory, timer *gameTimer, 
         applyTimerPhaseForState(m_state);
     }
 
-    m_wallClockBaseUtc = QDateTime::currentDateTimeUtc();
-    m_wallClockElapsed.start();
     m_wallClockTickTimer.setInterval(1000);
     connect(&m_wallClockTickTimer, &QTimer::timeout, this, &match_controller::onWallClockTick);
     m_wallClockTickTimer.start();
@@ -307,11 +305,21 @@ QString match_controller::getCurrentTime() const
 
 QString match_controller::getCurrentWallClockText() const
 {
+    if (!m_wallClockSynced)
+    {
+        return QStringLiteral("00:00:00");
+    }
+
     return currentWallClockUtc().toLocalTime().toString(QStringLiteral("HH:mm:ss"));
 }
 
 qint64 match_controller::getCurrentWallClockEpochMs() const
 {
+    if (!m_wallClockSynced)
+    {
+        return 0;
+    }
+
     return currentWallClockUtc().toMSecsSinceEpoch();
 }
 
@@ -324,6 +332,7 @@ bool match_controller::synchronizeWallClock(qint64 epochMs)
     }
 
     m_wallClockBaseUtc = syncedUtc;
+    m_wallClockSynced = true;
     m_wallClockElapsed.restart();
     emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
     return true;
@@ -353,6 +362,7 @@ bool match_controller::synchronizeWallClock(const QString &isoDateTime)
     }
 
     m_wallClockBaseUtc = parsed;
+    m_wallClockSynced = true;
     m_wallClockElapsed.restart();
     emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
     return true;
@@ -461,11 +471,21 @@ void match_controller::onTimerTimeout()
 
 void match_controller::onWallClockTick()
 {
+    if (!m_wallClockSynced)
+    {
+        return;
+    }
+
     emit wallClockUpdated(getCurrentWallClockText(), getCurrentWallClockEpochMs());
 }
 
 QDateTime match_controller::currentWallClockUtc() const
 {
+    if (!m_wallClockSynced)
+    {
+        return QDateTime();
+    }
+
     if (!m_wallClockElapsed.isValid())
     {
         return m_wallClockBaseUtc;

@@ -18,31 +18,32 @@ ApplicationClient.prototype.setupTimerHandlers = function () {
   });
 
   this.updateStartTimerButtonState();
-  this.setupClockSyncHandlers();
 };
 
-ApplicationClient.prototype.setupClockSyncHandlers = function () {
-  const syncBtn = document.getElementById("syncClockBtn");
-
-  if (!syncBtn) {
-    return;
+ApplicationClient.prototype.syncClockWithServer = function (
+  showNotification = false,
+) {
+  if (!this.wsClient.isConnected()) {
+    if (showNotification) {
+      this.showNotification("Not connected to server", "error");
+    }
+    return false;
   }
 
-  syncBtn.addEventListener("click", () => {
-    if (!this.wsClient.isConnected()) {
-      this.showNotification("Not connected to server", "error");
-      return;
-    }
-
-    const sent = this.wsClient.sendSetClockTime(Date.now());
-    if (!sent) {
+  const now = new Date();
+  const sent = this.wsClient.sendSetClockTime(now.getTime(), now.toISOString());
+  if (!sent) {
+    if (showNotification) {
       this.showNotification("Clock sync failed", "error");
-      return;
     }
+    return false;
+  }
 
-    this.wsClient.requestClockTime();
+  this.wsClient.requestClockTime();
+  if (showNotification) {
     this.showNotification("Clock synchronized", "success");
-  });
+  }
+  return true;
 };
 
 ApplicationClient.prototype.updateScoreTimeDisplay = function (

@@ -286,10 +286,11 @@ class WebSocketClient {
   /**
    * Synchronize server-side internal clock using browser epoch milliseconds.
    */
-  sendSetClockTime(epochMs) {
+  sendSetClockTime(epochMs, iso = null) {
     return this.send({
       type: "setClockTime",
       epochMs,
+      iso,
     });
   }
 

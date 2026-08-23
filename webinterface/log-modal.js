@@ -37,6 +37,13 @@ ApplicationClient.prototype.showLogMenu = function () {
     };
   }
 
+  const syncClockBtn = document.getElementById("syncClockBtn");
+  if (syncClockBtn) {
+    syncClockBtn.onclick = () => {
+      this.syncClockWithServer(true);
+    };
+  }
+
   const cancelBtn = document.getElementById("logMenuCancelBtn");
   if (cancelBtn) {
     cancelBtn.onclick = () => {

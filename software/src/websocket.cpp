@@ -422,17 +422,32 @@ void websocket::handleJsonCommand(const QJsonObject &obj)
     else if (type == "setClockTime")
     {
         bool synced = false;
+        qint64 epochMs = 0;
+        bool hasEpoch = false;
 
         if (obj.contains("epochMs"))
         {
-            bool ok = false;
-            const qint64 epochMs = obj.value("epochMs").toVariant().toLongLong(&ok);
-            if (ok)
+            const QJsonValue epochValue = obj.value("epochMs");
+
+            if (epochValue.isDouble())
             {
-                synced = m_controller->synchronizeWallClock(epochMs);
+                epochMs = static_cast<qint64>(epochValue.toDouble());
+                hasEpoch = epochMs > 0;
+            }
+            else if (epochValue.isString())
+            {
+                bool ok = false;
+                epochMs = epochValue.toString().toLongLong(&ok);
+                hasEpoch = ok && epochMs > 0;
             }
         }
-        else
+
+        if (hasEpoch)
+        {
+            synced = m_controller->synchronizeWallClock(epochMs);
+        }
+
+        if (!synced)
         {
             const QString iso = obj.value("iso").toString();
             synced = m_controller->synchronizeWallClock(iso);
@@ -443,6 +458,9 @@ void websocket::handleJsonCommand(const QJsonObject &obj)
             qDebug() << "setClockTime rejected: invalid payload";
             return;
         }
+
+        qDebug() << "setClockTime accepted. epochMs="
+                 << m_controller->getCurrentWallClockEpochMs();
 
         return;
     }

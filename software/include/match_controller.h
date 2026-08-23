@@ -441,6 +441,8 @@ private:
 
     /** @brief UTC base timestamp used for internal wall-clock progression. */
     QDateTime m_wallClockBaseUtc;
+    /** @brief True after first successful synchronization from web interface. */
+    bool m_wallClockSynced = false;
     /** @brief Monotonic elapsed timer since last clock synchronization. */
     QElapsedTimer m_wallClockElapsed;
     /** @brief Periodic notifier for wall-clock updates. */

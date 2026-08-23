@@ -68,8 +68,7 @@ class ApplicationClient {
     console.log("[Application] WebSocket connected");
     this.updateConnectionStatus("connected");
     this.showNotification("Connected to server", "success");
-    this.wsClient.sendSetClockTime(Date.now());
-    this.wsClient.requestClockTime();
+    this.syncClockWithServer(false);
   }
 
   /**
